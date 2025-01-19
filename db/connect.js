@@ -1,4 +1,3 @@
-// db/connect.js
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 
