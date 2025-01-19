@@ -9,7 +9,6 @@ let client;
 let db;
 
 async function connectToDB() {
-  // If we haven't created a client yet, do so now
   if (!client) {
     client = new MongoClient(uri, {
       serverApi: {
