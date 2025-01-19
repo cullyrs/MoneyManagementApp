@@ -1,6 +1,25 @@
-/* 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/javascript.js to edit this template
- */
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+
+// DB connection
+const { connectToDB, getDB } = require('./db/connect');
+
+let mainWindow;
+
+async function createWindow() {
+  await connectToDB();
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+
+  mainWindow.loadFile('index.html');
+
+}
+
+app.whenReady().then(createWindow);
 
 
