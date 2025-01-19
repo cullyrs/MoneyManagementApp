@@ -1,10 +1,35 @@
-// db/models/Category.js
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema, model } = require('mongoose');
 
 const categorySchema = new Schema({
-  name: { type: String, required: true },
-  userId: { type: Schema.Types.ObjectId, ref: 'User' } 
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 50
+  },
+  type: {
+    type: String,
+    enum: ['income', 'expense', 'both'],
+    default: 'expense'
+  },
+  icon: String,
+  color: String,
+  description: String,
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  parentCategoryId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category'
+  }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Category', categorySchema);
+categorySchema.index({ userId: 1, name: 1 }, { unique: true });
+
+module.exports = model('Category', categorySchema);
