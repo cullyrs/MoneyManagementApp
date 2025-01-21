@@ -1,0 +1,211 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  color: #333;
+}
+header {
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+header .header-nav ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+header .header-nav ul li {
+  margin-right: 20px;
+}
+header .header-nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+header .header-nav ul a img {
+  width: 50px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+.budget-goals {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px auto;
+  width: 80%;
+}
+.budget-goals #budget-display {
+  flex: 1;
+  text-align: center;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 8px;
+  margin-right: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.budget-goals #goal-display {
+  flex: 1;
+  text-align: center;
+  background-color: #d1ecf1;
+  color: #0c5460;
+  padding: 15px;
+  border-radius: 8px;
+  margin-left: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.month-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  position: relative;
+}
+.month-navigation button {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #000000;
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 20px;
+  font-weight: bold;
+}
+.month-navigation button:hover {
+  background-color: #0056b3;
+}
+.month-navigation #prev-month {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  margin-right: -5px;
+}
+.month-navigation #next-month {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  margin-left: -5px;
+}
+.month-navigation #current-month {
+  background-color: #007bff;
+  border: 1px solid #000000;
+  padding: 20px 20px;
+  border-radius: 0;
+  cursor: pointer;
+  margin: 0;
+  width: 50%;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+.month-navigation #current-month:hover {
+  background-color: #dae0e5;
+}
+.month-navigation #current-month.active {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.month-navigation input[type="month"] {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  width: auto;
+}
+.month-navigation input[type="month"].visible {
+  display: block;
+}
+.table {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+}
+.table table {
+  border-collapse: collapse;
+  width: 80%;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.table table th,
+.table table td {
+  text-align: left;
+  padding: 15px;
+  border-bottom: 1px solid #000000;
+}
+.table table th {
+  background-color: #007bff;
+  color: white;
+}
+.table table tfoot td {
+  font-weight: bold;
+  background-color: #ffffff;
+}
+.dashboard-totals {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+.dashboard-totals div {
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+}
+.add-expense {
+  background-color: white;
+  margin: 20px auto;
+  width: 60%;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.add-expense h2 {
+  text-align: center;
+  color: #007bff;
+}
+.add-expense .add-expense-form {
+  display: flex;
+  flex-direction: column;
+}
+.add-expense .add-expense-form label {
+  margin: 10px 0 5px;
+}
+.add-expense .add-expense-form input,
+.add-expense .add-expense-form select,
+.add-expense .add-expense-form button {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #000000;
+  border-radius: 5px;
+}
+.add-expense .add-expense-form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.add-expense .add-expense-form button:hover {
+  background-color: #0056b3;
+}
+footer {
+  background-color: #004a99;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  margin-top: 20px;
+}

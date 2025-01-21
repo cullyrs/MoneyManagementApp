@@ -1,0 +1,272 @@
+// Variables
+// placeholder colors for now. will edit later
+@primary-color: #007bff;
+@secondary-color: #f8f9fa;
+@text-color: #333;
+@header-text-color: white;
+@danger-bg: #f8d7da;
+@danger-text: #721c24;
+@info-bg: #d1ecf1;
+@info-text: #0c5460;
+@shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+@table-border: 1px solid #000000;
+@hover-bg: #0056b3;
+
+// general basic styling
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: @secondary-color;
+    color: @text-color;
+}
+
+// Header Styling
+header {
+    background-color: @primary-color;
+    color: @header-text-color;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    box-shadow: @shadow;
+
+    .header-nav {
+        ul {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+
+            li {
+                margin-right: 20px;
+
+                a {
+                    color: @header-text-color;
+                    text-decoration: none;
+                    font-weight: bold;
+                }
+            }
+
+            a img {
+      
+                width: 50px;
+                margin-right: 10px;
+                border-radius: 50%;
+            }
+        }
+    }
+}
+
+// Budget and Goals Section
+.budget-goals {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px auto;
+    width: 80%;
+
+    #budget-display {
+        flex: 1;
+        text-align: center;
+        background-color: @danger-bg;
+        color: @danger-text;
+        padding: 15px;
+        border-radius: 8px;
+        margin-right: 10px;
+        box-shadow: @shadow;
+    }
+
+    #goal-display {
+        flex: 1;
+        text-align: center;
+        background-color: @info-bg;
+        color: @info-text;
+        padding: 15px;
+        border-radius: 8px;
+        margin-left: 10px;
+        box-shadow: @shadow;
+    }
+}
+
+// Navigation buttons
+// todo: dropdown month selector
+.month-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    position: relative;
+
+    button {
+        background-color: @primary-color;
+        color: @header-text-color;
+        border: @table-border;
+        padding: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-size: 20px;
+        font-weight: bold;
+
+        &:hover {
+            background-color: @hover-bg;
+        }
+    }
+
+    #prev-month {
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        margin-right: -5px;
+    }
+
+    #next-month {
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        margin-left: -5px;
+    }
+
+    #current-month {
+        background-color: @primary-color;
+        border: @table-border;
+        padding: 20px 20px;
+        border-radius: 0;
+        cursor: pointer;
+        margin: 0;
+        width: 50%;
+        text-align: center;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: darken(@secondary-color, 10%);
+        }
+
+        &.active {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+
+    input[type="month"] {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        border: @table-border;
+        border-radius: 5px;
+        padding: 5px;
+        box-shadow: @shadow;
+        z-index: 10;
+        width: auto;
+
+        &.visible {
+            display: block;
+        }
+    }
+
+}
+
+// Table Styling
+.table {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+
+    table {
+        border-collapse: collapse;
+        width: 80%;
+        background-color: white;
+        box-shadow: @shadow;
+        border-radius: 10px;
+        overflow: hidden;
+
+        th,
+        td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: @table-border;
+        }
+
+        th {
+            background-color: @primary-color;
+            color: @header-text-color;
+        }
+
+        tfoot td {
+            font-weight: bold;
+            background-color: lighten(@secondary-color, 10%);
+        }
+    }
+}
+
+// Dashboard Totals 
+// TODO: top and bottom change
+.dashboard-totals {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+
+    div {
+        background-color: lighten(@secondary-color, 5%);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: @shadow;
+        font-size: 16px;
+    }
+}
+
+// Add Expense Form -- TODO fix the form styling and dropdown functionality, slide out from plus button
+.add-expense {
+    background-color: white;
+    margin: 20px auto;
+    width: 60%;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: @shadow;
+
+    h2 {
+        text-align: center;
+        color: @primary-color;
+    }
+
+    .add-expense-form {
+        display: flex;
+        flex-direction: column;
+
+        label {
+            margin: 10px 0 5px;
+        }
+
+        input,
+        select,
+        button {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: @table-border;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: @primary-color;
+            color: @header-text-color;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+
+            &:hover {
+                background-color: @hover-bg;
+            }
+        }
+    }
+}
+
+// Footer Styling --> later
+footer {
+    background-color: darken(@primary-color, 20%);
+    color: @header-text-color;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+}
