@@ -1,4 +1,3 @@
-// db/connect.js (CommonJS)
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const { username, password } = require('./api.json');
 
@@ -20,21 +19,17 @@ async function connectToDB() {
     });
   }
 
-  // Check if we're not already connected
   if (!client.topology || !client.topology.isConnected()) {
     try {
       // Attempt to connect to MongoDB
       await client.connect();
       console.log('Connected to MongoDB!');
 
-      // (Optional) Ping the admin database just to confirm
       await client.db('admin').command({ ping: 1 });
       console.log('Pinged your deployment. Connection is successful!');
 
-      // Use the 'Accounts' DB (adjust as needed)
       db = client.db('Accounts');
     } catch (err) {
-      // Log and re-throw so the caller can handle or exit
       console.error('Failed to connect to MongoDB:', err);
       throw err;
     }
