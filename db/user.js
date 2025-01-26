@@ -13,5 +13,5 @@ export const createNewUser(name, entry, _email) =>{
         password = hashed(entry),
         email = _email,
     });
-    await article.save();
+    await user.save();
 };
