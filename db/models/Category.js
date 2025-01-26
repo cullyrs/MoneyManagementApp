@@ -1,8 +1,11 @@
-const { Schema, model } = require('mongoose');
-
+const mongoose = require('mongoose');
+//Must install mongoose int 32 plugin "npm install mongoose-int32"
+const Int32 = require ('mongoose-int32).loadType(mongoose);
+const { Schema } = mongoose;
+                       
 const categorySchema = new Schema({
-  id: {type: Number, required: true, unique: true},
-  schema: {type: Number, default: 1.1},
+  id: {type: Int32, required: true, unique: true},
+  version: {type: Int32, default: 1},
   userId: {type: Schema.Types.ObjectId, ref: 'User'},
   name: {type: String, required: true, trim: true, minlength: 1, maxlength: 50},
   type: {type: String, enum: ['income', 'expense', 'both'], default: 'expense'},
