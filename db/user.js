@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "models/User";
+import User from "models/User.js";
 import hashed from "./utils/helper.js";
 const { username, password } = require('../api.json');
 const uri = `mongodb+srv://${username}:${password}@expensemanager1.3yfoo.mongodb.net/?retryWrites=true&w=majority&appName=ExpenseManager1`;
