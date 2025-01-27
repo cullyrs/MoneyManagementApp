@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="css/stylesheet.css">
+</head>
+
+<body>
+    <header>
+        <img src="imgs/icon.png" alt="icon homepage">
+
+        <!-- dashboard if user logged in, login if not -->
+        <h2><a href="dashboard.html">Expense Tracker</a></h2>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="dropdown">
+                    <div class="menu-title">Settings</div>
+                    <nav class="settings-dropdown">
+                        <ul class="menu-dropdown">
+                            <li><a href="">Export Data to CSV</a></li> <!-- replace with export function -->
+                            <li><a href="profile.html">User Profile</a></li>
+                            <li><a href="manage-categories.html">Manage Categories</a></li>
+                        </ul>
+                    </nav>
+                    <li><a href="">Log Out</a></li><!-- replace with logout function -->
+
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="contact">
+        <h1>Contact Us</h1>
+        <form action="/submitContactForm" method="post">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="message">Your Message:</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

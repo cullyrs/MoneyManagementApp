@@ -3,7 +3,7 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
 -->
-<!-- This will serve as the main login page for the website -->
+<!--This will serve as the main  page for the website if user is logged in -->
 <html lang="en">
 
 <head>
@@ -14,56 +14,60 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
 
     <link rel="stylesheet" href="css/stylesheet.css">
 
-    <!-- script of month -->
+    <!-- scripts -->
     <script src="js/dateScript.js"></script>
+    <script src="js/addExpense.js"></script>
+    <script src="js/fillTableData.js"></script>
+    <script src="js/headerMenu.js"></script>
+
     <title>Dashboard</title>
 </head>
 
 <body>
     <header>
-        <nav class="header-nav">
-            <ul>
-                <a href="index.html"><img src="imgs/icon.png" alt="icon homepage"></a>
-                <li><a href="index.html">Expense Tracker</a></li>
-                <li><a href="About.html">About</a></li>
-                <li><a href="Contact.html">Contact</a></li>
+        <img src="imgs/icon.png" alt="icon homepage">
 
-                <li>Settings</li>
-                <nav class="settings-dropdown">
-                    <ul>
-                        <li><a href="export.html">Export Data to CSV</a></li>
-                        <li><a href="profile.html">User Profile</a></li>
-                        <li><a href="manage-categories.html">Manage Categories</a></li>
-                        <li><a href="logout.html">Log Out</a></li>
-                    </ul>
-                </nav>
-                <li><a href="">UNDER CONSTRUCTION</a></li>
+        <!-- dashboard if user logged in, login if not -->
+        <h2><a href="dashboard.html">Expense Tracker</a></h2>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="dropdown">
+                    <div class="menu-title">Settings</div>
+                    <nav class="settings-dropdown">
+                        <ul class="menu-dropdown">
+                            <li><a href="">Export Data to CSV</a></li>
+                            <li><a href="profile.html">User Profile</a></li>
+                            <li><a href="manage-categories.html">Manage Categories</a></li>
+                        </ul>
+                    </nav>
+                </li>
+                
+                    <li><a href="">Log Out</a></li><!-- replace with logout function -->
 
             </ul>
         </nav>
-
-        <!-- TODO: replace with js db user saved goals -->
-
     </header>
 
-
-    <main>
+    <!-- TODO: replace with js db user saved goals -->
+    <main class="dashboard">
         <div class="budget-goals">
             <span id="budget-display">Budget - $0/9,999</span>
             <span id="goal-display">Goal - $0/9,999</span>
         </div>
 
+
         <div class="month-navigation">
             <button id="prev-month" name="Previous Month">&lt;</button>
 
-            <!-- Button displays the current month -->
-            <button id="current-month"></button>
-
-            <!-- Month selector -->
-            <input type="month" id="month-selector" name="Select Month">
+            <!-- Button directly opens the month selector -->
+            <input type="month" id="month-selector" name="Select Month" aria-label="Select Month">
 
             <button id="next-month" name="Next Month">&gt;</button>
         </div>
+
+
 
         <!-- a central table where CATEGORY IS parent with DROP DOWN, expenses are underneath as children
              The current month will display on top as the table header with arrows buttons to the left and right
@@ -73,63 +77,37 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
              brings up a menu to the right to add an expense -->
 
         <!-- replace with script to get data and fill tables -->
-        <section class="table">
-            <table>
-                <thead>
-                    <!-- placeholder table data -->
-                    <tr>
-                        <th>Category</th>
-                        <th>Expenses</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Income</td>
-                        <td>$0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Food</td>
-                        <td>$0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Transportation</td>
-                        <td>$0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Entertainment</td>
-                        <td>$0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Utilities</td>
-                        <td>$0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Health</td>
-                        <td>$0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Other</td>
-                        <td>$0.00</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td>Total</td>
-                        <td>$0.00</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </section>
 
-        <section class="dashboard-totals">
-
-            <div id="net-balance">
+        <div class="finance-container">
+            <div id="net-balance" class="total-text">
                 <span>Net Balance:</span> <span id="Income">$0.00</span>
+                <button id="add-expense-button" aria-label="Add Expense">+</button>
             </div>
-            <div id="total-balance">
-                <span>Total Balance:</span> <span id="Total Balance">$0.00</span>
+
+            <section class="table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-key="category">Category</th>
+                            <th data-key="description">Description</th>
+                            <th data-key="date">Date</th>
+                            <th data-key="amount">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expense-table-body">
+                        <!-- rows will be dynamically populated here -->
+                    </tbody>
+                </table>
+            </section>
+
+
+            </section>
+            <div id="total-balance" class="total-text">
+                <span>Total Balance:</span> <span id="TotalBalance">$0.00</span>
             </div>
-        </section>
+        </div>
+
+
 
         <!-- Add expense here: 
                HIGHLIGHT EXPENSE OR INCOME TOP SELECTIONS
@@ -142,31 +120,36 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
             IF DESCRIPTION IS EMPTY, USE CATEGORY NAME
             custom icons stored for user custom category
             submit button underneath all -->
-        <section class="add-expense">
-            <h2>Add Expense</h2>
-            <form class="add-expense-form" action="/addExpense" method="post" name="add-expense-title">
-                <label for="category">Category:</label>
-                <select id="category" name="category" required="true">
-                    <option value="income">Income</option>
-                    <option value="food">Food</option>
-                    <option value="transportation">Transportation</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="utilities">Utilities</option>
-                    <option value="health">Health</option>
-                    <option value="other">Other</option>
-                </select>
-                <label for="date">Date:</label>
-                <input type="date" id="date" name="date" required>
-                <label for="amount">Amount:</label>
-                <input type="number" id="amount" name="amount" step="0.01" required>
-                <span id="amount-validation" class="validation-error"></span>
-                <label for="description">Description:</label>
-                <input type="text" id="description" name="description">
-                <button type="submit" id="submit">Submit</button>
-            </form>
+        <div id="add-expense-container">
+            <section class="add-expense">
+                <button id="close-add-expense" aria-label="Close Menu">&times;</button>
+                <h2>Add Expense</h2>
 
-        </section>
+                <!-- Income and Expense Toggle Buttons -->
+                <div class="toggle-buttons">
+                    <button id="income-button" class="toggle-button">Income</button>
+                    <button id="expense-button" class="toggle-button">Expense</button>
+                </div>
 
+                <form class="add-expense-form" action="/addExpense" method="post" name="add-expense-title">
+                    <label for="category">Category:</label>
+                    <select id="category" name="category" required="true"></select>
+                    <div id="custom-category-container">
+                        <label for="custom-category">Enter Custom Category:</label>
+                        <input type="text" id="custom-category" name="custom-category" placeholder="Category">
+                    </div>
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required>
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" name="amount" step="0.01" required>
+                    <span id="amount-validation" class="validation-error"></span>
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" name="description">
+                    <button type="submit" id="submit">Submit</button>
+                </form>
+
+            </section>
+        </div>
 
     </main>
 
@@ -174,8 +157,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
         <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
     </footer>
 
-    <!-- placeholder script -->
-    <script src="js/getFormData.js"></script>
 
 </body>
 
