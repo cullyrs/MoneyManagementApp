@@ -91,22 +91,22 @@ header img {
 .budget-goals #budget-display {
   flex: 1;
   text-align: center;
-  background-color: #f8d7da;
-  color: #721c24;
   padding: 15px;
   border-radius: 8px;
   margin-right: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f8d7da;
+  color: #721c24;
 }
 .budget-goals #goal-display {
   flex: 1;
   text-align: center;
-  background-color: #d1ecf1;
-  color: #0c5460;
   padding: 15px;
   border-radius: 8px;
-  margin-left: 10px;
+  margin-right: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #d1ecf1;
+  color: #0c5460;
 }
 .month-navigation {
   display: flex;
@@ -395,7 +395,7 @@ header img {
   max-width: 800px;
   margin: 50px auto;
   padding: 30px;
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -424,7 +424,7 @@ header img {
   margin-top: 20px;
 }
 .about .team-section .team-card {
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -449,13 +449,13 @@ header img {
 }
 .about .team-section .team-card p {
   font-size: 0.9em;
-  color: #555;
+  color: #333;
 }
 .contact {
   max-width: 800px;
   margin: 50px auto;
   padding: 30px;
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -515,6 +515,305 @@ header img {
 }
 .contact form button:active {
   transform: scale(1);
+}
+.profile {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.profile h1,
+.profile h2 {
+  text-align: center;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+.profile .profile-info {
+  margin-bottom: 30px;
+}
+.profile .profile-info p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 10px;
+}
+.profile .profile-info p strong {
+  font-weight: bold;
+  color: #007bff;
+}
+.profile .profile-settings h2 {
+  margin-bottom: 15px;
+}
+.profile .profile-settings ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.profile .profile-settings ul li {
+  margin-bottom: 10px;
+}
+.profile .profile-settings ul li a {
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  color: #007bff;
+  transition: color 0.3s ease;
+}
+.profile .profile-settings ul li a:hover {
+  color: #0062cc;
+  text-decoration: underline;
+}
+.manage-categories {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.manage-categories h1,
+.manage-categories h2 {
+  text-align: center;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+.manage-categories form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.manage-categories form label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+.manage-categories form input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease;
+}
+.manage-categories form input[type="text"]:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+.manage-categories form button#add-category-button {
+  align-self: flex-start;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.manage-categories form button#add-category-button:hover {
+  background-color: #0062cc;
+  transform: scale(1.05);
+}
+.manage-categories form button#add-category-button:active {
+  transform: scale(1);
+}
+.manage-categories ul#categories-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.manage-categories ul#categories-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+.manage-categories ul#categories-list li:hover {
+  background-color: #e9ecef;
+}
+.manage-categories ul#categories-list li button.delete-category {
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.manage-categories ul#categories-list li button.delete-category:hover {
+  background-color: #bd2130;
+  transform: scale(1.05);
+}
+.manage-categories ul#categories-list li button.delete-category:active {
+  transform: scale(1);
+}
+.login {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 30px;
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.login .login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.login .login-form h1 {
+  text-align: center;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+.login .login-form input[type="text"],
+.login .login-form input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease;
+}
+.login .login-form input[type="text"]:focus,
+.login .login-form input[type="password"]:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+.login .login-form button {
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.login .login-form button:hover {
+  transform: scale(1.05);
+}
+.login .login-form button:active {
+  transform: scale(1);
+}
+.login .login-form button#login {
+  background-color: #007bff;
+}
+.login .login-form button#login:hover {
+  background-color: #0062cc;
+}
+.login .login-form button#signup {
+  background-color: #28a745;
+}
+.login .login-form button#signup:hover {
+  background-color: #1e7e34;
+}
+.homepage .hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 50px;
+}
+.homepage .hero .hero-content {
+  max-width: 600px;
+}
+.homepage .hero .hero-content h1 {
+  font-size: 2.5rem;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+.homepage .hero .hero-content p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: #333;
+}
+.homepage .hero .hero-content .btn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.homepage .hero .hero-content .btn:hover {
+  background-color: #0062cc;
+  transform: scale(1.05);
+}
+.homepage .hero .hero-content .btn:active {
+  transform: scale(1);
+}
+.homepage .hero .mascot {
+  margin-top: 40px;
+}
+.homepage .hero .mascot .mascot-img {
+  width: 150px;
+  height: auto;
+  animation: mascot-bounce 2s infinite ease-in-out;
+  transition: transform 0.3s ease;
+}
+.homepage .hero .mascot .mascot-img:hover {
+  transform: scale(1.2);
+}
+@keyframes mascot-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+.homepage .selling-points {
+  margin-top: 50px;
+  text-align: center;
+}
+.homepage .selling-points h2 {
+  font-size: 2rem;
+  color: #007bff;
+  margin-bottom: 30px;
+}
+.homepage .selling-points .points {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.homepage .selling-points .points .point {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.homepage .selling-points .points .point h3 {
+  font-size: 1.5rem;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+.homepage .selling-points .points .point p {
+  font-size: 1rem;
+  color: #555;
 }
 footer {
   background-color: #004a99;

@@ -1,16 +1,18 @@
-// TODO: 
+/** this script is used to handlle the expense form and the category selection */
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Get elements from the DOM
     const categorySelect = document.getElementById("category");
     const customCategoryContainer = document.getElementById("custom-category-container");
     const addExpenseButton = document.getElementById("add-expense-button");
     const addExpenseContainer = document.getElementById("add-expense-container");
     const closeExpenseButton = document.getElementById("close-add-expense");
 
+    // Buttons to toggle between Income and Expense categories
     const incomeButton = document.getElementById("income-button");
     const expenseButton = document.getElementById("expense-button");
 
-    // Define categories for income and expense
+    // Define categories for income and expense --> replace with actual data from the database
     const incomeCategories = ["Salary", "Bonus", "Investment", "Custom"];
     const expenseCategories = ["Food", "Transportation", "Entertainment", "Utilities", "Health", "Other", "Custom"];
 
@@ -26,17 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
         categorySelect.value = categories[0].toLowerCase(); // Default to the first category
     };
 
-    // Show the "Add Expense" menu
+    // Show the expense menu
     addExpenseButton.addEventListener("click", () => {
         addExpenseContainer.classList.add("active");
     });
 
-    // Hide the "Add Expense" menu
+    // Hide the expense menu
     closeExpenseButton.addEventListener("click", () => {
         addExpenseContainer.classList.remove("active");
     });
 
-    // When clicking outside the "Add Expense" menu, hide it
+    // When clicking outside the expense menu, hide it
     document.addEventListener("click", (event) => {
         if (!addExpenseContainer.contains(event.target) && event.target !== addExpenseButton) {
             addExpenseContainer.classList.remove("active");

@@ -25,7 +25,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
 
 <body>
     <header>
-        <img src="imgs/icon.png" alt="icon homepage">
+        <a href="index.html"><img src="imgs/icon.png" alt="icon homepage"></a>
+
 
         <!-- dashboard if user logged in, login if not -->
         <h2><a href="dashboard.html">Expense Tracker</a></h2>
@@ -44,7 +45,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                     </nav>
                 </li>
                 
-                    <li><a href="">Log Out</a></li><!-- replace with logout function -->
+                    <li><a href="login.html">Log Out</a></li><!-- replace with logout function -->
 
             </ul>
         </nav>
@@ -61,26 +62,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
         <div class="month-navigation">
             <button id="prev-month" name="Previous Month">&lt;</button>
 
-            <!-- Button directly opens the month selector -->
+            <!-- button directly opens the month selector -->
             <input type="month" id="month-selector" name="Select Month" aria-label="Select Month">
 
             <button id="next-month" name="Next Month">&gt;</button>
         </div>
 
-
-
-        <!-- a central table where CATEGORY IS parent with DROP DOWN, expenses are underneath as children
-             The current month will display on top as the table header with arrows buttons to the left and right
-             to cycle through the months. user can select the actual month to bring up a calendar as well to select
-             specific months. income displays under the month as the total income for the month. at the bottom of the 
-             table shows the total balance to date. to the right of income theres a "+" button to add an expense which 
-             brings up a menu to the right to add an expense -->
-
-        <!-- replace with script to get data and fill tables -->
+        <!-- script fills table -->
 
         <div class="finance-container">
             <div id="net-balance" class="total-text">
-                <span>Net Balance:</span> <span id="Income">$0.00</span>
+                <span>Net Balance:</span> <span id="Income">$0.00</span> <!-- income - expenses replace with db income -->
                 <button id="add-expense-button" aria-label="Add Expense">+</button>
             </div>
 
@@ -88,6 +80,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                 <table>
                     <thead>
                         <tr>
+                            <!-- headers -->
                             <th data-key="category">Category</th>
                             <th data-key="description">Description</th>
                             <th data-key="date">Date</th>
@@ -102,6 +95,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
 
 
             </section>
+            <!-- replace with db total balance -->
             <div id="total-balance" class="total-text">
                 <span>Total Balance:</span> <span id="TotalBalance">$0.00</span>
             </div>
@@ -109,28 +103,20 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
 
 
 
-        <!-- Add expense here: 
-               HIGHLIGHT EXPENSE OR INCOME TOP SELECTIONS
-               FORM:
-               CATEGORY DROPDOWN
-                IF EXPENSE clicked, SHOW EXPENSE CATEGORIES and subtract income. IF INCOME, SHOW INCOME CATEGORIES and add income           
-            DATE IS CALENDAR DAY SELECT
-            ENTER AMOUNT
-            CUSTOM USER DESCRIPTION
-            IF DESCRIPTION IS EMPTY, USE CATEGORY NAME
-            custom icons stored for user custom category
-            submit button underneath all -->
+
+        <!-- IF DESCRIPTION IS EMPTY, USE CATEGORY NAME -->
         <div id="add-expense-container">
             <section class="add-expense">
                 <button id="close-add-expense" aria-label="Close Menu">&times;</button>
                 <h2>Add Expense</h2>
 
-                <!-- Income and Expense Toggle Buttons -->
+                <!-- income and expense toggle Buttons -->
                 <div class="toggle-buttons">
                     <button id="income-button" class="toggle-button">Income</button>
                     <button id="expense-button" class="toggle-button">Expense</button>
                 </div>
 
+                <!-- replace form action? -->
                 <form class="add-expense-form" action="/addExpense" method="post" name="add-expense-title">
                     <label for="category">Category:</label>
                     <select id="category" name="category" required="true"></select>

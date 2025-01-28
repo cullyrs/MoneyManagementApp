@@ -20,33 +20,35 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
 
 <body>
     <header>
-        <nav class="header-nav">
+        <img src="imgs/icon.png" alt="icon homepage">
+
+        <!-- dashboard if user logged in, login if not -->
+        <h2><a href="dashboard.html">Expense Tracker</a></h2>
+        <nav class="main-nav">
             <ul>
-                <a href="index.html"><img src="imgs/icon.png" alt="icon homepage"></a>
-                <li><a href="index.html">Expense Tracker</a></li>
-                <li><a href="About.html">About</a></li>
-                <li><a href="Contact.html">Contact</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="dropdown">
+                    <div class="menu-title">Settings</div>
+                    <nav class="settings-dropdown">
+                        <ul class="menu-dropdown">
+                            <li><a href="">Export Data to CSV</a></li> <!-- replace with export function -->
+                            <li><a href="profile.html">User Profile</a></li>
+                            <li><a href="manage-categories.html">Manage Categories</a></li>
+                        </ul>
+                    </nav>
+                    <li><a href="login.html">Log Out</a></li><!-- replace with logout function -->
 
-                <li>Settings</li>
-                <nav class="settings-dropdown">
-                    <ul>
-                        <li><a href="export.html">Export Data to CSV</a></li>
-                        <li><a href="profile.html">User Profile</a></li>
-                        <li><a href="logout.html">Log Out</a></li>
-                        <li><a href="">UNDER CONSTRUCTION</a></li>
-                    </ul>
-                </nav>
-
+                </li>
             </ul>
         </nav>
     </header>
 
-    <main>
+    <main class="login">
         <section class="login-form">
             <h1>Log In</h1>
 
-            <!-- TODO: replace with actual js db script connection
-                 re-do entire login style -->
+            <!-- TODO: replace with actual js db script connection -->
             <!-- signup and login need different results -->
             <form class="login-form" action="/login" method="post">
                 <input type="text" id="username" name="username" placeholder="USERNAME">

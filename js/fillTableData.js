@@ -1,3 +1,5 @@
+// this script is used to fill the table with data and sort the data based on the header clicked
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const tableBody = document.getElementById("expense-table-body");
@@ -45,9 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Sort data
     const sortData = (data, key, order) => {
         return data.sort((a, b) => {
-            if (a[key] < b[key]) return order === "asc" ? -1 : 1;
-            if (a[key] > b[key]) return order === "asc" ? 1 : -1;
-            return 0;
+            if (a[key] < b[key]) return order === "asc" ? -1 : 1; // -1 for ascending order or 1 for descending order.
+            if (a[key] > b[key]) return order === "asc" ? 1 : -1; // 1 for ascending order or -1 for descending order.
+            return 0; // No change in order. The order parameter determines whether the sorting is in ascending or descending order.
         });
     };
 
@@ -55,8 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
     tableHeaders.forEach((header, index) => {
         header.addEventListener("click", () => {
             const key = header.getAttribute("data-key");
-            const currentOrder = header.getAttribute("data-order") || "asc";
-            const newOrder = currentOrder === "asc" ? "desc" : "asc";
+            const currentOrder = header.getAttribute("data-order") || "asc"; // Default order is ascending
+            const newOrder = currentOrder === "asc" ? "desc" : "asc"; // Toggle order on each click
 
             // Update data-order attribute for the clicked header
             tableHeaders.forEach((h) => h.removeAttribute("data-order"));

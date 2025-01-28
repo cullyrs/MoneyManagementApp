@@ -1,5 +1,4 @@
-//  notes: may need to change to return variables to be placed in the html file??? maybe.
-// currently edits the html file directly
+// this script is used to handle the month selector and the previous and next month buttons
 
 document.addEventListener("DOMContentLoaded", () => {
     const monthSelector = document.getElementById("month-selector");
@@ -11,12 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update the value of the month selector to the current date
     const updateMonthSelector = () => {
         const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-based, so add 1, pad with 0 if needed
         monthSelector.value = `${year}-${month}`;
     };
     updateMonthSelector();
 
-    // Show the picker programmatically when the monthSelector is clicked
+    // Show the picker programmatically when the month button is clicked
     monthSelector.addEventListener("click", () => {
         if ('showPicker' in monthSelector) {
             monthSelector.showPicker();

@@ -1,3 +1,6 @@
+// this script is used to correctly position the settings dropdown menu.
+// Why? The settings dropdown menu kept overflowing to the right side of the viewport.
+// If the dropdown menu overflows the viewport, it is repositioned to the left or right side of the dropdown button.
 document.addEventListener("DOMContentLoaded", () => {
     const dropdown = document.querySelector(".dropdown");
     const dropdownMenu = document.querySelector(".settings-dropdown");

@@ -27,14 +27,14 @@
                             <li><a href="manage-categories.html">Manage Categories</a></li>
                         </ul>
                     </nav>
-                    <li><a href="">Log Out</a></li><!-- replace with logout function -->
+                    <li><a href="login.html">Log Out</a></li><!-- replace with logout function -->
 
                 </li>
             </ul>
         </nav>
     </header>
 
-    <main>
+    <main class="manage-categories">
         <h1>Manage Categories</h1>
         <form id="manage-categories-form">
             <label for="new-category">Add New Category:</label>
@@ -42,10 +42,12 @@
             <button type="button" id="add-category-button">Add</button>
 
             <h2>Current Categories</h2>
+
+            <!-- placeholder for categories, add default and custom here. user can delete the defaults as well  -->
             <ul id="categories-list">
                 <li>Groceries <button class="delete-category">Delete</button></li>
                 <li>Entertainment <button class="delete-category">Delete</button></li>
-                <!-- More categories will be dynamically added -->
+                <!-- categories will be dynamically added through JavaScript -->
             </ul>
         </form>
     </main>
