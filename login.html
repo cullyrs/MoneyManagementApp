@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<!-- This will serve as the main home page for the website if user is not logged in -->
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
+-->
+<!-- This will serve as the main login page for the website -->
 <html lang="en">
 
 <head>
@@ -16,7 +20,7 @@
 
 <body>
     <header>
-        <img src="imgs/icon.png" alt="icon homepage" class="homepage-icon">
+        <img src="imgs/icon.png" alt="icon homepage">
 
         <!-- dashboard if user logged in, login if not -->
         <h2><a href="dashboard.html">Expense Tracker</a></h2>
@@ -40,34 +44,18 @@
         </nav>
     </header>
 
-    <main class="homepage">
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Welcome to Expense Tracker</h1>
-                <p>Your all-in-one tool for managing budgets, tracking expenses, and reaching financial goals effortlessly.</p>
-                <a href="login.html" class="btn">Get Started</a>
-            </div>
-            <div class="mascot">
-                <img src="imgs/icon.png" alt="Mascot Icon" class="mascot-img">
-            </div>
-        </section>
+    <main class="login">
+        <section class="login-form">
+            <h1>Log In</h1>
 
-        <section class="selling-points">
-            <h2>Why Choose Expense Tracker?</h2>
-            <div class="points">
-                <div class="point">
-                    <h3>Track Every Expense</h3>
-                    <p>Never lose sight of your finances. Track your spending and identify where your money goes.</p>
-                </div>
-                <div class="point">
-                    <h3>Set Realistic Goals</h3>
-                    <p>Set financial goals and see your progress in real-time with intuitive dashboards.</p>
-                </div>
-                <div class="point">
-                    <h3>Stay Organized</h3>
-                    <p>Export data to CSV for detailed analysis and keep your financial records up to date.</p>
-                </div>
-            </div>
+            <!-- TODO: replace with actual js db script connection -->
+            <!-- signup and login need different results -->
+            <form class="login-form" action="/login" method="post">
+                <input type="text" id="username" name="username" placeholder="USERNAME">
+                <input type="password" id="password" name="password" placeholder="PASSWORD">
+                <button type="submit" id="login">Log In</button>
+                <button type="submit" id="signup">Sign Up</button>
+            </form>
         </section>
     </main>
 
