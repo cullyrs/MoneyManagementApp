@@ -1,5 +1,4 @@
-// this script is used to handle the month selector and the previous and next month buttons
-
+// this script is used to handle the month selector and the previous and next month buttons.
 document.addEventListener("DOMContentLoaded", () => {
     const monthSelector = document.getElementById("month-selector");
     const prevMonthButton = document.getElementById("prev-month");
