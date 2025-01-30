@@ -14,7 +14,7 @@ const categorySchema = new Schema({
   description: String,
   isActive: {type: Boolean,default: true},
   parentCategory: {type: Schema.Types.ObjectId, ref: 'Category'}
-}, { timestamps: true });
+}, {collection: 'Category', timestamps: true });
 
 categorySchema.index({ userId: 1, name: 1 }, { unique: true });
 module.exports = model('Category', categorySchema);
