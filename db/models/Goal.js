@@ -10,6 +10,6 @@ const goalSchema = new Schema({
   savedAmount: { type: Int32, default: 0 },
   savedToDate: { type: Date, default: Date.now },
   category: { type: Schema.Types.ObjectId, ref: 'Category' }
-}, { timestamps: true });
+}, { collection : 'Goal', timestamps: true });
 
 module.exports = mongoose.model('Goal', goalSchema);
