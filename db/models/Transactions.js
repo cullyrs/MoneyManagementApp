@@ -10,6 +10,6 @@ const transactionSchema = new Schema({
   date: { type: Date, default: Date.now },
   category: { type: Schema.Types.ObjectId, ref: 'Category' },
   notes: { type: String }
-}, { timestamps: true });
+}, {collection: 'Transaction', timestamps: true });
 
 module.exports = mongoose.model('Transaction', transactionSchema);
