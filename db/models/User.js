@@ -1,15 +1,15 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+import mongoose from "mongoose";
+const { Schema,model} = mongoose;
 
-const BudgetSchema = new Schema({
-  userID: { type: Schema.Types.ObjectId, required: true },
+const UserSchema = new Schema({
   userName: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   transactionList: [{ type: Schema.Types.ObjectId, ref: 'Transaction'}],
   budgetList: [{ type: Schema.Types.ObjectId, ref: 'Budget' }],
   goalList: [{ type: Schema.Types.ObjectId, ref: 'Goal' }],
-  totalAmount: { type: Schema.Types.ObjectId, required: true },
-}, { timestamps: true });
+  totalAmount: { type: Schema.Types.Double, required: true },
+}, { collection: 'User', timestamps: true });
 
-module.exports = mongoose.model('User', budgetSchema);
+const User = model('User', UserSchema);
+export default User;
