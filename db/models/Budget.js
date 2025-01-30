@@ -13,6 +13,6 @@ const BudgetSchema = new Schema({
     required: true
   },
   category: { type: Schema.Types.ObjectId, ref: 'Category' }
-}, { timestamps: true });
+}, {collection : 'Budget', timestamps: true });
 
 module.exports = mongoose.model('Budget', budgetSchema);
