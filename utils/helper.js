@@ -12,17 +12,19 @@
 
 import bcrypt from 'bcrypt';
 
-
+// The cost of processing the data intialized at 10 (Recomended)
 const saltRounds = 10;
+
 /**
  * Function to hash password strings
  * @param {String} entry - The user provided string to be hashed.
  * @returns {String} - The hashed string.
  */
  const hashed =  async (entry) =>{
-    const salt = bcrypt.genSaltSync(saltRounds)
+    const salt = await bcrypt.genSalt(saltRounds)
     return bcrypt.hash(entry,salt);
 };
+
 /**
  * Function to compare user provided string with hashed string
  * @param {String} entry - The user provided string. 
