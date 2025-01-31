@@ -132,7 +132,7 @@ const loginUser = async(email, entry) => {
  * @param {String} userID - The current unique id of the User instance.
  * @param {String} oldEntry - The current string to access user account.
  * @param {String} newEntry - The updated string provided to access user account.
- * @returns {Object} The instance of the associated user object.
+ * @returns {Object} The updated instance of the associated user object.
  * Returns null if:
  *      1.  User collection is unassociated with id provided.
  *      2.  Invalid entry is provided.
@@ -140,8 +140,7 @@ const loginUser = async(email, entry) => {
 const updatePassword = async(userID, oldEntry, newEntry) => {
     const user = await User.findOne({_id : userID});
     if(await loginUser(user.email, oldEntry)){
-        
-        user.updateOne({password : await hashed(newEntry)});
+        user.set('password', await hashed(newEntry));
         await user.save();
         return user;
     }
