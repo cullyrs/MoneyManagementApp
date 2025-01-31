@@ -7,7 +7,7 @@
  * Project : Expense Tracker Capstone Project
  * Description : The purpose of the Transaction.js module is to build
  * and export the schema for the Transaction collection in the 
- * Expense Tracker Accounts database..
+ * Expense Tracker Accounts database.
  */
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
