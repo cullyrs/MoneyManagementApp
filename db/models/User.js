@@ -10,17 +10,17 @@
  * Expense Tracker Accounts database.
  */
 import mongoose from "mongoose";
-const { Schema,model} = mongoose;
+const { Schema,SchemaTypes, model} = mongoose;
 
 const userSchema = new Schema({
   userName: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   email: { type: String, required: true, lowercase:true, unique: true },
-  transactionList: [{ type: Schema.Types.ObjectId, ref: 'Transaction'}],
-  budgetList: [{ type: Schema.Types.ObjectId, ref: 'Budget' }],
-  goalList: [{ type: Schema.Types.ObjectId, ref: 'Goal' }],
-  totalAmount: { type: Schema.Types.Double, required: true },
-  version: {type: Number, default: 1},
+  transactionList: [{ type: SchemaTypes.ObjectId, ref: 'Transaction'}],
+  budgetList: [{ type: SchemaTypes.ObjectId, ref: 'Budget' }],
+  goalList: [{ type: SchemaTypes.ObjectId, ref: 'Goal' }],
+  totalAmount: { type: SchemaTypes.Double, required: true },
+  version: {type: SchemaTypes.Int32, default: 1},
 }, { collection: 'User', timestamps: true });
 const User = model('User', userSchema);
 export default User;
