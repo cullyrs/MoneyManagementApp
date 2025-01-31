@@ -129,17 +129,20 @@ const loginUser = async(email, entry) => {
 /**
  * Function to update password of a user instance in the User collection of the 
  * Expense Tracer Accounts database.
- * @param {String} email - The current email of the User instance.
- * @param {String} entry - The string provided to access user account.
+ * @param {String} userID - The current unique id of the User instance.
+ * @param {String} oldEntry - The current string to access user account.
+ * @param {String} newEntry - The updated string provided to access user account.
  * @returns {Object} The instance of the associated user object.
  * Returns null if:
- *      1.  User collection is unassociated with email provided.
+ *      1.  User collection is unassociated with id provided.
  *      2.  Invalid entry is provided.
  */
 const updatePassword = async(userID, oldEntry, newEntry) => {
     const user = await User.findOne({_id : userID});
     if(await loginUser(user.email, oldEntry)){
+        
         user.updateOne({password : await hashed(newEntry)});
+        await user.save();
         return user;
     }
     return null;
