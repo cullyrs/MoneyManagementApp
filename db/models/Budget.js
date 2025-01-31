@@ -1,18 +1,29 @@
-const mongoose = require('mongoose');
-//Must install mongoose int 32 plugin "npm install mongoose-int32"
-const Int32 = require ('mongoose-int32').loadType(mongoose);
-const { Schema } = (mongoose);
+/**
+ * Name : Arewa (Morountudun) Ojelade
+ * Contributors : Steven Mounie, and Cully Stearns
+ * Date : 1/31/2025
+ * File Name: Budget.js
+ * Course : CMSC 495 Capstone in Computer Science
+ * Project : Expense Tracker Capstone Project
+ * Description : The purpose of the Budget.js module is to build
+ * and export the schema for the Budget collection in the 
+ * Expense Tracker Accounts database.
+ */
 
-const BudgetSchema = new Schema({
-  budgetId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  budgetName: { type: String, required: true },
-  amount: { type: Int32, required: true },
+import mongoose from "mongoose";
+const { Schema, SchemaTypes, model } = mongoose;
+const mongoose = require('mongoose');
+
+const budgetSchema = new Schema({
+  userID: { type: SchemaTypes.ObjectId, ref: 'User', required: true },
+  name: { type: String, required: true },
+  amount: { type: SchemaTypes.Int32, required: true },
   duration: {
     type: Date,
-    default: () => new Date(Date.now() + 7 * 24 * 3600 * 1000), // one week from now
-    required: true
+    default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000), // default month duration
   },
-  category: { type: Schema.Types.ObjectId, ref: 'Category' }
+  categoryID: { type: SchemaTypes.Int32, default : 0},
+  version: { type: SchemaTypes.Int32, default : 1}
 }, {collection : 'Budget', timestamps: true });
 
-module.exports = mongoose.model('Budget', budgetSchema);
+module.exports = model('Budget', budgetSchema);
