@@ -9,9 +9,7 @@
  * the Expense Tracker Accounts database.
  */
 
-import mongoose from "mongoose";
 import Category from "./models/Category.js";
-import Transaction from "./models/Transaction.js";
 import Budget from "./models/Budget.js";
 import User from "./models/User.js";
 import connectDB from "./dbconnect.js"; connectDB();
@@ -23,7 +21,7 @@ import connectDB from "./dbconnect.js"; connectDB();
  * @param {String} userID - The unique _id of the associated User instance.
  * @param {String} name - The name of the associated Budget instance.
  * @param {Double} amount - The budget amount.
- * @param {Int32} categoryID - The unique categoryID (id) of the budget. 
+ * @param {Int32} categoryID - The categoryID that categorizes the budget. 
  * @returns {Object} The  created instance of the budget object.
  * Returns null if :
  *   1. Invalid userID is provided.
@@ -142,16 +140,18 @@ const updateBudgetAmount = async(userID, budgetID, newAmount) =>{
  * of the Expense Tracker Accounts database. 
  * @param {String} userID - The unique _id of the associated User instance. 
  * @param {String} budgetID - The unique _id of the budget. 
- * @param {Double} newCategoryID - The unique categoryID of the category.
+ * @param {Double} newCategoryID - The new categoryID that categorizes the budget.
  * @returns {Object} The updated instance of the budget object.
  * Returns null if :
  *      1. Invalid userID is provided.
- *      2. budgetID is not associated with the User instance provided.
+ *      2. Invalid categoryID is provided.
+ *      3. budgetID is not associated with the User instance provided.
  */
 const updateBudgetCategory = async(userID, budgetID, newCategoryID) =>{
     const user = await User.findOne({_id : userID});
     const index = user.budgetList.indexOf(budgetID);
-    if(user && index >= 0){
+    const category = await Category.findOne({categeoryID : newCategoryID});
+    if(user && category && index >= 0){
         const budget = Budget.findOneAndUpdate({_id : budgetID, categoryID : newCategoryID});
         await budget.save();
         return budget;        
