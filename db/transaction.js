@@ -8,8 +8,6 @@
  * compact functions to interact with the Transcaction collection of
  * the Expense Tracker Accounts database.
  */
-
-import mongoose from "mongoose";
 import Category from "./models/Category.js";
 import Transaction from "./models/Transaction.js";
 import User from "./models/User.js";
@@ -21,34 +19,30 @@ import connectDB from "./dbconnect.js"; connectDB();
  * User collection is updated with the unique transaction _id.
  * @param {String} userID - The unique _id of the associated User instance. 
  * @param {Double} amount - The transaction amount.
- * @param {INT32} type - {Expense : 0, Income : 1} The bit interpretation of the transaction type.
+ * @param {Int32} type - {Expense : 0, Income : 1} The bit interpretation of the transaction type.
  * @param {Date} date - The transaction date.
- * @param {INT32} category - The unique categoryID (id) of the transaction. 
+ * @param {Int32} categoryID - The categoryID that categorizes the transaction. 
  * @returns {Object} The  created instance of the transaction object.
  * Returns null if :
  *      1. Invalid userID is provided.
- *      2. Type is not {Expense : 0, Income : 1} The bit interpretation of transaction type.
+ *      2. Invalid amount is provided. (Positive values only)
+ *      3. Type is not {Expense : 0, Income : 1} The bit interpretation of transaction type.
  */
 const addTransaction = async(userID, amount, type = 0, date = date, 
-    category = 0, description ="") => {
+                            categoryID = 0, description ="") => {
         
     const user = await User.findOne({_id : userID});
-    if(user && (type == 0 || type == 1)){
-        console.log(user._id);
-        
-        const category_exist = await Category.findOne({id : category});
+    if(user && amount > 0 && (type == 0 || type == 1)){        
+        const category_exist = await Category.findOne({categoryID : categoryID});
         if(!category_exist){
-            category = 0;
+            categoryID = 0;
         }
         const transaction = await Transaction.create({
-            userId : user._id,
+            userID : user._id,
             amount : parseFloat(amount),
             type : type,
             date : date,
-            // CATEGORY UNDER CONSTRUCTION
-            // category : {id : category, 
-            //     name : await Category.where("id").equals(category)
-            // },
+            categoryID : categoryID,
             description : description
        });       
         // Updates transactionList with created transtion _id.
@@ -60,8 +54,7 @@ const addTransaction = async(userID, amount, type = 0, date = date,
                             user.totalAmount+= transaction.amount;
       
         await user.save();
-        await transaction.save();
-        console.log(user);
+        await transaction.save(); // #### test and remove (unecessary)
         return transaction;
         
     }
@@ -73,7 +66,7 @@ const addTransaction = async(userID, amount, type = 0, date = date,
  * is removed from the transactionList array in the User collection.
  * @param {String} userID - The unique _id of the associated User instance. 
  * @param {String} transactionID - The unique _id of the transaction. 
- * @returns {Object} The updated instance of the transaction object.
+ * @returns {Object} The removed instance of the transaction object.
  * Returns null if :
  *      1. Invalid userID is provided.
  *      2. transactionID is not associated with the User instance provided.
@@ -93,43 +86,87 @@ const removeTransaction = async (userID, transactionID) =>{
                             user.totalAmount+= transaction.amount:
                             user.totalAmount-= transaction.amount;
         await user.save();
-        await transaction.save();
+        await transaction.save(); // #### test and remove (unecessary)
         return transaction;
     }
    return null
 }
+/**
+ * Function to retrieve a transaction from the Transaction collection of the 
+ * Expense Tracker Accounts database. The unique transaction _id of the transaction
+ * must be associated with the transactionList array in the specified User collection.
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} transactionID - The unique _id of the transaction. 
+ * @returns {Object} The instance of the transaction object.
+ * Returns null if :
+ *      1. Invalid userID is provided.
+ *      2. transactionID is not associated with the User instance provided.
+ */
+const getTransaction = async(userID, transactionID)=>{
+    const user = await User.findOne({_id : userID});
+    const index = user.transactionList.indexOf(transactionID);
 
+    if(user && index >= 0){
+        const transaction = await Transaction.findOne({_id : transactionID});
+        return transaction;
+    }
+    return null;
+}
 /**
  * Function to change a transaction's type in the Transaction collection 
  * of the Expense Tracker Accounts database. 
  * @param {String} userID - The unique _id of the associated User instance. 
  * @param {String} transactionID - The unique _id of the transaction. 
- * @param {INT32} type - {Expense : 0, Income : 1} The bit interpretation of the transaction type.
+ * @param {Int32} newType - {Expense : 0, Income : 1} The bit interpretation of the transaction type.
  * @returns {Object} The updated instance of the transaction object.
  * Returns null if :
  *      1. Invalid userID is provided.
  *      2. transactionID is not associated with the User instance provided.
+ *      3. Type is not {Expense : 0, Income : 1} The bit interpretation of transaction type.
+ *      4. Transaction type is unchanged.
+ * 
  */
-const changeTransactionType = async (userID, transactionID, type) =>{
+const updateTransactionType = async (userID, transactionID, newType) =>{
     const user = await User.findOne({_id : userID});
     const index = user.transactionList.indexOf(transactionID);
-    if(user && index >= 0 && (type == 0 || type == 1)){
-        const transaction = Transaction.findOneAndUpdate({_id : transactionID, type: type});
-        
-        // Resets and increments/decrements total amount in accordance with type.
-        user.totalAmount = (transaction.type == 0) ?
-                            user.totalAmount-= (transaction.amount * 2):
-                            user.totalAmount+= (transaction.amount * 2);
-        await user.save();
-        await transaction.save();
-        return transaction;
+    if(user && index >= 0 && (newType == 0 || newType == 1)){
+        const transaction = Transaction.findOne({_id : transactionID});
+        if(transaction.type != newType){
+            transaction.set('type', newType);
+            // Resets and increments/decrements total amount in accordance with type.
+            user.totalAmount = (transaction.type == 0) ?
+                                user.totalAmount-= (transaction.amount * 2):
+                                user.totalAmount+= (transaction.amount * 2);
+            await user.save();
+            await transaction.save();
+            return transaction;
+        }
     }
     return null;
 
 }
-//
-const changeTransactionCategory = async(userID, transactionID, category) =>{
-    // TODO : Implement function
+/**
+ * Function to change a transaction's amount in the Transaction collection 
+ * of the Expense Tracker Accounts database. 
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} transactionID - The unique _id of the transaction. 
+ * @param {Double} newCategoryID - The new categoryId that categorizes the object.
+ * @returns {Object} The updated instance of the transaction object.
+ * Returns null if :
+ *      1. Invalid userID is provided.
+ *      2. Invalid categoryID is provided.
+ *      3. transactionID is not associated with the User instance provided.
+ */
+const updateTransactionCategory = async(userID, transactionID, newCategoryID) =>{
+    const user = await User.findOne({_id : userID});
+    const index = user.transactionList.indexOf(transactionID);
+    const category = await Category.findOne({categeoryID : newCategoryID});
+    if(user && category && index >= 0){
+        const transaction = Transaction.findOneAndUpdate({_id : transactionID, categoryID : newCategoryID});
+        await transaction.save();
+        return transaction;        
+    }
+    return null;
 }
 
 /**
@@ -137,16 +174,17 @@ const changeTransactionCategory = async(userID, transactionID, category) =>{
  * of the Expense Tracker Accounts database. 
  * @param {String} userID - The unique _id of the associated User instance. 
  * @param {String} transactionID - The unique _id of the transaction. 
- * @param {Double} amount - The updated transaction amount.
+ * @param {Double} newAmount - The updated transaction amount.
  * @returns {Object} The updated instance of the transaction object.
  * Returns null if :
  *      1. Invalid userID is provided.
- *      2. transactionID is not associated with the User instance provided.
+ *      2. Invalid amount is provided. (Positive values only)
+ *      3. transactionID is not associated with the User instance provided.
  */
-const changeTransactionAmount = async(userID, transactionID, amount) => {
+const updateTransactionAmount = async(userID, transactionID, newAmount) => {
     const user = await User.findOne({_id : userID});
     const index = user.transactionList.indexOf(transactionID);
-    if(user && index >= 0){
+    if(user && newAmount > 0 && index >= 0){
         const transaction = Transaction.findOne({_id : transactionID});
         const previousAmount = transaction.amount;
         const currentTotal = user.totalAmount;
@@ -155,7 +193,7 @@ const changeTransactionAmount = async(userID, transactionID, amount) => {
          * transaction amount.
          */
         if(transaction.type == 0){
-            user.set('totalAmount' , currentTotal + previousAmount - amount);
+            user.set('totalAmount' , currentTotal + previousAmount - newAmount);
             
         }
         /* Else, transaction is income. Reset totalAmount by decrementing 
@@ -163,10 +201,10 @@ const changeTransactionAmount = async(userID, transactionID, amount) => {
          * transaction amount.
          */
         else{
-            user.set('totalAmount' , currentTotal - previousAmount + amount);
+            user.set('totalAmount' , currentTotal - previousAmount + newAmount);
         }
-        // Update and save trasaction instance.
-        transaction.set('amount' , amount);
+        // Update and save trasaction and user instance.
+        transaction.set('amount' , newAmount);
         await user.save();
         await transaction.save();
         return transaction;
@@ -178,23 +216,22 @@ const changeTransactionAmount = async(userID, transactionID, amount) => {
  * of the Expense Tracker Accounts database. 
  * @param {String} userID - The unique _id of the associated User instance. 
  * @param {String} transactionID - The unique _id of the transaction. 
- * @param {Date} date - The updated transaction date.
+ * @param {Date} newDate - The updated transaction date.
  * @returns {Object} The updated instance of the transaction object.
  * Returns null if :
  *      1. Invalid userID is provided.
  *      2. transactionID is not associated with the User instance provided.
  */
-const changeTransactionDate = async(userID, transactionID, date) =>{
+const updateTransactionDate = async(userID, transactionID, newDate) =>{
     const user = await User.findOne({_id : userID});
     const index = user.transactionList.indexOf(transactionID);
     if(user && index >= 0){
-        const transaction = Transaction.findOneAndUpdate({_id : transactionID, date: date});
-        await user.save();
+        const transaction = Transaction.findOneAndUpdate({_id : transactionID, date: newDate});
         await transaction.save();
         return transaction;
     }
     return null;
 }
-export{addTransaction as default, removeTransaction, changeTransactionType,
-       changeTransactionAmount, changeTransactionDate
+export{addTransaction as default, getTransaction, removeTransaction, updateTransactionType,
+       updateTransactionAmount, updateTransactionDate, updateTransactionCategory
 }; 
