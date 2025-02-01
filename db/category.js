@@ -8,26 +8,54 @@
  * compact functions to interact with the Category collection of
  * the Expense Tracker Accounts database.
  */
-import mongoose from "mongoose";
+
 import Category from "./models/Category.js";
 import connectDB from "./dbconnect.js"; connectDB();
 
 /**
  * Function to add a category to the Category collection of the 
- * Expense Tracker Accounts database. The transactionList array in the 
- * User collection is updated with the unique transaction _id.
+ * Expense Tracker Accounts database.
  * @param {String} name - The name of the associated Category instance. 
- * @param {INT32} id - The unique categoryID (id) of the transaction. 
- * @returns {Object} The  created instance of the category object.
+ * @returns {Object} The created instance of the category object.
  */
-const addCategory = async(name,id)=>{   
-    const category = await Category.create({
-        id : id,
-        name : name
-    });
-    return category;
+const addCategory = async(name)=>{  
+        const count = await Category.count();
+        const category = await Category.create({
+            categoryID : count + 1,
+            name : name
+        });
+        return category;
 };
-
+/**
+ * Function to retrieve a category name from the Category collection of the 
+ * Expense Tracker Accounts database.
+ * @param {String} categoryID - The unique categoryID of the Category instance. 
+ * @returns {String} The name of the category object.
+ * Returns null if :
+ *      1. Invalid categoryID is provided.
+ */
+const getCategoryName = async(categoryID)=>{
+    const category = await Category.findOne({CategoryID : categoryID});
+    if(category){
+        return category.name;
+    }
+    return null;
+}
+/**
+ * Function to retrieve a category object from the Category collection of the 
+ * Expense Tracker Accounts database.
+ * @param {String} categoryID - The unique categoryID of the Category instance. 
+ * @returns {Object} The category instance of the Category object.
+ * Returns null if :
+ *      1. Invalid categoryID is provided.
+ */
+const getCategoryObject = async(categoryID)=>{
+    const category = await Category.findOne({CategoryID : categoryID});
+    if(category){
+        return category;
+    }
+    return null;
+}
 /**
  * Function to initialize the Category collection of the 
  * Expense Tracker Accounts database with generic categories. 
@@ -39,7 +67,7 @@ const initializeCategories = async() =>{
                 "Food & Drinks", "Income","Investments"];
 
     names.forEach((name,index)=>{
-        const category = addCategory(name, index);
+        const category = addCategory(name);
     });
    
 };
@@ -47,7 +75,7 @@ const initializeCategories = async() =>{
  * Function to delete the categories by the specified version in the 
  * Expense Tracker Accounts database. This function is designed for
  * internal database maintainance and is not exported from the module.
- * @param {INT32} version - The version of Category instances to be deleted. 
+ * @param {Int32} version - The version of Category instances to be deleted. 
  * @returns {Object} The  deleted instances of the categories that match specified version.
  */
 const deleteCategories = async(version) =>{
@@ -55,4 +83,4 @@ const deleteCategories = async(version) =>{
     const deleted = await Category.deleteMany({version : version});
     console.log(deleted);
 };
-export {initializeCategories as default, addCategory}
+export {initializeCategories as default, addCategory, getCategoryName, getCategoryObject}
