@@ -10,16 +10,15 @@
  * Expense Tracker Accounts database.
  */
 import mongoose from "mongoose";
-const { Schema, model } = mongoose;
+const { Schema, SchemaTypes, model } = mongoose;
 const categorySchema = new Schema({
-  id: {type: Number, required: true, unique: true},
+  categoryID: {type: SchemaTypes.Int32, required: true, unique: true},
   name: {type: String, required: true, trim: true, minlength: 1, maxlength: 50},
   icon: String,
   color: String,
   description: String,
-  isActive: {type: Boolean,default: true},
-  parentCategory: {type: Schema.Types.ObjectId, ref: 'Category'},
-  version: {type: Number, default: 1},
+  version: {type: SchemaTypes.Int32, default: 1},
 }, { collection : 'Category',timestamps: true });
+
 const Category = model('Category', categorySchema);
 export default Category;
