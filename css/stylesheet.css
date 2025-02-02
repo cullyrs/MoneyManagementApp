@@ -725,6 +725,65 @@ header img {
 .login .login-form button#signup:hover {
   background-color: #1e7e34;
 }
+
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+.close {
+  position: absolute;
+  right: 35px;
+  top: 15px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #f1f1f1;
+}
+.cancelbtn {
+  padding: 14px 20px;
+  background-color: #f44336;
+}
+.signupbtn {
+  padding: 14px 20px;
+  background-color: #28a745;
+}
+.signupbtn:hover {
+  background-color: #1e7e34;
+}
+.cancelbtn, .signupbtn {
+  float: left;
+  width: 50%;
+}
+.container {
+  padding: 16px;
+}
+
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: #474e5d;
+  padding-top: 50px;
+}
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; 
+  border: 1px solid #888;
+  width: 80%; 
+}
+
 .homepage .hero {
   display: flex;
   flex-direction: column;
