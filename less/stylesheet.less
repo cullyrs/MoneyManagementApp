@@ -11,6 +11,23 @@
 @shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 @table-border: 1px solid #000000;
 @hover-bg: #0056b3;
+@button-font-size: 20px;
+
+// mixins
+.month-buttons() {
+    padding: 20px 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-size: @button-font-size;
+    font-weight: bold;
+    border-radius: 5px;
+
+}
+.margin-centered() {
+    margin: 0 auto;
+    box-shadow: @shadow;
+}
+
 
 // general basic styling
 body {
@@ -21,97 +38,176 @@ body {
     color: @text-color;
 }
 
-// Header Styling
+
+
+// Header Styles
 header {
-    background-color: @primary-color;
-    color: @header-text-color;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    background-color: @primary-color;
     padding: 10px 20px;
-    box-shadow: @shadow;
+    color: @header-text-color;
 
-    .header-nav {
-        ul {
-            list-style: none;
-            display: flex;
-            align-items: center;
-            margin: 0;
-            padding: 0;
+    // move h2 to leftmost of header
+    h2 {
+        margin: 5px;
+        position: absolute;
+        left: 10%;
+    }
+    a {
+        color: @header-text-color;
+        text-decoration: none;
+    }
 
-            li {
-                margin-right: 20px;
+    img {
+        width: 50px;
+    }
+}
+// Navigation Styles
+// Variables
+@dropdown-bg: white;
+@dropdown-hover-bg: rgba(0, 123, 255, 0.1);
+@dropdown-text-color: @text-color;
+.main-nav {
+    ul {
+        list-style: none;
+        margin: 10px;
+        padding: 0;
 
-                a {
-                    color: @header-text-color;
-                    text-decoration: none;
-                    font-weight: bold;
+        li {
+            display: inline-block; // inline-block for horizontal alignment
+            margin: 0 15px; // space out navigation items
+            color: @header-text-color;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s;
+            a {
+                &:hover {
+                    color: darken(@header-text-color, 20%);
                 }
             }
+        }
+    }
 
-            a img {
-      
-                width: 50px;
-                margin-right: 10px;
-                border-radius: 50%;
+    .dropdown {
+        position: relative;
+
+        .settings-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: @dropdown-bg;
+            border-radius: 5px;
+            box-shadow: @shadow;
+            display: none; // hidden by default
+            z-index: 1000; // Ensure dropdown is on top
+            outline: 2px solid black;
+    
+            ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+               
+                li {
+                    margin: 0; // Remove extra space
+                    padding: 0; // Ensure no padding around li
+    
+                    a {
+                        display: inline-block; // Use inline-block to ensure vertical alignment and correct hover highlight effect
+                        padding: 10px 20px; // Add consistent padding
+                        min-width: 150px; // Ensure sufficient width for dropdown items
+                        text-align: left; // Align text to the left
+                        text-decoration: none;
+                        color: @dropdown-text-color;
+                        background-color: transparent; // Default background color
+    
+                        &:hover {
+                            background-color: @dropdown-hover-bg; // Highlight full block
+                            color: darken(@primary-color, 20%); // Keep text color consistent
+                        }
+                    }
+                }
             }
+        }
+    
+        &:hover .settings-dropdown {
+            display: block; // Show dropdown on hover
         }
     }
 }
 
+
+// DASHBOARD STYLING
 // Budget and Goals Section
 .budget-goals {
+    // allign budget and goal display side by side with space between
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 20px auto;
     width: 80%;
 
-    #budget-display {
+    .goal-budget() { // shared styling for budget and goal display
         flex: 1;
         text-align: center;
-        background-color: @danger-bg;
-        color: @danger-text;
         padding: 15px;
         border-radius: 8px;
         margin-right: 10px;
         box-shadow: @shadow;
     }
+    
+    #budget-display {
+        .goal-budget();
+        background-color: @danger-bg;
+        color: @danger-text;
+ 
+    }
 
     #goal-display {
-        flex: 1;
-        text-align: center;
+        .goal-budget();
         background-color: @info-bg;
-        color: @info-text;
-        padding: 15px;
-        border-radius: 8px;
-        margin-left: 10px;
-        box-shadow: @shadow;
+        color: @info-text; 
     }
 }
 
 // Navigation buttons
 // todo: dropdown month selector
+
 .month-navigation {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 20px 0;
-    position: relative;
 
-    button {
+    button,
+    input[type="month"] {
         background-color: @primary-color;
         color: @header-text-color;
         border: @table-border;
-        padding: 20px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        font-size: 20px;
-        font-weight: bold;
+        .month-buttons();
+
 
         &:hover {
             background-color: @hover-bg;
+            transform: scale(1.05);
         }
+
+        &:active {
+            transform: scale(1);
+        }
+    }
+
+    input[type="month"] {
+        text-align: center;
+        appearance: none; // Removes the native browser styling
+
+        &::-webkit-calendar-picker-indicator {
+            filter: invert(1); // Adjusts the icon color for better contrast
+        }
+
+        font-size: @button-font-size - 2px;
     }
 
     #prev-month {
@@ -125,127 +221,223 @@ header {
         border-bottom-right-radius: 5px;
         margin-left: -5px;
     }
-
-    #current-month {
-        background-color: @primary-color;
-        border: @table-border;
-        padding: 20px 20px;
-        border-radius: 0;
-        cursor: pointer;
-        margin: 0;
-        width: 50%;
-        text-align: center;
-        transition: background-color 0.3s;
-
-        &:hover {
-            background-color: darken(@secondary-color, 10%);
-        }
-
-        &.active {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-    }
-
-    input[type="month"] {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: white;
-        border: @table-border;
-        border-radius: 5px;
-        padding: 5px;
-        box-shadow: @shadow;
-        z-index: 10;
-        width: auto;
-
-        &.visible {
-            display: block;
-        }
-    }
-
 }
 
-// Table Styling
-.table {
-    display: flex;
-    justify-content: center;
-    margin: 20px auto;
 
-    table {
-        border-collapse: collapse;
-        width: 80%;
-        background-color: white;
-        box-shadow: @shadow;
-        border-radius: 10px;
-        overflow: hidden;
+.finance-container {
+    margin: 0 auto;
+    max-width: 80%; // Shared width for all children
+    box-shadow: @shadow;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden; // Prevent content from exceeding container
 
-        th,
-        td {
-            text-align: left;
-            padding: 15px;
-            border-bottom: @table-border;
-        }
+    .total-text {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: @primary-color;
+        color: @header-text-color;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
 
-        th {
+        // Add a plus button to add expenses
+        #add-expense-button {
+            position: absolute;
+            right: 20px;
             background-color: @primary-color;
             color: @header-text-color;
-        }
-
-        tfoot td {
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
             font-weight: bold;
-            background-color: lighten(@secondary-color, 10%);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+
+            &:hover {
+                background-color: darken(@primary-color, 10%);
+                transform: scale(1.1);
+            }
+
+            &:active {
+                transform: scale(1);
+            }
         }
     }
+
+    .table {
+        margin: 0 auto;
+        width: 100%;
+        overflow-x: auto;
+        display: flex;
+        justify-content: center;
+        .margin-centered();
+        max-height: 470px; // Limit table height
+        overflow: hidden;
+
+        // Customize the scrollbar
+        &::-webkit-scrollbar {
+            width: 15px; // Set scrollbar width
+        }
+
+        &::-webkit-scrollbar-track {
+            background: darken(@secondary-color, 20%); // Track background color
+            // border-radius: 0px 10px 10px 0px; // Rounded track edges
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: @primary-color; // Thumb color
+            // border-radius: 0px 10px 10px 0px; ;
+            // border: 1px solid lighten(@primary-color, 30%); // Add a border for contrast
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: darken(@primary-color, 10%); // Change thumb color on hover
+        }
+
+        // Add the scrollbar only on the container level
+        overflow-y: auto; // Enables scrolling for the entire table container
+        overflow-x: hidden; // Prevents horizontal scrolling
+
+        // Table styling
+        table {
+            width: 100%;
+            border-collapse: collapse;
+
+            thead {
+                th {
+                    background-color: white;
+                    color: @text-color;
+                    padding: 15px;
+                    text-align: left;
+                    position: sticky;
+                    top: 0;
+                    cursor: pointer; // Make headers clickable for sorting
+                    transition: background-color 0.3s;
+
+                    // Styling for sorting indicators
+                    &:after {
+                        content: ''; // Default no sorting
+                        position: absolute;
+                        right: 10px;
+                        font-size: 12px;
+                        opacity: 0.5;
+                    }
+
+                    &[data-order="asc"]:after {
+                        content: '▲'; // Ascending order
+                        opacity: 1;
+                    }
+
+                    &[data-order="desc"]:after {
+                        content: '▼'; // Descending order
+                        opacity: 1;
+                    }
+
+                    &:hover {
+                        background-color: darken(@secondary-color, 10%);
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+
+                    &:hover {
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                        background: darken(@secondary-color, 2%);
+                        transform: scale(1.01); // Slightly enlarge the row on hover
+                        cursor: pointer;
+                    }
+                }
+
+                td {
+                    padding: 10px;
+                    border-bottom: @table-border;
+                    word-wrap: break-word;
+                    text-align: left;
+                }
+            }
+        }
+    }
+
 }
 
-// Dashboard Totals 
-// TODO: top and bottom change
-.dashboard-totals {
-    display: flex;
-    justify-content: space-around;
-    margin: 20px 0;
+// Add Expense sidebar styling
+#add-expense-container {
+    position: fixed;
+    top: 0;
+    right: -400px; // Hidden off-screen
+    height: 100%;
+    width: 400px;
+    background-color: white;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-out;
+    z-index: 1000;
 
-    div {
-        background-color: lighten(@secondary-color, 5%);
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: @shadow;
-        font-size: 16px;
+    &.active {
+        transform: translateX(-400px); // Slide into view
     }
 }
 
-// Add Expense Form -- TODO fix the form styling and dropdown functionality, slide out from plus button
 .add-expense {
-    background-color: white;
-    margin: 20px auto;
-    width: 60%;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: @shadow;
+    position: relative;
 
     h2 {
         text-align: center;
         color: @primary-color;
     }
 
+    #close-add-expense {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: transparent;
+        border: none;
+        font-size: 24px;
+        color: @text-color;
+        cursor: pointer;
+        transition: color 0.3s, transform 0.2s;
+
+        &:hover {
+            color: darken(@text-color, 20%);
+            transform: scale(2);
+        }
+
+        &:active {
+            transform: scale(1);
+        }
+    }
+
     .add-expense-form {
         display: flex;
         flex-direction: column;
+        gap: 15px;
 
-        label {
-            margin: 10px 0 5px;
+        #custom-category-container {
+            display: none; // Initially hidden
         }
 
         input,
         select,
         button {
             padding: 10px;
-            margin-bottom: 15px;
-            border: @table-border;
+            border: 1px solid #ccc;
             border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s;
+
+            &:focus {
+                outline: none;
+                border-color: darken(@primary-color, 10%);
+                box-shadow: 0 0 5px lighten(@primary-color, 20%);
+            }
         }
 
         button {
@@ -253,14 +445,590 @@ header {
             color: @header-text-color;
             border: none;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
 
             &:hover {
                 background-color: @hover-bg;
+                transform: scale(1.05);
+            }
+
+            &:active {
+                transform: scale(1);
             }
         }
     }
 }
+
+.toggle-buttons {
+    display: flex;
+    justify-content: center; // Center align buttons
+    margin-bottom: 15px;
+
+    .toggle-button {
+        padding: 15px 30px; // Slightly larger for 3D effect
+        font-size: 16px;
+        font-weight: bold;
+        border: 2px solid transparent; // Border for styling
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        width: 50%; // Extend width and ensure both buttons touch
+        text-align: center;
+
+        // Default shadow for unpressed state
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15), 0 2px 3px rgba(0, 0, 0, 0.1);
+
+        // On hover, make the button pop up slightly
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 3px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        // On active ->> selected/pressed down
+        &.active {
+            transform: translateY(2px); // Pressed-down effect
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); // Inner shadow for pressed look
+        }
+
+        // Remove border radius for joined effect in the center
+        &:first-child { // First button
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        &:last-child { // Last button
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+
+    // Income button styling
+    #income-button {
+        background-color: lighten(@info-text, 20%);
+        color: @header-text-color;
+        border-color: @info-text;
+
+        &.active {
+            background-color: @info-text;
+            border-color: darken(@info-text, 10%);
+        }
+    }
+
+    // Expense button styling
+    #expense-button {
+        background-color: @danger-bg;
+        color: @danger-text;
+        border-color: @danger-bg;
+
+        &.active {
+            background-color: darken(@danger-bg, 20%);
+            border-color: darken(@danger-bg, 20%);
+        }
+    }
+}
+
+//about page
+.about {
+    .app-description {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: @secondary-color;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+        h1, h2 {
+            text-align: center;
+            color: @primary-color;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            text-align: justify;
+            margin-bottom: 20px;
+            color: @text-color;
+        }
+    }
+
+    h2 {
+        text-align: center;
+        color: @primary-color;
+        margin: 40px 0 20px;
+    }
+
+    .team-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); // Responsive grid
+        gap: 20px;
+        margin-top: 20px;
+
+        .team-card {
+            background-color: @secondary-color;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+            &:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            img {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                margin-bottom: 15px;
+                object-fit: cover;
+            }
+
+            h3 {
+                font-size: 1.2em;
+                margin: 10px 0 5px;
+                color: @primary-color;
+            }
+
+            p {
+                font-size: 0.9em;
+                color: @text-color;
+            }
+        }
+    }
+}
+
+.contact {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: @secondary-color; // Light card background
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
+
+    h1 {
+        text-align: center;
+        color: @primary-color; // Primary color for headings
+        margin-bottom: 20px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            color: @text-color; // Standard text color
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            color: @text-color;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+
+            &:focus {
+                border-color: @primary-color; // Highlighted border on focus
+                outline: none;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            }
+        }
+
+        textarea {
+            resize: vertical; // Allow vertical resizing only
+        }
+
+        button {
+            background-color: @primary-color;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+
+            &:hover {
+                background-color: darken(@primary-color, 10%);
+                transform: scale(1.05);
+            }
+
+            &:active {
+                transform: scale(1);
+            }
+        }
+    }
+}
+
+// profile page
+.profile {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: @secondary-color; // Light card background
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
+
+    h1, h2 {
+        text-align: center;
+        color: @primary-color; // Primary color for headings
+        margin-bottom: 20px;
+    }
+
+    .profile-info {
+        margin-bottom: 30px;
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: @text-color; // Standard text color
+            margin-bottom: 10px;
+
+            strong {
+                font-weight: bold;
+                color: @primary-color; // Highlighted primary color for labels
+            }
+        }
+    }
+
+    .profile-settings {
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                margin-bottom: 10px;
+
+                a {
+                    text-decoration: none;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: @primary-color;
+                    transition: color 0.3s ease;
+
+                    &:hover {
+                        color: darken(@primary-color, 10%);
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+}
+// manage categories
+.manage-categories {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: @secondary-color; // Light card background
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
+
+    h1, h2 {
+        text-align: center;
+        color: @primary-color; // Primary color for headings
+        margin-bottom: 20px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            color: @text-color; // Standard text color
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            color: @text-color;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+
+            &:focus {
+                border-color: @primary-color; // Highlighted border on focus
+                outline: none;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            }
+        }
+
+        button#add-category-button {
+            align-self: flex-start;
+            background-color: @primary-color;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+
+            &:hover {
+                background-color: darken(@primary-color, 10%);
+                transform: scale(1.05);
+            }
+
+            &:active {
+                transform: scale(1);
+            }
+        }
+    }
+
+    ul#categories-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: #e9ecef; // Slightly darker background on hover
+            }
+
+            button.delete-category {
+                background-color: #dc3545; // Red for delete button
+                color: #fff;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 5px 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease, transform 0.2s ease;
+
+                &:hover {
+                    background-color: darken(#dc3545, 10%);
+                    transform: scale(1.05);
+                }
+
+                &:active {
+                    transform: scale(1);
+                }
+            }
+        }
+    }
+}
+
+// login page
+.login {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: @secondary-color; // Light card background
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
+
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        h1 {
+            text-align: center;
+            color: @primary-color; // Primary color for headings
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            color: @text-color; // Standard text color
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+
+            &:focus {
+                border-color: @primary-color; // Highlighted border on focus
+                outline: none;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            }
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+
+            &:hover {
+                transform: scale(1.05);
+            }
+
+            &:active {
+                transform: scale(1);
+            }
+
+            // Login button styling
+            &#login {
+                background-color: @primary-color; // Primary button color
+
+                &:hover {
+                    background-color: darken(@primary-color, 10%);
+                }
+            }
+
+            // Sign Up button styling
+            &#signup {
+                background-color: #28a745; // Green for sign-up
+
+                &:hover {
+                    background-color: darken(#28a745, 10%);
+                }
+            }
+        }
+    }
+}
+// index page
+.homepage {
+    .hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: 50px;
+
+        .hero-content {
+            max-width: 600px;
+
+            h1 {
+                font-size: 2.5rem;
+                color: @primary-color;
+                margin-bottom: 20px;
+            }
+
+            p {
+                font-size: 1.2rem;
+                line-height: 1.6;
+                margin-bottom: 30px;
+                color: @text-color;
+            }
+
+            .btn {
+                background-color: @primary-color;
+                color: #fff;
+                padding: 10px 20px;
+                font-size: 1rem;
+                border-radius: 5px;
+                text-decoration: none;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                transition: background-color 0.3s ease, transform 0.2s ease;
+
+                &:hover {
+                    background-color: darken(@primary-color, 10%);
+                    transform: scale(1.05);
+                }
+
+                &:active {
+                    transform: scale(1);
+                }
+            }
+        }
+
+        .mascot {
+            margin-top: 40px;
+
+            .mascot-img {
+                width: 150px;
+                height: auto;
+                animation: mascot-bounce 2s infinite ease-in-out;
+                transition: transform 0.3s ease;
+
+                &:hover {
+                    transform: scale(1.2);
+                }
+            }
+        }
+    }
+
+    @keyframes mascot-bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    .selling-points {
+        margin-top: 50px;
+        text-align: center;
+
+        h2 {
+            font-size: 2rem;
+            color: @primary-color;
+            margin-bottom: 30px;
+        }
+
+        .points {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+
+            .point {
+                background-color: @secondary-color;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+                h3 {
+                    font-size: 1.5rem;
+                    color: @primary-color;
+                    margin-bottom: 10px;
+                }
+
+                p {
+                    font-size: 1rem;
+                    color: #555;
+                }
+            }
+        }
+    }
+}
+
 
 // Footer Styling --> later
 footer {

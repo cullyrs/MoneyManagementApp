@@ -1,46 +1,45 @@
-//  notes: may need to change to return variables to be placed in the html file??? maybe.
-// currently edits the html file directly
-
+// this script is used to handle the month selector and the previous and next month buttons.
 document.addEventListener("DOMContentLoaded", () => {
-    const currentMonthButton = document.getElementById("current-month");
     const monthSelector = document.getElementById("month-selector");
     const prevMonthButton = document.getElementById("prev-month");
     const nextMonthButton = document.getElementById("next-month");
 
-    let currentDate = new Date(); // current date
+    let currentDate = new Date(); // Current date
 
-    // update the displayed month and year
-    const updateDisplayedMonth = () => {
-        const month = currentDate.toLocaleString("default", { month: "long" });
+    // Update the value of the month selector to the current date
+    const updateMonthSelector = () => {
         const year = currentDate.getFullYear();
-
-        currentMonthButton.textContent = `${month} ${year}`;
-        monthSelector.value = `${year}-${String(currentDate.getMonth() + 1).padStart(2, "0")}`;
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-based, so add 1, pad with 0 if needed
+        monthSelector.value = `${year}-${month}`;
     };
-    updateDisplayedMonth();
+    updateMonthSelector();
 
-    // dropdown the month selector
-    currentMonthButton.addEventListener("click", () => {
-        monthSelector.classList.toggle("visible");
+    // Show the picker programmatically when the month button is clicked
+    monthSelector.addEventListener("click", () => {
+        if ('showPicker' in monthSelector) {
+            monthSelector.showPicker();
+        } else {
+            monthSelector.focus();
+        }
     });
 
-    // Update the displayed month when a new month is selected
+    // Handle changes in the month selector
     monthSelector.addEventListener("change", (event) => {
         const [year, month] = event.target.value.split("-");
-        currentDate = new Date(year, month - 1, 1); 
-        updateDisplayedMonth();
-        monthSelector.classList.remove("visible");
+        currentDate = new Date(year, month - 1, 1);
     });
 
-    // previous month button
+    // Handle previous month button
     prevMonthButton.addEventListener("click", () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
-        updateDisplayedMonth();
+        updateMonthSelector();
     });
 
-    // next month button
+    // Handle next month button
     nextMonthButton.addEventListener("click", () => {
         currentDate.setMonth(currentDate.getMonth() + 1);
-        updateDisplayedMonth();
+        updateMonthSelector();
     });
+
+    
 });

@@ -14,10 +14,7 @@
     "electron": "^33.3.1"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "moneymanagementapp": "file:"
-=======
+    "moneymanagementapp": "file:",
     "mongodb": "^6.12.0"
->>>>>>> 27fcd85d392fb8e6717a80d1c0b4785d52bcc2a3
   }
 }
