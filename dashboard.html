@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
--->
+
 <!--This will serve as the main  page for the website if user is logged in -->
 <html lang="en">
 
@@ -51,12 +47,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
         </nav>
     </header>
 
-    <!-- TODO: replace with js db user saved goals -->
-    <main class="dashboard">
-        <div class="budget-goals">
-            <span id="budget-display">Budget - $0/9,999</span>
-            <span id="goal-display">Goal - $0/9,999</span>
-        </div>
+
+<main class="dashboard">
+    <div class="budget-goals">
+      <span id="budget-display">Budget - $0/9,999</span>
+      <button id="update-budget">Update Budget</button>
+      <span id="goal-display">Goal - $0/9,999</span>
+      <button id="update-goal">Update Goal</button>
+    </div>
 
 
         <div class="month-navigation">
@@ -143,7 +141,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
         <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
     </footer>
 
-
+<script src="udateBudgetGoal.js"></script>
 </body>
 
 </html>
