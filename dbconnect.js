@@ -8,8 +8,7 @@ let db;
 
 async function connectToDB() {
   if (!client) {
-    // Add tls: true if your deployment specifically needs TLS forced:
-    // For example: { tls: true, ssl: true, ... }
+
     client = new MongoClient(uri, {
       serverApi: {
         version: ServerApiVersion.v1,

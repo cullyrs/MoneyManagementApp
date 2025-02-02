@@ -1,5 +1,3 @@
-// main.js (CommonJS)
-
 const userModule = require('./db/user.js');
 const addUser = userModule.default;
 const { loginUser, updateEmail, updatePassword, updateTotalAmount, updateUsername, findUser } = userModule;
@@ -16,7 +14,7 @@ let mainWindow;
 
 async function createWindow() {
   try {
-    // Connect to MongoDB Atlas
+
     await connectToDB();
 
     mainWindow = new BrowserWindow({
@@ -61,7 +59,7 @@ ipcMain.handle('login', async (event, { username, password }) => {
   }
 });
 
-// IPC handler to refresh the dashboard without a full login cycle.
+// IPC handler to refresh the dashboard 
 ipcMain.handle('getDashboardData', async (event, userId) => {
   try {
     const recentBudget = await Budget.findOne({ budgetId: userId }).sort({ createdAt: -1 });
@@ -80,17 +78,17 @@ ipcMain.handle('getDashboardData', async (event, userId) => {
   }
 });
 
-// IPC handler to update the budget for the logged-in user with validation.
+// IPC handler to update the budget
 ipcMain.handle('updateBudget', async (event, { userId, newBudgetValue }) => {
   try {
-    // Validate newBudgetValue: it must be a number and non-negative.
+
     if (typeof newBudgetValue !== 'number' || newBudgetValue < 0) {
       throw new Error('Invalid budget value: must be a non-negative number.');
     }
 
     let budget = await Budget.findOne({ budgetId: userId }).sort({ createdAt: -1 });
     if (!budget) {
-      // If no budget record exists, create one.
+
       budget = await Budget.create({
         budgetId: userId,
         budgetName: "Default Budget",
@@ -111,7 +109,7 @@ ipcMain.handle('updateBudget', async (event, { userId, newBudgetValue }) => {
 // IPC handler to update the goal for the logged-in user with validation.
 ipcMain.handle('updateGoal', async (event, { userId, newGoalCurrent, newGoalTarget }) => {
   try {
-    // Validate newGoalCurrent and newGoalTarget: both must be numbers and non-negative.
+
     if (typeof newGoalCurrent !== 'number' || newGoalCurrent < 0) {
       throw new Error('Invalid current goal value: must be a non-negative number.');
     }
@@ -121,7 +119,7 @@ ipcMain.handle('updateGoal', async (event, { userId, newGoalCurrent, newGoalTarg
 
     let goal = await Goal.findOne({ userId: userId }).sort({ createdAt: -1 });
     if (!goal) {
-      // If no goal record exists, create one.
+ 
       goal = await Goal.create({
         userId: userId,
         goalName: "Default Goal",
@@ -140,7 +138,7 @@ ipcMain.handle('updateGoal', async (event, { userId, newGoalCurrent, newGoalTarg
   }
 });
 
-// IPC handler for user signup, utilizing functions from user.js.
+// IPC handler for user signu
 ipcMain.handle('signup', async (event, { username, password, email, amount }) => {
   try {
     const newUser = await addUser(username, password, email, amount);
