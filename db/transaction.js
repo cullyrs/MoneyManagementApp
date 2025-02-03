@@ -36,7 +36,7 @@ const addTransaction = async(userID, amount, type, categoryID = 0, date = Date.n
     const user = await User.findOne({_id : userID});
     if(user && amount > 0 && (type == 0 || type == 1)){    
         
-        const category_exist = await Category.findOne({id : categoryID});
+        const category_exist = await Category.findOne({categoryID : categoryID});
         if(!category_exist){
             categoryID = 0;
         }
