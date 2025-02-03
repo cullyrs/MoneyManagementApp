@@ -6,10 +6,12 @@ The **Expense Tracker** is a financial management tool designed to help users lo
 
 ## **Contributors**
 
-- **cullyrs**
-- **NLovitt** (Naeem Lovitt)
-- **Arewa-lyi**
-- **mouniesa** (Steven Mounie)
+**Team Members & Roles:**
+
+- **Arewa (Arewa-lyi)** - Project Manager & DB Developer: Manages project deadlines and oversees database development
+- **Naeem (NLovitt)** - Frontend & Documentation: Handles UI/UX design and maintains project documentation
+- **Steven (mouniesa)** - Full Stack: Develops server-side logic and integrates frontend with backend
+- **Cully (cullyrs)** - Backend: Leads server-side development and JavaScript code optimization
 
 ## **Project Setup**
 
