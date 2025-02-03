@@ -1,4 +1,5 @@
 node_modules/
 .env
-api.jsondb/*.env
-/db/*.env
+*.log
+api.json
+list.js

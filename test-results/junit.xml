@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="5" failures="0" errors="0" time="2.894">
+  <testsuite name="MongoDB Connection Test" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:30:31" time="1.871" tests="1">
+    <testcase classname="MongoDB Connection Test Should successfully connect to MongoDB" name="MongoDB Connection Test Should successfully connect to MongoDB" time="0.054">
+    </testcase>
+  </testsuite>
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:30:31" time="1.95" tests="1">
+    <testcase classname=" Should log an expense" name=" Should log an expense" time="0.126">
+    </testcase>
+  </testsuite>
+  <testsuite name="Expense Table Rendering and Sorting" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:30:31" time="2.465" tests="3">
+    <testcase classname="Expense Table Rendering and Sorting Should populate the table with expense data" name="Expense Table Rendering and Sorting Should populate the table with expense data" time="0.114">
+    </testcase>
+    <testcase classname="Expense Table Rendering and Sorting Should sort the table when a header is clicked" name="Expense Table Rendering and Sorting Should sort the table when a header is clicked" time="0.045">
+    </testcase>
+    <testcase classname="Expense Table Rendering and Sorting Should toggle sort order on consecutive clicks" name="Expense Table Rendering and Sorting Should toggle sort order on consecutive clicks" time="0.063">
+    </testcase>
+  </testsuite>
+</testsuites>
