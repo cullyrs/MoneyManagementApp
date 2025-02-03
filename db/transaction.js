@@ -168,7 +168,7 @@ const updateTransactionCategory = async(userID, transactionID, newCategoryID) =>
     newCategoryID = parseInt(newCategoryID);
     const user = await User.findOne({_id : userID});
     const index = user.transactionList.indexOf(transactionID);
-    const category = await Category.findOne({id : newCategoryID});
+    const category = await Category.findOne({categoryID : newCategoryID});
     
     if(user && category && index >= 0){
         const transaction = await Transaction.findOne({_id : transactionID});
