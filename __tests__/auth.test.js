@@ -1,3 +1,5 @@
+// npm test to run tests in MoneyManagementApp/__tests__/auth.test.js This will output an HTML report in the test-results folder.
+
 const { default: hashPassword, compareEntry } = require("../utils/helper");
 
 test("Should hash a password and verify it correctly", async () => {

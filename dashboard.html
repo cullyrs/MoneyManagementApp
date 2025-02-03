@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <!--This will serve as the main  page for the website if user is logged in -->
 <html lang="en">
 
@@ -74,7 +74,7 @@
                 <button id="add-expense-button" aria-label="Add Expense">+</button>
             </div>
 
-            <section class="table">
+            <div class="table">
                 <table>
                     <thead>
                         <tr>
@@ -89,10 +89,9 @@
                         <!-- rows will be dynamically populated here -->
                     </tbody>
                 </table>
-            </section>
+            </div>
 
 
-            </section>
             <!-- replace with db total balance -->
             <div id="total-balance" class="total-text">
                 <span>Total Balance:</span> <span id="TotalBalance">$0.00</span>
@@ -117,7 +116,7 @@
                 <!-- replace form action? -->
                 <form class="add-expense-form" action="/addExpense" method="post" name="add-expense-title">
                     <label for="category">Category:</label>
-                    <select id="category" name="category" required="true"></select>
+                    <select id="category" name="category"></select>
                     <div id="custom-category-container">
                         <label for="custom-category">Enter Custom Category:</label>
                         <input type="text" id="custom-category" name="custom-category" placeholder="Category">

@@ -1,19 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="5" failures="0" errors="0" time="2.894">
-  <testsuite name="MongoDB Connection Test" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:30:31" time="1.871" tests="1">
-    <testcase classname="MongoDB Connection Test Should successfully connect to MongoDB" name="MongoDB Connection Test Should successfully connect to MongoDB" time="0.054">
+<testsuites name="jest tests" tests="11" failures="2" errors="0" time="2.766">
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:40:10" time="1.336" tests="2">
+    <testcase classname=" Should hash a password and verify it correctly" name=" Should hash a password and verify it correctly" time="0.146">
+    </testcase>
+    <testcase classname=" Should fail for incorrect password" name=" Should fail for incorrect password" time="0.128">
     </testcase>
   </testsuite>
-  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:30:31" time="1.95" tests="1">
-    <testcase classname=" Should log an expense" name=" Should log an expense" time="0.126">
+  <testsuite name="MongoDB Connection Test" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:40:10" time="1.76" tests="1">
+    <testcase classname="MongoDB Connection Test Should successfully connect to MongoDB" name="MongoDB Connection Test Should successfully connect to MongoDB" time="0.05">
     </testcase>
   </testsuite>
-  <testsuite name="Expense Table Rendering and Sorting" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:30:31" time="2.465" tests="3">
-    <testcase classname="Expense Table Rendering and Sorting Should populate the table with expense data" name="Expense Table Rendering and Sorting Should populate the table with expense data" time="0.114">
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:40:10" time="1.817" tests="1">
+    <testcase classname=" Should log an expense" name=" Should log an expense" time="0.094">
     </testcase>
-    <testcase classname="Expense Table Rendering and Sorting Should sort the table when a header is clicked" name="Expense Table Rendering and Sorting Should sort the table when a header is clicked" time="0.045">
+  </testsuite>
+  <testsuite name="Expense Table Rendering and Sorting" errors="0" failures="0" skipped="0" timestamp="2025-02-03T20:40:10" time="2.082" tests="3">
+    <testcase classname="Expense Table Rendering and Sorting Should populate the table with expense data" name="Expense Table Rendering and Sorting Should populate the table with expense data" time="0.118">
     </testcase>
-    <testcase classname="Expense Table Rendering and Sorting Should toggle sort order on consecutive clicks" name="Expense Table Rendering and Sorting Should toggle sort order on consecutive clicks" time="0.063">
+    <testcase classname="Expense Table Rendering and Sorting Should sort the table when a header is clicked" name="Expense Table Rendering and Sorting Should sort the table when a header is clicked" time="0.044">
+    </testcase>
+    <testcase classname="Expense Table Rendering and Sorting Should toggle sort order on consecutive clicks" name="Expense Table Rendering and Sorting Should toggle sort order on consecutive clicks" time="0.055">
+    </testcase>
+  </testsuite>
+  <testsuite name="undefined" errors="0" failures="2" skipped="0" timestamp="2025-02-03T20:40:10" time="2.38" tests="4">
+    <testcase classname=" Should create a new user and validate required fields" name=" Should create a new user and validate required fields" time="0.263">
+      <failure>MongoServerError: E11000 duplicate key error collection: test.User index: userName_1 dup key: { userName: &quot;testuser&quot; }
+    at InsertOneOperation.execute (C:\Users\zippe\OneDrive\School Work\Courses\31 CMSC 495\CMSC 495 Project\MoneyManagementApp\node_modules\mongoose\node_modules\mongodb\src\operations\insert.ts:88:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at tryOperation (C:\Users\zippe\OneDrive\School Work\Courses\31 CMSC 495\CMSC 495 Project\MoneyManagementApp\node_modules\mongoose\node_modules\mongodb\src\operations\execute_operation.ts:278:14)
+    at executeOperation (C:\Users\zippe\OneDrive\School Work\Courses\31 CMSC 495\CMSC 495 Project\MoneyManagementApp\node_modules\mongoose\node_modules\mongodb\src\operations\execute_operation.ts:112:12)
+    at Collection.insertOne (C:\Users\zippe\OneDrive\School Work\Courses\31 CMSC 495\CMSC 495 Project\MoneyManagementApp\node_modules\mongoose\node_modules\mongodb\src\collection.ts:284:12)</failure>
+    </testcase>
+    <testcase classname=" Should not allow duplicate emails" name=" Should not allow duplicate emails" time="0.042">
+      <failure>MongoServerError: E11000 duplicate key error collection: test.User index: userName_1 dup key: { userName: &quot;user1&quot; }
+    at InsertOneOperation.execute (C:\Users\zippe\OneDrive\School Work\Courses\31 CMSC 495\CMSC 495 Project\MoneyManagementApp\node_modules\mongoose\node_modules\mongodb\src\operations\insert.ts:88:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at tryOperation (C:\Users\zippe\OneDrive\School Work\Courses\31 CMSC 495\CMSC 495 Project\MoneyManagementApp\node_modules\mongoose\node_modules\mongodb\src\operations\execute_operation.ts:278:14)
+    at executeOperation (C:\Users\zippe\OneDrive\School Work\Courses\31 CMSC 495\CMSC 495 Project\MoneyManagementApp\node_modules\mongoose\node_modules\mongodb\src\operations\execute_operation.ts:112:12)
+    at Collection.insertOne (C:\Users\zippe\OneDrive\School Work\Courses\31 CMSC 495\CMSC 495 Project\MoneyManagementApp\node_modules\mongoose\node_modules\mongodb\src\collection.ts:284:12)</failure>
+    </testcase>
+    <testcase classname=" Should enforce email format validation" name=" Should enforce email format validation" time="0.005">
+    </testcase>
+    <testcase classname=" Should enforce password complexity" name=" Should enforce password complexity" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>
