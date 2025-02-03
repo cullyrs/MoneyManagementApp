@@ -13,13 +13,13 @@ import mongoose from "mongoose";
 const { Schema, SchemaTypes, model } = mongoose;
 
 const transactionSchema = new Schema({
-  userId: { type: SchemaTypes.ObjectId, ref: 'User', required: true },
+  userID: { type: SchemaTypes.ObjectId, ref: 'User', required: true },
   amount: { type: SchemaTypes.Double, required: true },
   type: { type: SchemaTypes.Int32, required: true },
   date: { type: SchemaTypes.Date, default: Date.now },
-  category: { id: SchemaTypes.Int32, name : String},
+  categoryID: { type: SchemaTypes.Int32, default : 0},
   description: { type: String },
-  version: {type: Number, default : 1}
+  version: {type: SchemaTypes.Int32, default : 1}
 }, { collection : 'Transaction', timestamps: true });
 
 const Transaction = model('Transaction', transactionSchema);
