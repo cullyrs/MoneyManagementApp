@@ -8,10 +8,11 @@
  * compact functions to interact with the Transcaction collection of
  * the Expense Tracker Accounts database.
  */
+
+import connectDB from "./dbconnect.js"; connectDB();
 import Category from "./models/Category.js";
 import Transaction from "./models/Transaction.js";
 import User from "./models/User.js";
-import connectDB from "./dbconnect.js"; connectDB();
 
 /**
  * Function to add a transaction to the Transaction collection of the 
@@ -28,12 +29,14 @@ import connectDB from "./dbconnect.js"; connectDB();
  *      2. Invalid amount is provided. (Positive values only)
  *      3. Type is not {Expense : 0, Income : 1} The bit interpretation of transaction type.
  */
-const addTransaction = async(userID, amount, type = 0, date = date, 
-                            categoryID = 0, description ="") => {
-        
+
+const addTransaction = async(userID, amount, type, categoryID = 0, date = Date.now(), description ="") => {
+  
+    type = parseInt(type);
     const user = await User.findOne({_id : userID});
-    if(user && amount > 0 && (type == 0 || type == 1)){        
-        const category_exist = await Category.findOne({categoryID : categoryID});
+    if(user && amount > 0 && (type == 0 || type == 1)){    
+        
+        const category_exist = await Category.findOne({id : categoryID});
         if(!category_exist){
             categoryID = 0;
         }
@@ -41,7 +44,7 @@ const addTransaction = async(userID, amount, type = 0, date = date,
             userID : user._id,
             amount : parseFloat(amount),
             type : type,
-            date : date,
+            date : new Date(date),
             categoryID : categoryID,
             description : description
        });       
@@ -52,13 +55,12 @@ const addTransaction = async(userID, amount, type = 0, date = date,
         user.totalAmount = (transaction.type == 0) ?
                             user.totalAmount-= transaction.amount:
                             user.totalAmount+= transaction.amount;
-      
         await user.save();
         await transaction.save(); // #### test and remove (unecessary)
         return transaction;
         
-    }
-    return null
+     }
+     return null
 }
 /**
  * Function to remove a transaction from the Transaction collection of the 
@@ -72,23 +74,27 @@ const addTransaction = async(userID, amount, type = 0, date = date,
  *      2. transactionID is not associated with the User instance provided.
  */
 const removeTransaction = async (userID, transactionID) =>{
-    const user = await User.findOne({_id : userID});
-    const index = user.transactionList.indexOf(transactionID);
-    
-    if(user && index >= 0){
-        const transaction = await Transaction.findOneAndDelete({_id : transactionID});
 
+     const user = await User.findOne({_id : userID});
+     const index = user.transactionList.indexOf(transactionID);
+
+     if(user && index >= 0){
+        const transaction = await Transaction.findOne({_id : transactionID});
+        const type = transaction.type;
+        const amount = transaction.amount;
+        // Creates a final copy of transaction
+        const finalCopy = JSON.parse(JSON.stringify(transaction));
+        // Deletes the original copy of transaction
+        await Transaction.deleteOne({_id :transactionID});
         // Removes transaction _id from transactionList.
         user.transactionList.splice(index, 1);
-
         // Increments/Decrements totalAmount in accordance with type.
-        user.totalAmount = (transaction.type == 0) ?
-                            user.totalAmount+= transaction.amount:
-                            user.totalAmount-= transaction.amount;
+        user.totalAmount = (type == 0) ?
+                            user.totalAmount+= amount:
+                            user.totalAmount-= amount;
         await user.save();
-        await transaction.save(); // #### test and remove (unecessary)
         return transaction;
-    }
+     }
    return null
 }
 /**
@@ -127,10 +133,11 @@ const getTransaction = async(userID, transactionID)=>{
  * 
  */
 const updateTransactionType = async (userID, transactionID, newType) =>{
+    newType = parseInt(newType);
     const user = await User.findOne({_id : userID});
     const index = user.transactionList.indexOf(transactionID);
     if(user && index >= 0 && (newType == 0 || newType == 1)){
-        const transaction = Transaction.findOne({_id : transactionID});
+        const transaction = await Transaction.findOne({_id : transactionID});
         if(transaction.type != newType){
             transaction.set('type', newType);
             // Resets and increments/decrements total amount in accordance with type.
@@ -142,7 +149,7 @@ const updateTransactionType = async (userID, transactionID, newType) =>{
             return transaction;
         }
     }
-    return null;
+     return null;
 
 }
 /**
@@ -158,11 +165,14 @@ const updateTransactionType = async (userID, transactionID, newType) =>{
  *      3. transactionID is not associated with the User instance provided.
  */
 const updateTransactionCategory = async(userID, transactionID, newCategoryID) =>{
+    newCategoryID = parseInt(newCategoryID);
     const user = await User.findOne({_id : userID});
     const index = user.transactionList.indexOf(transactionID);
-    const category = await Category.findOne({categeoryID : newCategoryID});
+    const category = await Category.findOne({id : newCategoryID});
+    
     if(user && category && index >= 0){
-        const transaction = Transaction.findOneAndUpdate({_id : transactionID, categoryID : newCategoryID});
+        const transaction = await Transaction.findOne({_id : transactionID});
+        transaction.set('categoryID', newCategoryID);
         await transaction.save();
         return transaction;        
     }
@@ -182,28 +192,30 @@ const updateTransactionCategory = async(userID, transactionID, newCategoryID) =>
  *      3. transactionID is not associated with the User instance provided.
  */
 const updateTransactionAmount = async(userID, transactionID, newAmount) => {
+    newAmount = parseFloat(newAmount);
     const user = await User.findOne({_id : userID});
-    const index = user.transactionList.indexOf(transactionID);
+    const index = user.transactionList.indexOf(transactionID);    
+   
     if(user && newAmount > 0 && index >= 0){
-        const transaction = Transaction.findOne({_id : transactionID});
-        const previousAmount = transaction.amount;
-        const currentTotal = user.totalAmount;
+        const transaction = await Transaction.findOne({_id : transactionID});
+        var previousAmount = transaction.amount;
+        var currentTotal = user.totalAmount;
         /* If transaction is an expense reset totalAmount by incrementing 
          * previous transaction ammount, then decrement totalAmount with updated 
          * transaction amount.
          */
-        if(transaction.type == 0){
-            user.set('totalAmount' , currentTotal + previousAmount - newAmount);
-            
-        }
+        var updatedAmount = (transaction.type == 0) ? 
+                             currentTotal + previousAmount - newAmount :
+                             currentTotal - previousAmount + newAmount;
+
+ 
         /* Else, transaction is income. Reset totalAmount by decrementing 
          * previous transaction ammount, then increment totalAmount with updated 
          * transaction amount.
          */
-        else{
-            user.set('totalAmount' , currentTotal - previousAmount + newAmount);
-        }
+    
         // Update and save trasaction and user instance.
+        user.set('totalAmount', updatedAmount);
         transaction.set('amount' , newAmount);
         await user.save();
         await transaction.save();
@@ -223,15 +235,17 @@ const updateTransactionAmount = async(userID, transactionID, newAmount) => {
  *      2. transactionID is not associated with the User instance provided.
  */
 const updateTransactionDate = async(userID, transactionID, newDate) =>{
+    
     const user = await User.findOne({_id : userID});
     const index = user.transactionList.indexOf(transactionID);
     if(user && index >= 0){
-        const transaction = Transaction.findOneAndUpdate({_id : transactionID, date: newDate});
+        const transaction = await Transaction.findOne({_id : transactionID});
+        transaction.set('date', new Date(newDate));
         await transaction.save();
         return transaction;
     }
     return null;
 }
-export{addTransaction as default, getTransaction, removeTransaction, updateTransactionType,
+export {addTransaction, getTransaction, removeTransaction, updateTransactionType,
        updateTransactionAmount, updateTransactionDate, updateTransactionCategory
 }; 
