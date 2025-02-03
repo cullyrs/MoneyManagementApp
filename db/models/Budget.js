@@ -9,15 +9,13 @@
  * and export the schema for the Budget collection in the 
  * Expense Tracker Accounts database.
  */
-
 import mongoose from "mongoose";
 const { Schema, SchemaTypes, model } = mongoose;
-const mongoose = require('mongoose');
 
 const budgetSchema = new Schema({
   userID: { type: SchemaTypes.ObjectId, ref: 'User', required: true },
   name: { type: String, required: true },
-  amount: { type: SchemaTypes.Int32, required: true },
+  amount: { type: SchemaTypes.Double, required: true },
   duration: {
     type: Date,
     default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000), // default month duration
@@ -26,4 +24,5 @@ const budgetSchema = new Schema({
   version: { type: SchemaTypes.Int32, default : 1}
 }, {collection : 'Budget', timestamps: true });
 
-module.exports = model('Budget', budgetSchema);
+const Budget = model('Budget', budgetSchema);
+export default Budget;
