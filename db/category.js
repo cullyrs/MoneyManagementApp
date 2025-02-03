@@ -10,7 +10,7 @@
  */
 
 import Category from "./models/Category.js";
-import connectDB from "./dbconnect.js"; connectDB();
+import connectDB from "./dbconnect.js";connectDB();
 
 /**
  * Function to add a category to the Category collection of the 
@@ -19,11 +19,13 @@ import connectDB from "./dbconnect.js"; connectDB();
  * @returns {Object} The created instance of the category object.
  */
 const addCategory = async(name)=>{  
-        const count = await Category.count();
+        const count = await Category.where("version").equals("1").countDocuments();
         const category = await Category.create({
-            categoryID : count + 1,
+            categoryID : count,
             name : name
         });
+        
+        console.log(category);
         return category;
 };
 /**
@@ -35,12 +37,13 @@ const addCategory = async(name)=>{
  *      1. Invalid categoryID is provided.
  */
 const getCategoryName = async(categoryID)=>{
-    const category = await Category.findOne({CategoryID : categoryID});
+    const category = await Category.findOne({categoryID : categoryID});
+    console.log(category);
     if(category){
         return category.name;
     }
     return null;
-}
+};
 /**
  * Function to retrieve a category object from the Category collection of the 
  * Expense Tracker Accounts database.
@@ -50,12 +53,13 @@ const getCategoryName = async(categoryID)=>{
  *      1. Invalid categoryID is provided.
  */
 const getCategoryObject = async(categoryID)=>{
-    const category = await Category.findOne({CategoryID : categoryID});
+    
+    const category = await Category.findOne({categoryID : parseInt(categoryID)});
     if(category){
         return category;
     }
     return null;
-}
+};
 /**
  * Function to initialize the Category collection of the 
  * Expense Tracker Accounts database with generic categories. 
@@ -63,11 +67,12 @@ const getCategoryObject = async(categoryID)=>{
  * a unique categoryID utilized for application purposes.
  */
 const initializeCategories = async() =>{
-    const names = ["All","Housing","Transportation","Vehicle","Life & Entertainment",
-                "Food & Drinks", "Income","Investments"];
-
+    const names = ["All","Transportation","Housing","Vehicle","Life & Entertainment",
+                "Food & Drinks", "Health & Body", "Professional Development", "Income","Investments"];
+    var category;
     names.forEach((name,index)=>{
-        const category = addCategory(name);
+        category = addCategory(name);
+        console.log(category);
     });
    
 };
@@ -81,6 +86,8 @@ const initializeCategories = async() =>{
 const deleteCategories = async(version) =>{
    
     const deleted = await Category.deleteMany({version : version});
-    console.log(deleted);
+    return deleted;
 };
-export {initializeCategories as default, addCategory, getCategoryName, getCategoryObject}
+export {initializeCategories, addCategory, getCategoryName,
+        getCategoryObject, deleteCategories
+    };
