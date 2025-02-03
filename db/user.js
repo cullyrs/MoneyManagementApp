@@ -187,7 +187,7 @@ const updatePassword = async(userID, oldEntry, newEntry) => {
     return null;
 }
 
-export {addUser, findUser, getUser, getUserID, loginUser, updateEmail,
+export {addUser, findUser, getUser, loginUser, updateEmail,
         updatePassword, updateTotalAmount, updateUserName
 };
 
