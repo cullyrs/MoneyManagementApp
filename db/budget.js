@@ -9,10 +9,10 @@
  * the Expense Tracker Accounts database.
  */
 
+import connectDB from "./dbconnect.js"; connectDB();
 import Category from "./models/Category.js";
 import Budget from "./models/Budget.js";
 import User from "./models/User.js";
-import connectDB from "./dbconnect.js"; connectDB();
 
 /**
  * Function to add a budget to the Budget collection of the 
@@ -28,12 +28,14 @@ import connectDB from "./dbconnect.js"; connectDB();
  *   2. No name is provided.
  *   3. Invalid amount is provided.
  */
-const addBudget = async(userID, name, amount, categoryID = 0) =>{    
+const addBudget = async(userID, name, amount, categoryID = 0) =>{ 
+    amount = parseFloat(amount);   
+    categoryID = parseInt(categoryID);
     const user = await User.findOne({_id : userID});
     const category_exist = await Category.findOne({categoryID : categoryID});
-        if(!category_exist){
-            categoryID = 0;
-        }
+    if(!category_exist){
+        categoryID = 0;
+    }
     if(user && name && amount > 0){
         const budget = await Budget.create({
             userID : userID,
@@ -63,10 +65,12 @@ const removeBudget = async(userID, budgetID)=>{
     const index = user.budgetList.indexOf(budgetID);
 
     if(user && index >= 0){
-        const budget = await Budget.findOneAndDelete({_id : budgetID});
+        const budget = await Budget.findOne({_id : budgetID});
+        const finalCopy = JSON.parse(JSON.stringify(budget));
+        await Budget.deleteOne({_id : budgetID});
         user.budgetList.splice(index, 1);
         await user.save();
-        return budget;
+        return finalCopy;
     }
     return null;
 }
@@ -107,7 +111,8 @@ const updateBudgetName = async(userID, budgetID, newName) =>{
     const user = await User.findOne({_id : userID});
     const index = user.budgetList.indexOf(budgetID);
     if(user && newName && index >= 0){
-        const budget = await Budget.findOneAndUpdate({_id : budgetID, name : newName});
+        const budget = await Budget.findOne({_id : budgetID});
+        budget.set('name', newName);
         await budget.save();
         return budget;
     }
@@ -129,7 +134,8 @@ const updateBudgetAmount = async(userID, budgetID, newAmount) =>{
     const user = await User.findOne({_id : userID});
     const index = user.budgetList.indexOf(budgetID);
     if(user && newAmount > 0 && index >= 0){
-        const budget = Budget.findOneAndUpdate({_id : budgetID, amount : newAmount});
+        const budget = await Budget.findOne({_id : budgetID});
+        budget.set('amount', newAmount)
         await budget.save();
         return budget;        
     }
@@ -148,25 +154,19 @@ const updateBudgetAmount = async(userID, budgetID, newAmount) =>{
  *      3. budgetID is not associated with the User instance provided.
  */
 const updateBudgetCategory = async(userID, budgetID, newCategoryID) =>{
+    newCategoryID = parseInt(newCategoryID);
     const user = await User.findOne({_id : userID});
     const index = user.budgetList.indexOf(budgetID);
-    const category = await Category.findOne({categeoryID : newCategoryID});
+    const category = await Category.findOne({categoryID : newCategoryID});
     if(user && category && index >= 0){
-        const budget = Budget.findOneAndUpdate({_id : budgetID, categoryID : newCategoryID});
+        const budget = await Budget.findOne({_id : budgetID});
+        budget.set('categoryID', newCategoryID);
         await budget.save();
         return budget;        
     }
     return null;
 }
 
-const checkIfOverBudget = async(userID, budgetID) =>{
-    // TODO : Implement function
-    if(/**expenses in budget category is greater than budget */ true){
-        return true;
-    }
-    return false;
-}
-export{addBudget as default, getBudget, removeBudget, updateBudgetName,
+export {addBudget, getBudget, removeBudget, updateBudgetName,
        updateBudgetAmount, updateBudgetCategory
-
 };
