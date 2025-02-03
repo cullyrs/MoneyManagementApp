@@ -14,15 +14,16 @@ import mongoose from "mongoose";
 const { Schema, SchemaTypes, model } = mongoose;
 
 const goalSchema = new Schema({
-  userId: { type: SchemaTypes.ObjectId, ref: 'User', required: true },
+  userID: { type: SchemaTypes.ObjectId, ref: 'User', required: true },
   name: { type: String, required: true },
   targetAmount: { type: SchemaTypes.Double, required: true },
   savedAmount: { type: SchemaTypes.Double, default: 0 },
   savedToDate: { type: Date, 
-    default: ()=> new Date(Date.now) + 30 * 24 * 3600 * 1000, // default month duration
+    default: ()=> new Date(Date.now() + 30 * 24 * 3600 * 1000), // default month duration
   }, 
   categoryID: { type: SchemaTypes.Int32, default : 0},
   version : {type : SchemaTypes.Int32, default : 1}
 }, { collection : 'Goal', timestamps: true });
 
-module.exports = model('Goal', goalSchema);
+const Goal = model('Goal', goalSchema);
+export default Goal;
