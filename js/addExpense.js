@@ -1,5 +1,3 @@
-/** this script is used to handlle the expense form and the category selection */
-
 document.addEventListener("DOMContentLoaded", () => {
     // Get elements from the DOM
     const categorySelect = document.getElementById("category");
@@ -77,4 +75,23 @@ document.addEventListener("DOMContentLoaded", () => {
     populateCategories(expenseCategories); // Default to Expense categories
     expenseButton.classList.add("active"); // Ensure Expense is the active button
     customCategoryContainer.style.display = "none"; // Hide custom category input by default
+
+    // -------------------------------
+    // Validation for non-negative amount
+    // -------------------------------
+    // Assume there is an input field for the expense amount with the ID "amount"
+    const expenseAmountInput = document.getElementById("amount");
+
+    if (expenseAmountInput) {
+        expenseAmountInput.addEventListener("input", () => {
+            // Parse the input value as a float
+            const value = parseFloat(expenseAmountInput.value);
+            // Check if the value is negative and is a valid number
+            if (!isNaN(value) && value < 0) {
+                alert("Please enter a non-negative amount.");
+
+                expenseAmountInput.value = Math.abs(value);
+            }
+        });
+    }
 });

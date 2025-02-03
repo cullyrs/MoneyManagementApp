@@ -38,6 +38,7 @@
     "jsdom": "^26.0.0"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "moneymanagementapp": "file:",
     "mongodb": "^6.13.0",
     "mongoose-double": "^0.0.1",
