@@ -7,10 +7,11 @@ const fs = require("fs");
 const path = require("path");
 const { JSDOM } = require("jsdom");
 
-// Load the script file
+// load the script file
 const scriptPath = path.resolve(__dirname, "../js/fillTableData.js");
 const scriptContent = fs.readFileSync(scriptPath, "utf8");
 
+// describe the test suite, and this will contain the test cases
 describe("Expense Table Rendering and Sorting", () => {
     let dom;
     let document;
@@ -50,6 +51,7 @@ describe("Expense Table Rendering and Sorting", () => {
         eval(scriptContent);
     });
 
+    // this test case will check if the table is populated with data
     test("Should populate the table with expense data", () => {
         // Verify that table rows are created
         const rows = tableBody.querySelectorAll("tr");
@@ -62,13 +64,14 @@ describe("Expense Table Rendering and Sorting", () => {
         expect(firstRowCells[1].textContent).toBeTruthy(); // Description should exist
     });
 
+    // this test case will check if the table is sorted when a header is clicked
     test("Should sort the table when a header is clicked", () => {
         const dateHeader = document.querySelector('th[data-key="date"]');
 
         // Get first row before sorting
         const firstRowBefore = tableBody.querySelector("tr td:nth-child(3)").textContent;
 
-        // Simulate a click event on the date header
+        // simulate a click event on the date header
         dateHeader.click();
 
         // Get first row after sorting
@@ -78,6 +81,7 @@ describe("Expense Table Rendering and Sorting", () => {
         expect(firstRowBefore).not.toBe(firstRowAfter);
     });
 
+    // this test case will check if the table is sorted in ascending order
     test("Should toggle sort order on consecutive clicks", () => {
         const amountHeader = document.querySelector('th[data-key="amount"]');
 

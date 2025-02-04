@@ -1,3 +1,9 @@
+/**
+ * This test file is used to test the connection to the MongoDB database.
+ * It uses the mongodb package to connect to the database and perform a ping operation.
+ * The test checks if the connection is successful and the ping response is as expected.
+ * The connection is established using the URI from the api.json file.
+ */
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { username, password } = require("../api.json");
 

@@ -15,7 +15,7 @@ const passwordValidator = function(value) {
 };
 
 const userSchema = new Schema({
-  userName: { type: String, required: true, unique: true },
+  userName: { type: String, required: true, unique: true, index: true }, // Ensure unique index
     password: {
     type: String,
     required: true,
@@ -29,17 +29,18 @@ const userSchema = new Schema({
     required: true,
     lowercase: true,
     unique: true,
+    index: true, // Ensure unique index for email
     match: [ /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please provide a valid email address' ]
   },
 
   transactionList: [{ type: Schema.Types.ObjectId, ref: 'Transaction' }],
   budgetList: [{ type: Schema.Types.ObjectId, ref: 'Budget' }],
   goalList: [{ type: Schema.Types.ObjectId, ref: 'Goal' }],
-
-
   version: { type: Int32, default: 1 },
 
 }, { collection: 'User', timestamps: true });
+
+const User = mongoose.model('User', userSchema);
 
 module.exports = mongoose.model('User', userSchema);
 

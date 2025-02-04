@@ -1,3 +1,7 @@
+/**
+ * This test file is used to test the transactions collection in MongoDB.
+ * It tests the ability to insert and retrieve transactions.
+ */
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { username, password } = require("../api.json");
 
@@ -5,6 +9,7 @@ const uri = `mongodb+srv://${username}:${password}@expensemanager1.3yfoo.mongodb
 
 let client;
 let db;
+
 
 beforeAll(async () => {
   try {
@@ -32,6 +37,7 @@ afterAll(async () => {
   }
 });
 
+// Test for logging an expense
 test("Should log an expense", async () => {
   const transactions = db.collection("Transaction");
 

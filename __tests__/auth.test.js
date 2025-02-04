@@ -1,4 +1,8 @@
-// npm test to run tests in MoneyManagementApp/__tests__/auth.test.js This will output an HTML report in the test-results folder.
+/** npm test to run tests in MoneyManagementApp/__tests__/auth.test.js 
+ * This will output an HTML report in the test-results folder.
+ * The report will contain the test results and coverage information.
+ * This test file is used to test the authentication helper functions.
+ */
 
 const { default: hashPassword, compareEntry } = require("../utils/helper");
 

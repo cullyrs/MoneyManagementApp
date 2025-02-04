@@ -95,8 +95,13 @@ header img {
   border-radius: 8px;
   margin-right: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   background-color: #f8d7da;
   color: #721c24;
+}
+.budget-goals #budget-display:hover {
+  opacity: 0.8;
 }
 .budget-goals #goal-display {
   flex: 1;
@@ -105,8 +110,13 @@ header img {
   border-radius: 8px;
   margin-right: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   background-color: #d1ecf1;
   color: #0c5460;
+}
+.budget-goals #goal-display:hover {
+  opacity: 0.8;
 }
 .month-navigation {
   display: flex;
@@ -662,68 +672,117 @@ header img {
   transform: scale(1);
 }
 .login {
-  max-width: 400px;
-  margin: 100px auto;
+  max-width: 450px;
+  margin: 80px auto;
   padding: 30px;
   background-color: #f8f9fa;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
-.login .login-form {
+.login .login-container {
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+}
+.login .tab-buttons {
+  display: flex;
+  width: 100%;
+  border-radius: 10px;
+}
+.login .tab-buttons button {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 0;
+}
+.login .tab-buttons button:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.login .tab-buttons button:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.login .tab-buttons button.active {
+  background-color: #007bff;
+  color: white;
+}
+.login .tab-buttons button:hover {
+  background-color: #0062cc;
+  color: white;
+}
+.login .tab-buttons button#signup-tab.active {
+  background-color: #28a745;
+  color: white;
+}
+.login .tab-buttons button#signup-tab:hover {
+  background-color: #1e7e34;
+  color: white;
+}
+.login button#signup {
+  background-color: #28a745;
+  color: white;
+}
+.login button#signup:hover {
+  background-color: #1e7e34;
+  transform: scale(1.05);
+}
+.login button#signup:active {
+  transform: scale(1);
+}
+.login .tab-content {
+  display: none;
+  width: 100%;
+}
+.login .tab-content.active {
+  display: block;
+}
+.login .tab-content form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
+  align-items: center;
 }
-.login .login-form h1 {
-  text-align: center;
-  color: #007bff;
-  margin-bottom: 20px;
+.login .tab-content form input,
+.login .tab-content form button {
+  width: 90%;
+  max-width: 320px;
 }
-.login .login-form input[type="text"],
-.login .login-form input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  color: #333;
-  background-color: #fff;
+.login .tab-content form input {
+  padding: 12px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: border-color 0.3s ease;
+  font-size: 14px;
+  background-color: #f9f9f9;
 }
-.login .login-form input[type="text"]:focus,
-.login .login-form input[type="password"]:focus {
+.login .tab-content form input:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
-.login .login-form button {
-  padding: 10px;
+.login .tab-content form button {
+  padding: 12px;
   font-size: 16px;
   font-weight: bold;
-  color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  background-color: #007bff;
+  color: white;
 }
-.login .login-form button:hover {
+.login .tab-content form button:hover {
+  background-color: #0062cc;
   transform: scale(1.05);
 }
-.login .login-form button:active {
+.login .tab-content form button:active {
   transform: scale(1);
-}
-.login .login-form button#login {
-  background-color: #007bff;
-}
-.login .login-form button#login:hover {
-  background-color: #0062cc;
-}
-.login .login-form button#signup {
-  background-color: #28a745;
-}
-.login .login-form button#signup:hover {
-  background-color: #1e7e34;
 }
 .homepage .hero {
   display: flex;
@@ -821,4 +880,5 @@ footer {
   text-align: center;
   padding: 10px 0;
   margin-top: 20px;
+  width: 100%;
 }
