@@ -38,40 +38,54 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                             </ul>
                         </nav>
                     <li><a href="login.html">Log Out</a></li><!-- replace with logout function -->
-
-                    </li>
                 </ul>
             </nav>
         </header>
 
-          <main class="login">
-    <!-- LOGIN SECTION -->
-    <section class="login-form">
-      <h1>Log In</h1>
-      <form class="login-form">
-        <input type="text" id="username" placeholder="USERNAME" />
-        <input type="password" id="password" placeholder="PASSWORD" />
-        <button type="button" id="login">Log In</button>
-      </form>
-    </section>
-
-    <!-- SIGN UP SECTION -->
-    <section class="signup-form">
-      <h1>Sign Up</h1>
-      <form class="signup-form">
-        <input type="text" id="signupUsername" placeholder="USERNAME" />
-        <input type="password" id="signupPassword" placeholder="PASSWORD" />
-        <input type="email" id="signupEmail" placeholder="EMAIL" />
-
-        <button type="button" id="signup">Sign Up</button>
-      </form>
-    </section>
-  </main>
+        <main class="login">
+            <div class="login-container">
+                <div class="tab-buttons">
+                    <button id="login-tab" class="active" onclick="openTab('login')">Log In</button>
+                    <button id="signup-tab" onclick="openTab('signup')">Sign Up</button>
+                </div>
+            
+                <div id="login-form" class="tab-content active">
+                    <h1>Log In</h1>
+                    <form>
+                        <input type="text" id="username" name="username" placeholder="USERNAME" required>
+                        <input type="password" id="password" name="password" placeholder="PASSWORD" required>
+                        <button type="button" id="login">Log In</button>
+                    </form>
+                </div>
+            
+                <div id="signup-form" class="tab-content">
+                    <h1>Sign Up</h1>
+                    <form>
+                        <input type="text" id="signupUsername" name="signupUsername" placeholder="USERNAME" required>
+                        <input type="email" id="signupEmail" name="signupEmail" placeholder="EMAIL" required>
+                        <input type="password" id="signupPassword" name="signupPassword" placeholder="PASSWORD" required>
+                        <button type="button" id="signup">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+            
+        </main>
 
         <footer>
             <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
         </footer>
         <script src="./js/initializeUser.js"></script>
+        <script>
+            function openTab(tabName) {
+                document.getElementById("login-form").classList.remove("active");
+                document.getElementById("signup-form").classList.remove("active");
+                document.getElementById("login-tab").classList.remove("active");
+                document.getElementById("signup-tab").classList.remove("active");
+    
+                document.getElementById(tabName + "-form").classList.add("active");
+                document.getElementById(tabName + "-tab").classList.add("active");
+            }
+        </script>
     </body>
 
 </html>
