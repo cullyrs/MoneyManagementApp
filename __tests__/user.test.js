@@ -27,7 +27,7 @@ beforeAll(async () => {
 }, 20000); // 20s timeout
 
 afterAll(async () => {
-  // await db.dropDatabase(); // Cleanup the test database
+  await db.dropDatabase(); // Cleanup the test database
   await mongoose.connection.close();
 });
 
