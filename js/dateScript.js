@@ -1,10 +1,10 @@
-// this script is used to handle the month selector and the previous and next month buttons.
+
 document.addEventListener("DOMContentLoaded", () => {
     const monthSelector = document.getElementById("month-selector");
     const prevMonthButton = document.getElementById("prev-month");
     const nextMonthButton = document.getElementById("next-month");
 
-    let currentDate = new Date(); // Current date
+    let currentDate = new Date(); 
 
     // Update the value of the month selector to the current date
     const updateMonthSelector = () => {

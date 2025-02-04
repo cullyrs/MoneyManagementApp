@@ -1,16 +1,33 @@
+/**
+ * Name : Arewa (Morountudun) Ojelade
+ * Contributors : Steven Mounie, and Cully Stearns
+ * Date : 1/31/2025
+ * File Name: Budget.js
+ * Course : CMSC 495 Capstone in Computer Science
+ * Project : Expense Tracker Capstone Project
+ * Description : The purpose of the Budget.js module is to build
+ * and export the schema for the Budget collection in the 
+ * Expense Tracker Accounts database.
+ */
+
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 require('mongoose-double')(mongoose);
 const mongooseInt32 = require('mongoose-int32');
 mongooseInt32.loadType(mongoose);
 
+const { ObjectId, Double, Int32 } = Schema.Types;
+
 const BudgetSchema = new Schema({
-  budgetId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  budgetName: { type: String, required: true },
-  amount: { type: Schema.Types.Double, required: true },
-  duration: {type: Date, default: () => new Date(Date.now() + 7 * 24 * 3600 * 1000), required: true},
-  version: { type: Schema.Types.Int32, default: 1 },
-  category: { type: Schema.Types.ObjectId, ref: 'Category' }
-}, { timestamps: true });
+  userID: { type: ObjectId, ref: 'User', required: true },
+  name: { type: String, required: true },
+  amount: { type: Double, required: true },
+  duration: {
+    type: Date,
+    default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000) 
+  },
+  categoryID: { type: Int32, default: 0 },
+  version: { type: Int32, default: 1 }
+}, { collection: 'Budget', timestamps: true });
 
 module.exports = mongoose.model('Budget', BudgetSchema);

@@ -1,6 +1,13 @@
-// this script is used to correctly position the settings dropdown menu.
-// Why? The settings dropdown menu kept overflowing to the right side of the viewport.
-// If the dropdown menu overflows the viewport, it is repositioned to the left or right side of the dropdown button.
+/**
+ * Name : Arewa (Morountudun) Ojelade
+ * Date : 2/4/2025
+ * File Name: headerMenu.js
+ * Contributors: Cully Stearns Naeem Levitt
+ * Course : CMSC 495 Capstone in Computer Science
+ * Project : Expense Tracker Capstone Project
+ * Description : Correctly position shte settings in the dropdown menu
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
     const dropdown = document.querySelector(".dropdown");
     const dropdownMenu = document.querySelector(".settings-dropdown");

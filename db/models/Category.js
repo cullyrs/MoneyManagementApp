@@ -1,23 +1,30 @@
+/**
+ * Name : Arewa (Morountudun) Ojelade
+ * Contributors : Steven Mounie, and Cully Stearns
+ * Date : 1/31/2025
+ * File Name: Category.js
+ * Course : CMSC 495 Capstone in Computer Science
+ * Project : Expense Tracker Capstone Project
+ * Description : The purpose of the Category.js module is to build
+ * and export the schema for the Category collection in the 
+ * Expense Tracker Accounts database.
+ */
+
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 require('mongoose-double')(mongoose);
 const mongooseInt32 = require('mongoose-int32');
 mongooseInt32.loadType(mongoose);
 
+const { Int32 } = Schema.Types;
+
 const categorySchema = new Schema({
-  id: { type: Schema.Types.Int32, required: true, unique: true },
-  schemaVersion: { type: Schema.Types.Double, default: 1.1 },
-  userId: { type: Schema.Types.ObjectId, ref: 'User' },
+  categoryID: { type: Int32, required: true, unique: true },
   name: { type: String, required: true, trim: true, minlength: 1, maxlength: 50 },
-  type: { type: String, enum: ['income', 'expense', 'both'], default: 'expense' },
   icon: String,
   color: String,
   description: String,
-  isActive: { type: Boolean, default: true },
-  parentCategory: { type: Schema.Types.ObjectId, ref: 'Category' },
-  version: { type: Schema.Types.Int32, default: 1 }
-}, { timestamps: true });
-
-categorySchema.index({ userId: 1, name: 1 }, { unique: true });
+  version: { type: Int32, default: 1 },
+}, { collection: 'Category', timestamps: true });
 
 module.exports = mongoose.model('Category', categorySchema);

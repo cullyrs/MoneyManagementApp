@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const Category = require('./category');
-const { username, password } = require('.../api.json');
+const Category = require('./models/Category');
+const { username, password } = require('../api.json');  
 
 async function seedCategories() {
   try {
@@ -10,16 +10,27 @@ async function seedCategories() {
       useUnifiedTopology: true,
     });
     console.log('Connected to DB for seeding categories.');
+
     await Category.deleteMany({});
-    const categories = [
-      { id: 0, name: "Utilities", schemaVersion: 1.1, version: 1 },
-      { id: 1, name: "Entertainment", schemaVersion: 1.1, version: 1 },
-      { id: 2, name: "Groceries", schemaVersion: 1.1, version: 1 },
-      { id: 3, name: "Transportation", schemaVersion: 1.1, version: 1 },
-      { id: 4, name: "Dining", schemaVersion: 1.1, version: 1 },
-      { id: 5, name: "Health", schemaVersion: 1.1, version: 1 },
-      { id: 6, name: "Other", schemaVersion: 1.1, version: 1 }
+
+    const expenseCategories = [
+      { categoryID: 0, name: "Food", schemaVersion: 1.1, version: 1, type: "expense" },
+      { categoryID: 1, name: "Transportation", schemaVersion: 1.1, version: 1, type: "expense" },
+      { categoryID: 2, name: "Entertainment", schemaVersion: 1.1, version: 1, type: "expense" },
+      { categoryID: 3, name: "Utilities", schemaVersion: 1.1, version: 1, type: "expense" },
+      { categoryID: 4, name: "Health", schemaVersion: 1.1, version: 1, type: "expense" },
+      { categoryID: 5, name: "Other", schemaVersion: 1.1, version: 1, type: "expense" },
+      { categoryID: 6, name: "Custom", schemaVersion: 1.1, version: 1, type: "expense" }
     ];
+
+    const incomeCategories = [
+      { categoryID: 0, name: "Salary", schemaVersion: 1.1, version: 1, type: "income" },
+      { categoryID: 1, name: "Bonus", schemaVersion: 1.1, version: 1, type: "income" },
+      { categoryID: 2, name: "Investment", schemaVersion: 1.1, version: 1, type: "income" },
+      { categoryID: 3, name: "Custom", schemaVersion: 1.1, version: 1, type: "income" }
+    ];
+
+    const categories = expenseCategories.concat(incomeCategories);
 
     await Category.insertMany(categories, { ordered: false });
     console.log('Categories seeded successfully.');

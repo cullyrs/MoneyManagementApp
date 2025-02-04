@@ -34,7 +34,7 @@ const compareEntry = async (entry, hashedPassword) => {
 };
 
 module.exports = {
-  default: hashed,
+  hashed,
   compareEntry
 };
 
