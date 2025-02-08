@@ -1,0 +1,76 @@
+<!--
+    Name : Arewa (Morountudun) Ojelade
+    Date  : 1/31/2025
+    File Name : goal.html
+    Course : CMSC 495 Capstone in Computer Science
+    Project : Expense Tracker Capstone Project
+    Description : This HTML file provides the user interface for updating the user's financial goal.
+    It displays the current goal status and includes a form for entering a new goal target
+    and goal name. The page also features a header with navigation elements for seamless 
+    integration with the rest of the Expense Tracker application.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Update Goal</title>
+        <link rel="stylesheet" href="css/stylesheet.css" />
+    </head>
+    <body>
+        <header>
+            <img src="imgs/icon.png" alt="icon homepage" />
+            <h2><a href="dashboard.html">Expense Tracker</a></h2>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li class="dropdown">
+                        <div class="menu-title">Settings</div>
+                        <nav class="settings-dropdown">
+                            <ul class="menu-dropdown">
+                                <li><a href="">Export Data to CSV</a></li>
+                                <li><a href="profile.html">User Profile</a></li>
+                                <li><a href="manage-categories.html">Manage Categories</a></li>
+                            </ul>
+                        </nav>
+                    </li>
+                    <li><a href="logout.html">Log Out</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="goal-page">
+            <h1>Update Goal</h1>
+            <!-- Display the current goal information -->
+            <div id="current-goal">Current Goal: $0/9,999</div>
+            <!-- Form for updating the goal -->
+            <form id="goal-form">
+                <label for="goal-name">Goal Name:</label>
+                <input
+                    type="text"
+                    id="goal-name"
+                    name="goal-name"
+                    placeholder="Enter goal name"
+                    required
+                    />
+                <label for="goal-input">New Goal Target:</label>
+                <input
+                    type="number"
+                    id="goal-input"
+                    name="goal-input"
+                    placeholder="Enter new goal target"
+                    required
+                    />
+                <button type="submit">Update Goal</button>
+            </form>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
+        </footer>
+
+        <script src="js/userGoal.js"></script>
+    </body>
+</html>

@@ -1,26 +1,30 @@
 /**
  * Name : Arewa (Morountudun) Ojelade
- * Date : 2/4/2025
- * File Name: headerMenu.js
- * Contributors: Cully Stearns Naeem Levitt
- * Course : CMSC 495 Capstone in Computer Science
+ * Date : 1/31/2025
+ * File Name : headerMenu.js
+ * Course  : CMSC 495 Capstone in Computer Science
  * Project : Expense Tracker Capstone Project
- * Description : Correctly position shte settings in the dropdown menu
+ * Description : This module handles the functionality for the settings dropdown
+ * menu in the header. It ensures that the dropdown appears on mouse
+ * hover and adjusts its position if it overflows the viewport.
  */
 
+/**
+ * Initializes the settings dropdown behavior for the Expense Tracker application.
+ * When the DOM is fully loaded, event listeners are added to the dropdown element to control
+ * the display and positioning of the associated settings dropdown menu:
+ * 
+ * - On mouseenter: The dropdown menu is shown. Its position is adjusted if it overflows the viewport.
+ * - On mouseleave: The dropdown menu is hidden.
+ */
 document.addEventListener("DOMContentLoaded", () => {
     const dropdown = document.querySelector(".dropdown");
     const dropdownMenu = document.querySelector(".settings-dropdown");
 
     dropdown.addEventListener("mouseenter", () => {
-        // Reset position to defaults
-        dropdownMenu.style.left = "0";
         dropdownMenu.style.right = "auto";
-
-        // Make the dropdown visible
         dropdownMenu.style.display = "block";
 
-        // Adjust position if it overflows the viewport
         const dropdownRect = dropdownMenu.getBoundingClientRect();
         if (dropdownRect.right > window.innerWidth) {
             dropdownMenu.style.left = "auto";
@@ -28,8 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    dropdown.addEventListener("mouseleave", () => {
-        // Hide the dropdown
+    dropdown.addEventListener("mouseleave", () => { 
         dropdownMenu.style.display = "none";
     });
 });

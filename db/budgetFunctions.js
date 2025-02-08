@@ -172,11 +172,6 @@ const updateBudgetCategory = async (userID, budgetID, newCategoryID) => {
     return null;
 };
 
-module.exports = {
-    addBudget,
-    getBudget,
-    removeBudget,
-    updateBudgetName,
-    updateBudgetAmount,
-    updateBudgetCategory
+module.exports = { addBudget, getBudget, removeBudget, updateBudgetName,
+    updateBudgetAmount, updateBudgetCategory
 };

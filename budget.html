@@ -1,0 +1,89 @@
+<!--
+    Name : Arewa (Morountudun) Ojelade
+    Date : 1/31/2025
+    File Name : budget.html
+    Course : CMSC 495 Capstone in Computer Science
+    Project : Expense Tracker Capstone Project
+    Description : This HTML file provides the user interface for updating the user's budget.
+    It includes a form for entering a new budget amount, budget name, and selecting a
+    budget category. The page also features a header with navigation to various sections
+    of the application.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Update Budget</title>
+        <link rel="stylesheet" href="css/stylesheet.css" />
+    </head>
+    <body>
+        <header>
+            <img src="imgs/icon.png" alt="icon homepage" />
+            <h2><a href="dashboard.html">Expense Tracker</a></h2>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li class="dropdown">
+                        <div class="menu-title">Settings</div>
+                        <nav class="settings-dropdown">
+                            <ul class="menu-dropdown">
+                                <li><a href="">Export Data to CSV</a></li>
+                                <li><a href="profile.html">User Profile</a></li>
+                                <li><a href="manage-categories.html">Manage Categories</a></li>
+                            </ul>
+                        </nav>
+                    </li>
+                    <li><a href="logout.html">Log Out</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="budget-page">
+            <h1>Update Budget</h1>
+            <!-- Display the current budget (optional) -->
+            <div id="current-budget">Current Budget: $0</div>
+            <!-- Form for updating the budget -->
+            <form id="budget-form">
+                <label for="budget-name">Budget Name:</label>
+                <input
+                    type="text"
+                    id="budget-name"
+                    name="budget-name"
+                    placeholder="Enter budget name"
+                    required
+                    />
+
+                <label for="budget-input">New Budget Amount:</label>
+                <input
+                    type="number"
+                    id="budget-input"
+                    name="budget-input"
+                    placeholder="Enter new budget amount"
+                    required
+                    />
+
+                <label for="budget-category">Budget Category:</label>
+                <select id="budget-category" name="budget-category">
+                    <option value="0">General</option>
+                    <option value="1">Food</option>
+                    <option value="2">Transportation</option>
+                    <option value="3">Entertainment</option>
+                    <option value="4">Utilities</option>
+                    <option value="5">Health</option>
+                    <option value="6">Other</option>
+                </select>
+
+                <button type="submit">Update Budget</button>
+            </form>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
+        </footer>
+
+        <script src="js/userBudget.js"></script>
+    </body>
+</html>

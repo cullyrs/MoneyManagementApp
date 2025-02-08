@@ -1,0 +1,48 @@
+<!--
+    INCOMPLETE
+    Name : Arewa (Morountudun) Ojelade
+    Date : 1/31/2025
+    File Name : logout.html
+    Course : CMSC 495 Capstone in Computer Science
+    Project : Expense Tracker Capstone Project
+    Description : This HTML file handles the logout process for the Expense Tracker application.
+    It invokes the logout IPC handler (NEED TO ADD) , clears stored user session data,
+    and redirects the user to the login page upon successful logout.
+    INCOMPLETE
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Logging Out...</title>
+        <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+            try {
+              // Optionally, invoke the logout IPC handler if implemented.
+              const result = await window.electronAPI.invoke("logout");
+              if (result.success) {
+                // Clear stored session information.
+                localStorage.removeItem("userId");
+                localStorage.removeItem("user");
+                alert("Logout successful!");
+                window.location.href = "./login.html"; // Redirect to login page.
+            } else {
+            alert("Logout failed: " + result.error);
+            }
+            } catch (err) {
+            console.error("Error during logout:", err);
+            alert("Logout failed: " + err.message);
+            }
+            });
+            } else {
+            console.error("Logout button not found in the DOM.");
+            }
+            });
+        </script>
+    </head>
+    <body>
+        <p>Logging out, please wait...</p>
+    </body>
+</html>

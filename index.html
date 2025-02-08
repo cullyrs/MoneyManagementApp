@@ -1,77 +1,87 @@
+<!--
+    Name : Arewa (Morountudun) Ojelade
+    Date  : 1/31/2025
+    File Name : index.html
+    Course : CMSC 495 Capstone in Computer Science
+    Project  : Expense Tracker Capstone Project
+    Description : This HTML file serves as the landing page for the Expense Tracker application.
+    It introduces the application, highlights its features, and provides navigation
+    options for users to log in, learn more about the project, or contact the team.
+-->
+
 <!DOCTYPE html>
-<!-- This will serve as the main home page for the website if user is not logged in -->
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Money Management App">
-    <meta name="keywords" content="money, management, app, budget, finance">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Money Management App">
+        <meta name="keywords" content="money, management, app, budget, finance">
 
 
-    <link rel="stylesheet" href="css/stylesheet.css">
+        <link rel="stylesheet" href="css/stylesheet.css">
 
-    <title>Expense Tracker</title>
-</head>
+        <title>Expense Tracker</title>
+    </head>
 
-<body>
-    <header>
-        <img src="imgs/icon.png" alt="icon homepage" class="homepage-icon">
+    <body>
+        <header>
+            <img src="imgs/icon.png" alt="icon homepage" class="homepage-icon">
 
-        <!-- dashboard if user logged in, login if not -->
-        <h2><a href="dashboard.html">Expense Tracker</a></h2>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="about.html">About</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li class="dropdown">
-                    <div class="menu-title">Settings</div>
-                    <nav class="settings-dropdown">
-                        <ul class="menu-dropdown">
-                            <li><a href="">Export Data to CSV</a></li> <!-- replace with export function -->
-                            <li><a href="profile.html">User Profile</a></li>
-                            <li><a href="manage-categories.html">Manage Categories</a></li>
-                        </ul>
-                    </nav>
+            <!-- dashboard if user logged in, login if not -->
+            <h2><a href="dashboard.html">Expense Tracker</a></h2>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li class="dropdown">
+                        <div class="menu-title">Settings</div>
+                        <nav class="settings-dropdown">
+                            <ul class="menu-dropdown">
+                                <li><a href="">Export Data to CSV</a></li> <!-- replace with export function -->
+                                <li><a href="profile.html">User Profile</a></li>
+                                <li><a href="manage-categories.html">Manage Categories</a></li>
+                            </ul>
+                        </nav>
                     <li><a href="login.html">Log Out</a></li><!-- replace with logout function -->
-            </ul>
-        </nav>
-    </header>
+                </ul>
+            </nav>
+        </header>
 
-    <main class="homepage">
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Welcome to Expense Tracker</h1>
-                <p>Your all-in-one tool for managing budgets, tracking expenses, and reaching financial goals effortlessly.</p>
-                <a href="login.html" class="btn">Get Started</a>
-            </div>
-            <div class="mascot">
-                <img src="imgs/icon.png" alt="Mascot Icon" class="mascot-img">
-            </div>
-        </section>
+        <main class="homepage">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Welcome to Expense Tracker</h1>
+                    <p>Your all-in-one tool for managing budgets, tracking expenses, and reaching financial goals effortlessly.</p>
+                    <a href="login.html" class="btn">Get Started</a>
+                </div>
+                <div class="mascot">
+                    <img src="imgs/icon.png" alt="Mascot Icon" class="mascot-img">
+                </div>
+            </section>
 
-        <section class="selling-points">
-            <h2>Why Choose Expense Tracker?</h2>
-            <div class="points">
-                <div class="point">
-                    <h3>Track Every Expense</h3>
-                    <p>Never lose sight of your finances. Track your spending and identify where your money goes.</p>
+            <section class="selling-points">
+                <h2>Why Choose Expense Tracker?</h2>
+                <div class="points">
+                    <div class="point">
+                        <h3>Track Every Expense</h3>
+                        <p>Never lose sight of your finances. Track your spending and identify where your money goes.</p>
+                    </div>
+                    <div class="point">
+                        <h3>Set Realistic Goals</h3>
+                        <p>Set financial goals and see your progress in real-time with intuitive dashboards.</p>
+                    </div>
+                    <div class="point">
+                        <h3>Stay Organized</h3>
+                        <p>Export data to CSV for detailed analysis and keep your financial records up to date.</p>
+                    </div>
                 </div>
-                <div class="point">
-                    <h3>Set Realistic Goals</h3>
-                    <p>Set financial goals and see your progress in real-time with intuitive dashboards.</p>
-                </div>
-                <div class="point">
-                    <h3>Stay Organized</h3>
-                    <p>Export data to CSV for detailed analysis and keep your financial records up to date.</p>
-                </div>
-            </div>
-        </section>
-    </main>
+            </section>
+        </main>
 
-    <footer>
-        <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
-    </footer>
-</body>
+        <footer>
+            <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
+        </footer>
+    </body>
 
 </html>

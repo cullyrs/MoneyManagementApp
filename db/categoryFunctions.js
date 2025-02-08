@@ -88,6 +88,39 @@ const deleteCategories = async(version) =>{
     const deleted = await Category.deleteMany({version : version});
     return deleted;
 };
+
+/**
+ * Function to delete a category by its name from the Expense Tracker Accounts database.
+ * This function retrieves the category by name and, if found, deletes it from the database.
+ * @param {String} categoryName - The name of the category to be deleted.
+ * @returns {Object} The result of the deletion operation.
+ * @throws {Error} Throws an error if the category is not found.
+ */
+const deleteCategory = async (categoryName) => {
+  const category = await getCategoryByName(categoryName);
+  if (!category) {
+    throw new Error("Category not found");
+  }
+  const deleted = await Category.deleteOne({ categoryID: category.categoryID });
+  return deleted;
+};
+
+/**
+ * Function to retrieve a category by its name from the Expense Tracker Accounts database.
+ * This function performs a case-insensitive search for the specified category name.
+ * @param {String} name - The name of the category to be retrieved.
+ * @returns {Object|null} The category document if found; otherwise, null.
+ * @throws {Error} Throws an error if an invalid or empty name is provided.
+ */
+const getCategoryByName = async (name) => {
+  if (!name || name.trim() === "") {
+    throw new Error("A valid category name is required.");
+  }
+  const regex = new RegExp(`^${name.trim()}$`, "i");
+  const category = await Category.findOne({ name: regex });
+  return category;
+};
+
 module.exports = {initializeCategories, addCategory, getCategoryName,
-        getCategoryObject, deleteCategories
+        getCategoryObject, deleteCategories, deleteCategory, getCategoryByName
     };
