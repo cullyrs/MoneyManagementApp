@@ -1,6 +1,5 @@
 /**
- * Name : Cully Stearns
- * Contributors : Arewa 
+ * Name : Arewa 
  * Date : 1/31/2025
  * File Name : dbConnection.js
  * Course : CMSC 495 Capstone in Computer Science
