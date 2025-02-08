@@ -1,5 +1,5 @@
 /**
- * Name : Arewa (Morountudun) Ojelade
+ * Name : Cully Stearns
  * Date  : 1/31/2025
  * File Name : userProfile.js
  * Course : CMSC 495 Capstone in Computer Science
