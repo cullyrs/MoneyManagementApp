@@ -1,5 +1,6 @@
 /**
  * Name : Arewa (Morountudun) Ojelade
+ * Contributors : Cully Stearns
  * Date : 1/31/2025
  * File Name: category.js
  * Course : CMSC 495 Capstone in Computer Science
