@@ -1,5 +1,6 @@
 /**
- * Name : Arewa (Morountudun) Ojelade
+ * Name : Cully Stearns
+ * Contributors : Arewa 
  * Date : 1/31/2025
  * File Name : ipcHandlers.js
  * Course : CMSC 495 Capstone in Computer Science
