@@ -1,3 +1,48 @@
+progress {
+  text-align: center;
+  height: 1.5em;
+  width: 100%;
+  border: none;
+  position: relative;
+  font-weight: 800;
+  font-size: 1.2rem;
+  -webkit-text-stroke: .5px;
+}
+progress.prog-budget{
+  color: #000000;
+  -webkit-text-stroke-color: #f8d7da;
+}
+progress.prog-goal{
+  color: #000000;
+  -webkit-text-stroke-color: #d1ecf1;
+}
+progress:before {
+  content: attr(data-label);
+  font-size: 0.8em;
+  vertical-align: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+progress.prog-budget::-webkit-progress-bar{
+  background-color: #f8d7da;
+}
+progress.prog-budget::-webkit-progress-value{
+  background-color: #721c24;
+}
+progress.prog-budget::-moz-progress-bar{
+  background-color: #721c24;
+}
+progress.prog-goal::-webkit-progress-bar{
+  background-color: #d1ecf1;
+}
+progress.prog-goal::-webkit-progress-value{
+  background-color: #0c5460;
+}
+progress.prog-goal::-moz-progress-bar{
+  background-color: #0c5460;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;

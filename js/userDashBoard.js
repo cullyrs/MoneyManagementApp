@@ -151,16 +151,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         const result = await window.electronAPI.invoke("getDashboardData", userId);
         if (result.success) {
             const {recentBudget, recentGoal} = result;
-            const budgetCurrent = recentBudget ? recentBudget.amount : 0;
-            const budgetTarget = recentBudget ? recentBudget.budgetTarget || "9,999" : "9,999";
-            const goalCurrent = recentGoal ? recentGoal.savedAmount : 0;
-            const goalTarget = recentGoal ? recentGoal.targetAmount : "9,999";
+            const budgetCurrent = recentBudget ? 10 : 0;
+            const budgetTarget = recentBudget ? recentBudget._doc.amount.value : "9,999";
+            const goalCurrent = recentGoal ? recentGoal._doc.savedAmount.value : 0;
+            const goalTarget = recentGoal ? recentGoal._doc.targetAmount.value : "9,999";
+            const test = {budgetCurrent, budgetTarget, goalCurrent, goalTarget}
+            console.log("check updated:", test)
+            console.log("test 2", recentBudget._doc.amount.value)
 
-            document.getElementById("budget-display").innerText =
-                    `Budget - $${budgetCurrent}/${budgetTarget}`;
-            document.getElementById("goal-display").innerText =
-                    `Goal - $${goalCurrent}/${goalTarget}`;
-
+            document.getElementById("budget-display").innerHTML =
+                    `<progress class="prog-budget" max="100" value="${(50/budgetTarget)*100}" data-label="Budget - $${budgetCurrent.toFixed(2)}/${budgetTarget.toFixed(2)}"></progress>`;
+            document.getElementById("goal-display").innerHTML =
+                    `<progress class="prog-goal" max="100" value="${(goalCurrent/goalTarget)*100}" data-label="Goal - $${goalCurrent.toFixed(2)}/${goalTarget.toFixed(2)}"></progress>`;
             console.log("Dashboard updated:", result);
         } else {
             console.error("Failed to load dashboard data:", result.error);
