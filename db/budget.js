@@ -11,6 +11,7 @@
 
 import connectDB from "./dbconnect.js"; connectDB();
 import Category from "./models/Category.js";
+import Transaction from "./models/Transaction.js";
 import Budget from "./models/Budget.js";
 import User from "./models/User.js";
 
@@ -43,8 +44,11 @@ const addBudget = async(userID, name, amount, categoryID = 0) =>{
             amount : amount,
             categoryID : categoryID
         });
+        budget.set('spentAmount', getSpentAmount(userID, budget._id));
+        budget.save();
         user.budgetList.push(budget._id);
         user.save();
+        
         return budget;
     }
     return null;
@@ -166,7 +170,18 @@ const updateBudgetCategory = async(userID, budgetID, newCategoryID) =>{
     }
     return null;
 }
-
+const getSpentAmount = async(userID, budgetID) =>{
+    const budget = Budget.findOne({_id : budgetID});
+    const transactions = await Transaction.where('userID').equals(userID);
+    var spentAmount = 0;
+    transactions.forEach((transaction) =>{
+         if(transaction.categoryID == budget.categoryID)
+             spentAmount += transaction.amount;
+    })
+    budget.set('spentAmount',spentAmount);
+    budget.save();   
+    return spentAmount;
+}
 export {addBudget, getBudget, removeBudget, updateBudgetName,
-       updateBudgetAmount, updateBudgetCategory
+       updateBudgetAmount, updateBudgetCategory,getSpentAmount
 };
