@@ -44,11 +44,9 @@ const addBudget = async(userID, name, amount, categoryID = 0) =>{
             amount : amount,
             categoryID : categoryID
         });
-        budget.set('spentAmount', getSpentAmount(userID, budget._id));
-        budget.save();
+        getSpentAmount(userID, budget._id);
         user.budgetList.push(budget._id);
         user.save();
-        
         return budget;
     }
     return null;
@@ -170,16 +168,36 @@ const updateBudgetCategory = async(userID, budgetID, newCategoryID) =>{
     }
     return null;
 }
+/**
+ * Function to get sum of epense transactions aggregated by budget's categoryID
+ * in the Budget collection of the Expense Tracker Accounts database. 
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} budgetID - The unique _id of the budget. 
+ * @returns {Double} The total amount accumulated from transactions with the budget's 
+ * categoryID.
+ * Returns 0 if :
+ *      1. Invalid userID is provided.
+ *      2. budgetID is not associated with the User instance provided.
+ *      3. There are no transactions associated with userID.
+ *      4. There are no transactions associated with budget's categoryID.
+ */
 const getSpentAmount = async(userID, budgetID) =>{
+    
+    const user = await User.findOne({_id : userID});
     const budget = Budget.findOne({_id : budgetID});
-    const transactions = await Transaction.where('userID').equals(userID);
+    const transactions = await Transaction.where('userID').equals(userID); 
     var spentAmount = 0;
-    transactions.forEach((transaction) =>{
-         if(transaction.categoryID == budget.categoryID)
-             spentAmount += transaction.amount;
-    })
-    budget.set('spentAmount',spentAmount);
-    budget.save();   
+    if(user && budget && transactions[0]){
+        transactions.forEach((transaction) =>{
+            if(transaction.categoryID == budget.categoryID &&transaction.type == 0){
+                spentAmount += transaction.amount;
+            }
+        })
+        budget.set('spentAmount', spentAmount);
+        budget.save();
+        return spentAmount;
+    }
+   
     return spentAmount;
 }
 export {addBudget, getBudget, removeBudget, updateBudgetName,
