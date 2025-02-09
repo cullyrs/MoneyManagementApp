@@ -20,6 +20,8 @@ const budgetSchema = new Schema({
     type: Date,
     default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000), // default month duration
   },
+  spentAmount: { type: SchemaTypes.Double, defualt : 0},
+  
   categoryID: { type: SchemaTypes.Int32, default : 0},
   version: { type: SchemaTypes.Int32, default : 1}
 }, {collection : 'Budget', timestamps: true });
