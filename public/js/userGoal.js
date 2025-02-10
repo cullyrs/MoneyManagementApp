@@ -11,6 +11,7 @@
  * for updating the goal, ensuring that only valid goal data is processed.
  */
 
+// HAVE NOT UPDATED YET
 document.addEventListener("DOMContentLoaded", async () => {
     
     const userId = localStorage.getItem("userId");

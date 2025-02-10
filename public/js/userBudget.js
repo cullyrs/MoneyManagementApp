@@ -28,6 +28,8 @@
  *   2. The new budget name is empty.
  *   3. The new budget amount is either not a number or is a negative value.
  */
+
+// HAVE NOT UPDATED YET
 document.addEventListener("DOMContentLoaded", async () => {
     const userId = localStorage.getItem("userId");
     if (!userId) {

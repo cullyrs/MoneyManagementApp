@@ -9,22 +9,30 @@
  * and export the schema for the Transaction collection in the 
  * Expense Tracker Accounts database.
  */
-
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
-require('mongoose-double')(mongoose);
-const mongooseInt32 = require('mongoose-int32');
+require("mongoose-double")(mongoose);
+const mongooseInt32 = require("mongoose-int32");
 mongooseInt32.loadType(mongoose);
 
 const { ObjectId, Double, Int32 } = Schema.Types;
 
-const transactionSchema = new Schema({
-  userID: { type: ObjectId, ref: 'User', required: true },
-  amount: { type: Double, required: true },
-  type: { type: Int32, required: true }, 
-  date: { type: String },
-  categoryID: { type: Int32, default: 0 },
-  description: { type: String },
-  version: { type: Int32, default: 1 }
-}, { collection: 'Transaction', timestamps: true });
-module.exports = mongoose.model('Transaction', transactionSchema);
+const transactionSchema = new Schema(
+  {
+    userID: { type: ObjectId, ref: "User", required: true },
+    amount: { type: Double, required: true },
+    date: { type: String, required: true },
+    category: { type: ObjectId, ref: "Category", required: true }, 
+    description: { type: String, trim: true },
+    type: {
+      type: String,
+      enum: ["expense", "income"],
+      required: true,
+    },
+
+    version: { type: Int32, default: 1 },
+  },
+  { collection: "Transaction", timestamps: true }
+);
+
+module.exports = mongoose.model("Transaction", transactionSchema);

@@ -10,6 +10,9 @@
  * or delete existing ones using IPC communication with the main process.
  */
 
+
+// DEPRECATED: This code is no longer used in the application.
+
 document.addEventListener("DOMContentLoaded", () => {
     const categoriesList = document.getElementById("categories-list");
     const addCategoryButton = document.getElementById("add-category-button");

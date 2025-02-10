@@ -1,0 +1,92 @@
+<!--
+    Name : Naeem
+    Date  : 1/31/2025
+    File Name : login.html
+    Course : CMSC 495 Capstone in Computer Science
+    Project : Expense Tracker Capstone Project
+    Description : This HTML file provides the user interface for logging in and signing up to the Expense Tracker application.
+    It features separate forms for login and sign-up, and includes JavaScript to toggle between the two tabs.
+    The page also includes a navigation header with links to other parts of the application.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Money Management App">
+    <meta name="keywords" content="money, management, app, budget, finance">
+    <link rel="stylesheet" href="css/stylesheet.css">
+
+    <title>Expense Tracker</title>
+</head>
+
+<body>
+    <header>
+        <img src="imgs/icon.png" alt="icon homepage">
+
+        <!-- dashboard if user logged in, login if not -->
+        <h2><a href="dashboard.html">Expense Tracker</a></h2>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="dropdown">
+                    <div class="menu-title">Settings</div>
+                    <nav class="settings-dropdown">
+                        <ul class="menu-dropdown">
+                            <li><a href="">Export Data to CSV</a></li> <!-- replace with export function -->
+                            <li><a href="profile.html">User Profile</a></li>
+                        </ul>
+                    </nav>
+                <li id="logout"><a href="">Log Out</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="login">
+        <div class="login-container">
+            <div class="tab-buttons">
+                <button id="login-tab" class="active" onclick="openTab('login')">Log In</button>
+                <button id="signup-tab" onclick="openTab('signup')">Sign Up</button>
+            </div>
+
+            <div id="login-form" class="tab-content active">
+                <h1>Log In</h1>
+                <form>
+                    <input type="text" id="username" name="username" placeholder="USERNAME" required>
+                    <input type="password" id="password" name="password" placeholder="PASSWORD" required>
+                    <button type="button" id="login">Log In</button>
+                </form>
+            </div>
+
+            <div id="signup-form" class="tab-content">
+                <h1>Sign Up</h1>
+                <form>
+                    <input type="text" id="signupUsername" name="signupUsername" placeholder="USERNAME" required>
+                    <input type="email" id="signupEmail" name="signupEmail" placeholder="EMAIL" required>
+                    <input type="password" id="signupPassword" name="signupPassword" placeholder="PASSWORD" required>
+                    <button type="button" id="signup">Sign Up</button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
+    </footer>
+    <script src="./js/initializeUser.js"></script>
+    <script>
+        function openTab(tabName) {
+            document.getElementById("login-form").classList.remove("active");
+            document.getElementById("signup-form").classList.remove("active");
+            document.getElementById("login-tab").classList.remove("active");
+            document.getElementById("signup-tab").classList.remove("active");
+            document.getElementById(tabName + "-form").classList.add("active");
+            document.getElementById(tabName + "-tab").classList.add("active");
+        }
+    </script>
+</body>
+
+</html>

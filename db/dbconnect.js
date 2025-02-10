@@ -1,5 +1,5 @@
 /**
- * Name : Arewa 
+ * Name : -- 
  * Date : 1/31/2025
  * File Name : dbConnection.js
  * Course : CMSC 495 Capstone in Computer Science

@@ -3,25 +3,35 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "node main.js",
+    "dev": "nodemon main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "electron": "^33.3.1",
-    "electron-rebuild": "^3.2.9",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^6.0.1"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cullyrs/MoneyManagementApp.git"
   },
+  "keywords": [],
+  "author": "Naeem Lovitt, [add names here]",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cullyrs/MoneyManagementApp/issues"
+  },
+  "homepage": "https://github.com/cullyrs/MoneyManagementApp#readme",
+  "description": "Money Management Web Application",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "moneymanagementapp": "file:",
-    "mongodb": "^6.12.0",
+    "mongoose": "^7.8.6",
     "mongoose-double": "^0.0.1",
     "mongoose-int32": "^0.6.0",
+    "morgan": "^1.10.0",
     "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }

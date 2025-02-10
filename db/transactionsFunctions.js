@@ -1,5 +1,6 @@
 /**
  * Name : Arewa (Morountudun) Ojelade
+ * contributors : Cully Stearns, Naeem Lovitt
  * Date : 1/31/2025
  * File Name: transaction.js
  * Course : CMSC 495 Capstone in Computer Science
@@ -11,7 +12,7 @@
 
 
 const Category = require('./models/Category.js');
-const Transaction = require ('./models/Transaction.js');
+const Transactions = require ('./models/Transactions.js');
 const User = require ('./models/User.js');
 
 /**
@@ -30,38 +31,63 @@ const User = require ('./models/User.js');
  *      3. Type is not {Expense : 0, Income : 1} The bit interpretation of transaction type.
  */
 
-const addTransaction = async(userID, amount, type, categoryID = 0, date = Date.now(), description ="") => {
-  
-    type = parseInt(type);
-    const user = await User.findOne({_id : userID});
-    if(user && amount > 0 && (type == 0 || type == 1)){    
-        
-        const category_exist = await Category.findOne({categoryID : categoryID});
-        if(!category_exist){
-            categoryID = 0;
-        }
-        const transaction = await Transaction.create({
-            userID : user._id,
-            amount : parseFloat(amount),
-            type : type,
-            date : new Date(date),
-            categoryID : categoryID,
-            description : description
-       });       
-        // Updates transactionList with created transtion _id.
-        user.transactionList.push(transaction._id);
-        
-        // Increments/Decrements totalAmount in accordance with type.
-        user.totalAmount = (transaction.type == 0) ?
-                            user.totalAmount-= transaction.amount:
-                            user.totalAmount+= transaction.amount;
-        await user.save();
-        await transaction.save(); // #### test and remove (unecessary)
-        return transaction;
-        
-     }
-     return null
-}
+const addTransaction = async (userID, amount, type, category, date, description = "") => {
+    console.log("[Processing Transaction] =================="); //debugging
+    console.log("Parameters Received:", { userID, amount, type, category, date, description });
+
+    amount = parseFloat(amount);
+
+    // Validate user
+    const user = await User.findOne({ _id: userID });
+    if (!user || amount <= 0 || !["expense", "income"].includes(type)) {
+        console.error("Invalid user or transaction data.");
+        return null;
+    }
+
+    console.log("Checking category exists for ID:", category);
+    
+    // check category is not being overwritten. had an issue with this happening
+    const categoryData = await Category.findById(category);
+    if (!categoryData) {
+        console.error(`Category "${category}" not found.`);
+        return null;
+    }
+
+    //  date properly formatted. had an issue with this happening
+    const formattedDate = new Date(date);
+    if (isNaN(formattedDate.getTime())) {
+        console.error("Invalid date provided:", date);
+        return null;
+    }
+
+    console.log("Category found:", categoryData.name, "✔ Date Validated:", formattedDate);
+
+    // Create transaction
+    const transaction = await Transactions.create({
+        userID: user._id,
+        amount,
+        type,
+        date: formattedDate, // Make sure this is correctly formatted
+        category: categoryData._id, // Store category ObjectId
+        description,
+    });
+
+    console.log("Transaction Created:", transaction);
+
+    // Update user's transaction list
+    user.transactionList.push(transaction._id);
+
+    // Adjust totalAmount based on transaction type
+    user.totalAmount = (type === "expense")
+        ? user.totalAmount - transaction.amount
+        : user.totalAmount + transaction.amount;
+
+    await user.save();
+    return transaction;
+};
+
+
+
 /**
  * Function to remove a transaction from the Transaction collection of the 
  * Expense Tracker Accounts database. The unique transaction _id of the transaction
@@ -73,30 +99,32 @@ const addTransaction = async(userID, amount, type, categoryID = 0, date = Date.n
  *      1. Invalid userID is provided.
  *      2. transactionID is not associated with the User instance provided.
  */
-const removeTransaction = async (userID, transactionID) =>{
+const removeTransaction = async (userID, transactionID) => {
+    const user = await User.findOne({ _id: userID });
+    if (!user) return null;
 
-     const user = await User.findOne({_id : userID});
-     const index = user.transactionList.indexOf(transactionID);
+    const index = user.transactionList.indexOf(transactionID);
+    if (index >= 0) {
+        const transaction = await Transactions.findOne({ _id: transactionID });
+        if (!transaction) return null;
 
-     if(user && index >= 0){
-        const transaction = await Transaction.findOne({_id : transactionID});
-        const type = transaction.type;
-        const amount = transaction.amount;
-        // Creates a final copy of transaction
-        const finalCopy = JSON.parse(JSON.stringify(transaction));
-        // Deletes the original copy of transaction
-        await Transaction.deleteOne({_id :transactionID});
-        // Removes transaction _id from transactionList.
+        // Remove transaction from DB
+        await Transactions.deleteOne({ _id: transactionID });
+
+        // Remove transaction _id from user's transaction list.
         user.transactionList.splice(index, 1);
-        // Increments/Decrements totalAmount in accordance with type.
-        user.totalAmount = (type == 0) ?
-                            user.totalAmount+= amount:
-                            user.totalAmount-= amount;
+
+        // Adjust totalAmount
+        user.totalAmount = (transaction.type === 0)
+            ? user.totalAmount + transaction.amount
+            : user.totalAmount - transaction.amount;
+
         await user.save();
         return transaction;
-     }
-   return null
-}
+    }
+    return null;
+};
+
 /**
  * Function to retrieve a transaction from the Transaction collection of the 
  * Expense Tracker Accounts database. The unique transaction _id of the transaction
@@ -113,7 +141,7 @@ const getTransaction = async(userID, transactionID)=>{
     const index = user.transactionList.indexOf(transactionID);
 
     if(user && index >= 0){
-        const transaction = await Transaction.findOne({_id : transactionID});
+        const transaction = await Transactions.findOne({_id : transactionID});
         return transaction;
     }
     return null;
@@ -137,7 +165,7 @@ const updateTransactionType = async (userID, transactionID, newType) =>{
     const user = await User.findOne({_id : userID});
     const index = user.transactionList.indexOf(transactionID);
     if(user && index >= 0 && (newType == 0 || newType == 1)){
-        const transaction = await Transaction.findOne({_id : transactionID});
+        const transaction = await Transactions.findOne({_id : transactionID});
         if(transaction.type != newType){
             transaction.set('type', newType);
             // Resets and increments/decrements total amount in accordance with type.
@@ -171,7 +199,7 @@ const updateTransactionCategory = async(userID, transactionID, newCategoryID) =>
     const category = await Category.findOne({categoryID : newCategoryID});
     
     if(user && category && index >= 0){
-        const transaction = await Transaction.findOne({_id : transactionID});
+        const transaction = await Transactions.findOne({_id : transactionID});
         transaction.set('categoryID', newCategoryID);
         await transaction.save();
         return transaction;        
@@ -197,7 +225,7 @@ const updateTransactionAmount = async(userID, transactionID, newAmount) => {
     const index = user.transactionList.indexOf(transactionID);    
    
     if(user && newAmount > 0 && index >= 0){
-        const transaction = await Transaction.findOne({_id : transactionID});
+        const transaction = await Transactions.findOne({_id : transactionID});
         var previousAmount = transaction.amount;
         var currentTotal = user.totalAmount;
         /* If transaction is an expense reset totalAmount by incrementing 
@@ -239,13 +267,41 @@ const updateTransactionDate = async(userID, transactionID, newDate) =>{
     const user = await User.findOne({_id : userID});
     const index = user.transactionList.indexOf(transactionID);
     if(user && index >= 0){
-        const transaction = await Transaction.findOne({_id : transactionID});
+        const transaction = await Transactions.findOne({_id : transactionID});
         transaction.set('date', new Date(newDate));
         await transaction.save();
         return transaction;
     }
     return null;
 }
+/**
+ * Function to retrieve all transactions for a user.
+ * @param {String} userID - The unique _id of the associated User instance.
+ * @returns {Array} Array of transactions, or empty array if none found.
+ */
+const getUserTransactions = async (userID) => {
+    try {
+        const user = await User.findOne({ _id: userID }).lean();
+        if (!user) return []; // Ensure we always return an array
+
+        // Fetch transactions associated with the user, include category details
+        const transactions = await Transactions.find({ userID })
+            .sort({ date: -1 })
+            .populate("category", "name type") // Ensure category details are populated
+            .lean();
+        console.log("transactions", transactions);
+        // print variable type
+        console.log("type", typeof transactions);
+
+        return transactions || []; // Always return an array
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
+        return []; 
+    }
+};
+
+
+
 module.exports = {addTransaction, getTransaction, removeTransaction, updateTransactionType,
-       updateTransactionAmount, updateTransactionDate, updateTransactionCategory
+       updateTransactionAmount, updateTransactionDate, updateTransactionCategory, getUserTransactions,
 }; 

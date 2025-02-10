@@ -10,6 +10,7 @@
  * the Expense Tracker Accounts database.
  */
 
+//  DEPRECATED CODE
 const Category = require('./models/Category.js');
 
 

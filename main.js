@@ -1,65 +1,62 @@
-/**
- * Name : Cully Stearns
- * Date : 1/31/2025
- * File Name : main.js
- * Course : CMSC 495 Capstone in Computer Science
- * Project : Expense Tracker Capstone Project
- * Description : This is the main process file for the Expense Tracker application.
- * It sets up the Electron application, establishes a connection to the MongoDB
- * database via Mongoose, creates the main application window, and registers
- * IPC handlers for communication between the main and renderer processes.
- */
+const express = require("express");
+const path = require("path");
+const { connectToDB } = require("./db/dbconnect");
 
-const {app, BrowserWindow, ipcMain} = require('electron');
-const path = require('path');
+// Import functions
+const budgetFunctions = require("./db/budgetFunctions");
+const userFunctions = require("./db/userFunctions");
+// const categoryFunctions = require("./db/categoryFunctions"); // not used
+const goalFunctions = require("./db/goalFunctions");
+const transactionsFunctions = require("./db/transactionsFunctions");
 
-const {connectToDB} = require('./js/dbconnect');
-const User = require('./db/models/User.js');
-const Budget = require('./db/models/Budget.js');
-const Goal = require('./db/models/Goal.js');
-const Transactions = require('./db/models/Transactions.js');
+// routes
+const authRoutes = require("./routes/authenRoutes"); 
+const userRoutes = require("./routes/userRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
 
-let mainWindow;
+// Initialize Express app
+const app = express();
 
-async function createWindow() {
-    try {
-        await connectToDB();
+// Body Parser Middleware (Needed for post and put requests)
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-        mainWindow = new BrowserWindow({
-            width: 800,
-            height: 600,
-            webPreferences: {
-                preload: path.join(__dirname, './js/preload.js'),
-                nodeIntegration: false,
-//        contextIsolation: false,
-                backgroundThrottling: false
-            }
-        });
+// Serve static files (HTML, CSS, JS)
+app.use(express.static(path.join(__dirname, "public")));
 
-        mainWindow.loadFile('index.html');
-    } catch (err) {
-        console.error('Error creating main window:', err);
-    }
-}
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/users", dashboardRoutes); 
+app.use("/api/transactions", transactionRoutes);
+app.use("/api/categories", categoryRoutes); 
 
-require('./ipcHandlers/ipcHandlers');
-
-app.whenReady().then(createWindow);
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+// Homepage Route
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
-    }
-});
+// EXAMPLES
+// API Routes using controller functions update nonsense functions
+// app.get("/api/users", userFunctions.getUsers);
+// app.post("/api/users", userFunctions.createUser);
 
-app.on('before-quit', async () => {
-    console.log('Shutting down...');
-    const mongoose = require('mongoose');
-    await mongoose.connection.close();
+// app.get("/api/budget", budgetFunctions.getBudget);
+// app.post("/api/budget", budgetFunctions.createBudget);
+
+// app.get("/api/goals", goalFunctions.getGoals);
+// app.post("/api/goals", goalFunctions.createGoal);
+
+// app.get("/api/transactions", transactionsFunctions.getTransactions);
+// app.post("/api/transactions", transactionsFunctions.createTransaction);
+
+
+// Start the server after connecting to the database
+const PORT = 8000;
+connectToDB().then(() => {
+    app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+}).catch(err => {
+    console.error("Database connection failed. Server not started.");
 });

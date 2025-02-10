@@ -1,0 +1,105 @@
+<!--
+    Name : Naeem
+    Date : 1/31/2025
+    File Name : about.html
+    Course : CMSC 495 Capstone in Computer Science
+    Project : Expense Tracker Capstone Project
+    Description : This HTML file provides an overview of the Expense Tracker 
+    Capstone Project. It contains details about the project, 
+    team members, and other relevant information about the application.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/stylesheet.css">
+
+    <title>About</title>
+
+</head>
+
+<body>
+    <header>
+        <img src="imgs/icon.png" alt="icon homepage">
+
+        <!-- dashboard if user logged in, login if not -->
+        <h2><a href="dashboard.html">Expense Tracker</a></h2>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="dropdown">
+                    <div class="menu-title">Settings</div>
+                    <nav class="settings-dropdown">
+                        <ul class="menu-dropdown">
+                            <li><a href="">Export Data to CSV</a></li> <!-- replace with export function -->
+                            <li><a href="profile.html">User Profile</a></li>
+                        </ul>
+                    </nav>
+                <li id="logout"><a href="">Log Out</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main class="about">
+        <section class="app-description">
+            <h1>About Expense Tracker</h1>
+            <p>
+                Expense Tracker is a powerful yet easy-to-use tool that helps individuals take control of their personal
+                finances. It provides users with the ability to monitor their income and expenses, set financial goals,
+                and gain valuable insights into their spending habits. With advanced features like exporting data to CSV
+                and generating monthly summaries, Expense Tracker makes financial management simple and accessible for
+                everyone.
+            </p>
+
+            <h2>Features</h2>
+            <p>
+                Expense Tracker is packed with a wide range of features tailored to suit your financial needs. Users can
+                create and customize categories for tracking specific expenses, enabling detailed monitoring of their
+                financial activities. The application encourages better saving habits by allowing users to set financial
+                goals and track their progress. Secure login functionality ensures the safety of your data, while
+                real-time
+                updates on the financial dashboard provide immediate insights into your finances.
+            </p>
+        </section>
+
+        <h2>About the Creators</h2>
+        <div class="team-section">
+            <div class="team-card">
+                <img src="imgs/arewa.png" alt="Arewa Ojelade">
+                <h3>Arewa Ojelade</h3>
+                <p>Project Manager & Database Developer</p>
+                <p>Arewa oversaw the project development, managed team communication, and implemented the database
+                    structure.</p>
+            </div>
+            <div class="team-card">
+                <img src="imgs/naeem.png" alt="Naeem Lovitt">
+                <h3>Naeem Lovitt</h3>
+                <p>Frontend Developer & Documentation Lead</p>
+                <p>Naeem designed the user interface and compiled project documentation for seamless usability.</p>
+            </div>
+            <div class="team-card">
+                <img src="imgs/steven.png" alt="Steven Mounie">
+                <h3>Steven Mounie</h3>
+                <p>Full Stack Developer</p>
+                <p>Steven handled server-side integration with the Frontend and implemented key application
+                    functionalities.</p>
+            </div>
+            <div class="team-card">
+                <img src="imgs/cully.png" alt="Cully Stearns">
+                <h3>Cully Stearns</h3>
+                <p>Backend Developer</p>
+                <p>Cully focused on server-side logic and the core backend logic to ensure smooth operation.</p>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

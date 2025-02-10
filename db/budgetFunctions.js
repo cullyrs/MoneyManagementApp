@@ -13,6 +13,7 @@
 const Category = require('./models/Category.js');
 const Budget = require('./models/Budget.js');
 const User = require('./models/User.js');
+const Transaction = require('./models/Transactions.js'); // Added from db branch
 
 /**
  * Function to add a budget to the Budget collection of the 
@@ -31,18 +32,23 @@ const User = require('./models/User.js');
 const addBudget = async (userID, name, amount, categoryID = 0) => {
     amount = parseFloat(amount);
     categoryID = parseInt(categoryID);
+
     const user = await User.findOne({ _id: userID });
-    const category_exist = await Category.findOne({ categoryID: categoryID });
-    if (!category_exist) {
+    const categoryExist = await Category.findOne({ categoryID: categoryID });
+
+    if (!categoryExist) {
         categoryID = 0;
     }
+
     if (user && name && amount > 0) {
         const budget = await Budget.create({
-            userID: userID,
-            name: name,
-            amount: amount,
-            categoryID: categoryID
+            userID,
+            name,
+            amount,
+            categoryID
         });
+
+        await getSpentAmount(userID, budget._id); // Ensure spentAmount is set
         user.budgetList.push(budget._id);
         await user.save();
         return budget;
@@ -51,23 +57,21 @@ const addBudget = async (userID, name, amount, categoryID = 0) => {
 };
 
 /**
- * Function to remove a budget from the Budget collection of the 
- * Expense Tracker Accounts database. The unique budget _id of the budget
- * is removed from the budgetList array in the User collection.
+ * Function to remove a budget from the Budget collection.
+ * Also removes it from the user's budget list.
  * @param {String} userID - The unique _id of the associated User instance. 
  * @param {String} budgetID - The unique _id of the budget. 
  * @returns {Object} The removed instance of the budget object.
- * Returns null if :
- *      1. Invalid userID is provided.
- *      2. budgetID is not associated with the User instance provided.
  */
 const removeBudget = async (userID, budgetID) => {
     const user = await User.findOne({ _id: userID });
-    const index = user ? user.budgetList.indexOf(budgetID) : -1;
+    if (!user) return null;
 
-    if (user && index >= 0) {
+    const index = user.budgetList.indexOf(budgetID);
+    if (index >= 0) {
         const budget = await Budget.findOne({ _id: budgetID });
         const finalCopy = JSON.parse(JSON.stringify(budget));
+
         await Budget.deleteOne({ _id: budgetID });
         user.budgetList.splice(index, 1);
         await user.save();
@@ -77,25 +81,16 @@ const removeBudget = async (userID, budgetID) => {
 };
 
 /**
- * Function to retrieve a budget from the Budget collection of the 
- * Expense Tracker Accounts database. The unique budget _id of the budget
- * must be associated with the budgetList array in the specified User collection.
+ * Function to retrieve a budget from the Budget collection.
  * @param {String} userID - The unique _id of the associated User instance. 
  * @param {String} budgetID - The unique _id of the budget. 
  * @returns {Object} The instance of the budget object.
- * Returns null if :
- *      1. Invalid userID is provided.
- *      2. budgetID is not associated with the User instance provided.
  */
 const getBudget = async (userID, budgetID) => {
     const user = await User.findOne({ _id: userID });
-    const index = user ? user.budgetList.indexOf(budgetID) : -1;
+    if (!user || !user.budgetList.includes(budgetID)) return null;
 
-    if (user && index >= 0) {
-        const budget = await Budget.findOne({ _id: budgetID });
-        return budget;
-    }
-    return null;
+    return await Budget.findOne({ _id: budgetID });
 };
 
 /**
@@ -112,14 +107,12 @@ const getBudget = async (userID, budgetID) => {
  */
 const updateBudgetName = async (userID, budgetID, newName) => {
     const user = await User.findOne({ _id: userID });
-    const index = user ? user.budgetList.indexOf(budgetID) : -1;
-    if (user && newName && index >= 0) {
-        const budget = await Budget.findOne({ _id: budgetID });
-        budget.set('name', newName);
-        await budget.save();
-        return budget;
-    }
-    return null;
+    if (!user || !newName || !user.budgetList.includes(budgetID)) return null;
+
+    const budget = await Budget.findOne({ _id: budgetID });
+    budget.name = newName;
+    await budget.save();
+    return budget;
 };
 
 /**
@@ -135,17 +128,15 @@ const updateBudgetName = async (userID, budgetID, newName) => {
  *      3. budgetID is not associated with the User instance provided.
  */
 const updateBudgetAmount = async (userID, budgetID, newAmount) => {
+    newAmount = parseFloat(newAmount);
     const user = await User.findOne({ _id: userID });
-    const index = user ? user.budgetList.indexOf(budgetID) : -1;
-    if (user && newAmount > 0 && index >= 0) {
-        const budget = await Budget.findOne({ _id: budgetID });
-        budget.set('amount', newAmount);
-        await budget.save();
-        return budget;
-    }
-    return null;
-};
+    if (!user || newAmount <= 0 || !user.budgetList.includes(budgetID)) return null;
 
+    const budget = await Budget.findOne({ _id: budgetID });
+    budget.amount = newAmount;
+    await budget.save();
+    return budget;
+};
 /**
  * Function to change a budget's category in the Budget collection 
  * of the Expense Tracker Accounts database. 
@@ -161,17 +152,43 @@ const updateBudgetAmount = async (userID, budgetID, newAmount) => {
 const updateBudgetCategory = async (userID, budgetID, newCategoryID) => {
     newCategoryID = parseInt(newCategoryID);
     const user = await User.findOne({ _id: userID });
-    const index = user ? user.budgetList.indexOf(budgetID) : -1;
+    if (!user || !user.budgetList.includes(budgetID)) return null;
+
     const category = await Category.findOne({ categoryID: newCategoryID });
-    if (user && category && index >= 0) {
-        const budget = await Budget.findOne({ _id: budgetID });
-        budget.set('categoryID', newCategoryID);
-        await budget.save();
-        return budget;
-    }
-    return null;
+    if (!category) return null;
+
+    const budget = await Budget.findOne({ _id: budgetID });
+    budget.categoryID = newCategoryID;
+    await budget.save();
+    return budget;
+};
+/**
+ * function to get the total spent amount for a budget.
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} budgetID - The unique _id of the budget. 
+ * @returns {Double} The total spent amount.
+ */
+const getSpentAmount = async (userID, budgetID) => {
+    const user = await User.findOne({ _id: userID });
+    if (!user || !user.budgetList.includes(budgetID)) return 0;
+
+    const budget = await Budget.findOne({ _id: budgetID });
+    if (!budget) return 0;
+
+    const transactions = await Transaction.find({ userID, categoryID: budget.categoryID, type: 0 });
+
+    let spentAmount = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+    budget.spentAmount = spentAmount;
+    await budget.save();
+    return spentAmount;
 };
 
-module.exports = { addBudget, getBudget, removeBudget, updateBudgetName,
-    updateBudgetAmount, updateBudgetCategory
+module.exports = {
+    addBudget,
+    getBudget,
+    removeBudget,
+    updateBudgetName,
+    updateBudgetAmount,
+    updateBudgetCategory,
+    getSpentAmount
 };

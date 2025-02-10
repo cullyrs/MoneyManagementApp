@@ -1,6 +1,6 @@
 /**
  * Name : Arewa (Morountudun) Ojelade
- * Contributors : Steven Mounie, and Cully Stearns
+ * Contributors : Steven Mounie, and Cully Stearns, Naeem 
  * Date : 1/31/2025
  * File Name: Budget.js
  * Course : CMSC 495 Capstone in Computer Science
@@ -11,12 +11,12 @@
  */
 
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema, SchemaTypes } = mongoose;
 require('mongoose-double')(mongoose);
 const mongooseInt32 = require('mongoose-int32');
 mongooseInt32.loadType(mongoose);
 
-const { ObjectId, Double, Int32 } = Schema.Types;
+const { ObjectId, Double, Int32 } = SchemaTypes;
 
 const BudgetSchema = new Schema({
   userID: { type: ObjectId, ref: 'User', required: true },
@@ -24,8 +24,9 @@ const BudgetSchema = new Schema({
   amount: { type: Double, required: true },
   duration: {
     type: Date,
-    default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000) 
+    default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000) // Default month duration
   },
+  spentAmount: { type: Double, default: 0 }, // Added from db branch
   categoryID: { type: Int32, default: 0 },
   version: { type: Int32, default: 1 }
 }, { collection: 'Budget', timestamps: true });
