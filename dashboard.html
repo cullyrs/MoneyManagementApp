@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!--
     Name : Naeem
     Date : 1/31/2025
@@ -10,6 +11,10 @@
 -->
 
 <!DOCTYPE html>
+=======
+<!DOCTYPE html>
+<!--This will serve as the main  page for the website if user is logged in -->
+>>>>>>> front-end-development
 <html lang="en">
 
     <head>
@@ -55,6 +60,7 @@
             </nav>
         </header>
 
+<<<<<<< HEAD
         <main class="dashboard">
             <div class="budget-goals">
                 <div id="budget-display" class="clickable">
@@ -72,6 +78,62 @@
                 <!-- button directly opens the month selector -->
                 <input type="month" id="month-selector" name="Select Month" aria-label="Select Month">
                 <button id="next-month" name="Next Month">&gt;</button>
+=======
+            </ul>
+        </nav>
+    </header>
+
+
+<main class="dashboard">
+    <div class="budget-goals">
+        <div id="budget-display" class="clickable">
+            Budget - $0/9,999
+        </div>
+        <div id="goal-display" class="clickable">
+            Goal - $0/9,999
+        </div>
+    </div>
+
+
+        <div class="month-navigation">
+            <button id="prev-month" name="Previous Month">&lt;</button>
+
+            <!-- button directly opens the month selector -->
+            <input type="month" id="month-selector" name="Select Month" aria-label="Select Month">
+
+            <button id="next-month" name="Next Month">&gt;</button>
+        </div>
+
+        <!-- script fills table -->
+
+        <div class="finance-container">
+            <div id="net-balance" class="total-text">
+                <span>Net Balance:</span> <span id="Income">$0.00</span> <!-- income - expenses replace with db income -->
+                <button id="add-expense-button" aria-label="Add Expense">+</button>
+            </div>
+
+            <div class="table">
+                <table>
+                    <thead>
+                        <tr>
+                            <!-- headers -->
+                            <th data-key="category">Category</th>
+                            <th data-key="description">Description</th>
+                            <th data-key="date">Date</th>
+                            <th data-key="amount">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expense-table-body">
+                        <!-- rows will be dynamically populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- replace with db total balance -->
+            <div id="total-balance" class="total-text">
+                <span>Total Balance:</span> <span id="TotalBalance">$0.00</span>
+>>>>>>> front-end-development
             </div>
 
             <!-- script fills table -->
@@ -81,6 +143,7 @@
                     <button id="add-expense-button" aria-label="Add Expense">+</button>
                 </div>
 
+<<<<<<< HEAD
                 <div class="table">
                     <table>
                         <thead>
@@ -113,6 +176,15 @@
                     <div class="toggle-buttons">
                         <button id="income-button" class="toggle-button">Income</button>
                         <button id="expense-button" class="toggle-button">Expense</button>
+=======
+                <!-- replace form action? -->
+                <form class="add-expense-form" action="/addExpense" method="post" name="add-expense-title">
+                    <label for="category">Category:</label>
+                    <select id="category" name="category"></select>
+                    <div id="custom-category-container">
+                        <label for="custom-category">Enter Custom Category:</label>
+                        <input type="text" id="custom-category" name="custom-category" placeholder="Category">
+>>>>>>> front-end-development
                     </div>
 
                     <!-- replace form action? -->

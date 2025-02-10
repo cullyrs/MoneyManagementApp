@@ -24,6 +24,7 @@
 
 }
 
+
 .margin-centered() {
     margin: 0 auto;
     box-shadow: @shadow;
@@ -57,6 +58,7 @@ header {
         left: 10%;
     }
 
+
     a {
         color: @header-text-color;
         text-decoration: none;
@@ -67,11 +69,13 @@ header {
     }
 }
 
+
 // Navigation Styles
 // Variables
 @dropdown-bg: white;
 @dropdown-hover-bg: rgba(0, 123, 255, 0.1);
 @dropdown-text-color: @text-color;
+
 
 .main-nav {
     ul {
@@ -87,6 +91,7 @@ header {
             font-size: 18px;
             font-weight: bold;
             transition: color 0.3s;
+
 
             a {
                 &:hover {
@@ -110,14 +115,17 @@ header {
             z-index: 1000; // Ensure dropdown is on top
             outline: 2px solid black;
 
+
             ul {
                 list-style: none;
                 margin: 0;
                 padding: 0;
 
+
                 li {
                     margin: 0; // Remove extra space
                     padding: 0; // Ensure no padding around li
+
 
                     a {
                         display: inline-block; // Use inline-block to ensure vertical alignment and correct hover highlight effect
@@ -128,6 +136,7 @@ header {
                         color: @dropdown-text-color;
                         background-color: transparent; // Default background color
 
+
                         &:hover {
                             background-color: @dropdown-hover-bg; // Highlight full block
                             color: darken(@primary-color, 20%); // Keep text color consistent
@@ -136,6 +145,7 @@ header {
                 }
             }
         }
+
 
         &:hover .settings-dropdown {
             display: block; // Show dropdown on hover
@@ -154,6 +164,7 @@ header {
     width: 80%;
 
     .goal-budget() {
+    .goal-budget() {
         flex: 1;
         text-align: center;
         padding: 15px;
@@ -166,7 +177,14 @@ header {
         &:hover {
             opacity: 0.8;
         }
+        cursor: pointer; // ✅ Makes the element behave like a button
+        transition: background-color 0.3s ease;
+        
+        &:hover {
+            opacity: 0.8;
+        }
     }
+
 
     #budget-display {
         .goal-budget();
@@ -178,8 +196,10 @@ header {
         .goal-budget();
         background-color: @info-bg;
         color: @info-text;
+        color: @info-text;
     }
 }
+
 
 
 // Navigation buttons
@@ -503,10 +523,14 @@ header {
         // Remove border radius for joined effect in the center
         &:first-child {
             // First button
+        &:first-child {
+            // First button
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
         }
 
+        &:last-child {
+            // Last button
         &:last-child {
             // Last button
             border-top-left-radius: 0;
@@ -549,6 +573,8 @@ header {
         border-radius: 15px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
+        h1,
+        h2 {
         h1,
         h2 {
             text-align: center;
@@ -696,6 +722,8 @@ header {
 
     h1,
     h2 {
+    h1,
+    h2 {
         text-align: center;
         color: @primary-color; // Primary color for headings
         margin-bottom: 20px;
@@ -747,6 +775,7 @@ header {
     }
 }
 
+
 // manage categories
 .manage-categories {
     max-width: 800px;
@@ -756,6 +785,8 @@ header {
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
 
+    h1,
+    h2 {
     h1,
     h2 {
         text-align: center;
@@ -863,9 +894,23 @@ header {
 .login {
     max-width: 450px;
     margin: 80px auto;
+    max-width: 450px;
+    margin: 80px auto;
     padding: 30px;
     background-color: @secondary-color;
+    background-color: @secondary-color;
     border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+    .login-container {
+        width: 100%;
+        max-width: 400px;
+        margin: auto;
+        text-align: center;
+    }
+
+    .tab-buttons {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 
@@ -967,7 +1012,102 @@ header {
                 border-radius: 5px;
                 font-size: 14px;
                 background-color: #f9f9f9;
+        width: 100%;
+        border-radius: 10px; // Rounds the outer edges
 
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 0; // Ensures only outer edges are rounded
+
+            &:first-child {
+                border-top-left-radius: 5px;
+                border-bottom-left-radius: 5px;
+            }
+
+            &:last-child {
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+
+            &.active {
+                background-color: @primary-color;
+                color: white;
+            }
+
+            &:hover {
+                background-color: darken(@primary-color, 10%);
+                color: white;
+            }
+
+            // Sign-Up Tab Green
+            &#signup-tab {
+                &.active {
+                    background-color: #28a745;
+                    color: white;
+                }
+
+                &:hover {
+                    background-color: darken(#28a745, 10%);
+                    color: white;
+                }
+            }
+        }
+    }
+
+    // Sign-Up Button Green
+    button#signup {
+        background-color: #28a745;
+        color: white;
+
+        &:hover {
+            background-color: darken(#28a745, 10%);
+            transform: scale(1.05);
+        }
+
+        &:active {
+            transform: scale(1);
+        }
+    }
+
+    .tab-content {
+        display: none;
+        width: 100%;
+
+        &.active {
+            display: block;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+
+            input,
+            button {
+                width: 90%; // Match width of input and buttons
+                max-width: 320px; // Keep uniform width
+            }
+
+            input {
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+                background-color: #f9f9f9;
+
+                &:focus {
+                    border-color: @primary-color;
+                    outline: none;
+                    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+                }
+            }
                 &:focus {
                     border-color: @primary-color;
                     outline: none;
@@ -985,11 +1125,33 @@ header {
                 transition: background-color 0.3s ease, transform 0.2s ease;
                 background-color: @primary-color;
                 color: white;
+            button {
+                padding: 12px;
+                font-size: 16px;
+                font-weight: bold;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease, transform 0.2s ease;
+                background-color: @primary-color;
+                color: white;
 
                 &:hover {
                     background-color: darken(@primary-color, 10%);
                     transform: scale(1.05);
                 }
+                &:hover {
+                    background-color: darken(@primary-color, 10%);
+                    transform: scale(1.05);
+                }
+
+                &:active {
+                    transform: scale(1);
+                }
+            }
+        }
+    }
+}
 
                 &:active {
                     transform: scale(1);
@@ -1065,8 +1227,12 @@ header {
 
         0%,
         100% {
+
+        0%,
+        100% {
             transform: translateY(0);
         }
+
 
         50% {
             transform: translateY(-20px);
@@ -1119,4 +1285,6 @@ footer {
     padding: 10px 0;
     margin-top: 20px;
     width: 100%;
+    width: 100%;
 }
+

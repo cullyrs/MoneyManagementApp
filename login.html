@@ -40,7 +40,7 @@
                                 <li><a href="manage-categories.html">Manage Categories</a></li>
                             </ul>
                         </nav>
-                    <li><a href="logout.html">Log Out</a></li><!-- replace with logout function -->
+                    <li><a href="login.html">Log Out</a></li><!-- replace with logout function -->
                 </ul>
             </nav>
         </header>
@@ -51,7 +51,7 @@
                     <button id="login-tab" class="active" onclick="openTab('login')">Log In</button>
                     <button id="signup-tab" onclick="openTab('signup')">Sign Up</button>
                 </div>
-
+            
                 <div id="login-form" class="tab-content active">
                     <h1>Log In</h1>
                     <form>
@@ -60,7 +60,7 @@
                         <button type="button" id="login">Log In</button>
                     </form>
                 </div>
-
+            
                 <div id="signup-form" class="tab-content">
                     <h1>Sign Up</h1>
                     <form>
@@ -71,7 +71,7 @@
                     </form>
                 </div>
             </div>
-
+            
         </main>
 
         <footer>
@@ -84,9 +84,10 @@
                 document.getElementById("signup-form").classList.remove("active");
                 document.getElementById("login-tab").classList.remove("active");
                 document.getElementById("signup-tab").classList.remove("active");
+    
                 document.getElementById(tabName + "-form").classList.add("active");
                 document.getElementById(tabName + "-tab").classList.add("active");
-                        }
+            }
         </script>
     </body>
 
