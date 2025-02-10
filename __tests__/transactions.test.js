@@ -1,6 +1,7 @@
 /**
  * This test file is used to test the transactions collection in MongoDB.
  * It tests the ability to insert and retrieve transactions.
+ * currently does not test the transactions js:: TODO: add tests for transactions.js to follow schema
  */
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { username, password } = require("../api.json");
@@ -45,8 +46,8 @@ test("Should log an expense", async () => {
     userId: new ObjectId(),
     amount: 50.75,
     type: "expense",
-    category: new ObjectId(),
-    notes: "Dinner with friends"
+    category: "Food",
+    description: "Dinner with friends"
   };
 
   // Insert transaction
@@ -56,5 +57,5 @@ test("Should log an expense", async () => {
   // Retrieve transaction
   const savedTransaction = await transactions.findOne({ _id: result.insertedId });
   expect(savedTransaction).toBeDefined();
-  expect(savedTransaction.notes).toBe("Dinner with friends");
+  expect(savedTransaction.description).toBe("Dinner with friends");
 });
