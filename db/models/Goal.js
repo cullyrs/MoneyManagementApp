@@ -1,6 +1,5 @@
 /**
- * Name : Arewa (Morountudun) Ojelade
- * Contributors : Steven Mounie, and Cully Stearns
+ * Name : Cully Stearns
  * Date : 1/31/2025
  * File Name: Goal.js
  * Course : CMSC 495 Capstone in Computer Science
