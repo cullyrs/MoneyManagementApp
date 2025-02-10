@@ -5,7 +5,27 @@
   "scripts": {
     "start": "node main.js",
     "dev": "nodemon main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:log": "jest --json --outputFile=test-results.json",
+    "test:xml": "jest --reporters=default --reporters=jest-junit",
+    "test:html": "jest --reporters=default --reporters=jest-html-reporter"
+  },
+  "jest": {
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "outputDirectory": "./test-results"
+        }
+      ],
+      [
+        "jest-html-reporter",
+        {
+          "outputPath": "./test-results/test-report.html"
+        }
+      ]
+    ]
   },
   "repository": {
     "type": "git",
@@ -15,7 +35,11 @@
   "author": "Naeem Lovitt, [add names here]",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cullyrs/MoneyManagementApp/issues"
+    "url": "https://github.com/cullyrs/MoneyManagementApp/issues",
+    "jest": "^29.7.0",
+    "jest-html-reporter": "^3.10.2",
+    "jest-junit": "^16.0.0",
+    "jsdom": "^26.0.0"
   },
   "homepage": "https://github.com/cullyrs/MoneyManagementApp#readme",
   "description": "Money Management Web Application",

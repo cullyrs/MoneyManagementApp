@@ -49,5 +49,7 @@ const userSchema = new Schema({
   version: { type: Int32, default: 1 }            
 }, { collection: 'User', timestamps: true });
 
+const User = mongoose.model('User', userSchema);
+
 module.exports = mongoose.model('User', userSchema);
 
