@@ -151,13 +151,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const result = await window.electronAPI.invoke("getDashboardData", userId);
         if (result.success) {
             const {recentBudget, recentGoal} = result;
-            const budgetCurrent = recentBudget ? 10 : 0;
+            const budgetCurrent = recentBudget ? 50 : 0;
             const budgetTarget = recentBudget ? recentBudget._doc.amount.value : "9,999";
             const goalCurrent = recentGoal ? recentGoal._doc.savedAmount.value : 0;
             const goalTarget = recentGoal ? recentGoal._doc.targetAmount.value : "9,999";
-            const test = {budgetCurrent, budgetTarget, goalCurrent, goalTarget}
-            console.log("check updated:", test)
-            console.log("test 2", recentBudget._doc.amount.value)
 
             document.getElementById("budget-display").innerHTML =
                     `<progress class="prog-budget" max="100" value="${(50/budgetTarget)*100}" data-label="Budget - $${budgetCurrent.toFixed(2)}/${budgetTarget.toFixed(2)}"></progress>`;
@@ -217,7 +214,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const descriptionDisplay =
                 transactions.description && transactions.description.trim() !== ""
                 ? transactions.description
-                : "";
+                : categoryDisplay;
 
         let displayDate = transactions.date || "N/A";
 
@@ -229,7 +226,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     <td>${categoryDisplay}</td>
     <td>${descriptionDisplay}</td>
     <td>${displayDate}</td>
-    <td>$${displayAmount}</td>
+    <td>${transactions.type == 1?"":"-"}$${displayAmount}</td>
   `;
 
         return row;

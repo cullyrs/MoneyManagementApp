@@ -459,5 +459,3 @@ ipcMain.handle('logout', async (event) => {
 module.exports = function registerIPCHandlers() {
     console.log("IPC Handlers registered.");
 };
-
-
