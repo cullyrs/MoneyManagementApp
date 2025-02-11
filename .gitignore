@@ -4,3 +4,6 @@ nbproject/
 *.log
 api.json
 list.js
+__tests__
+tests
+test-results
