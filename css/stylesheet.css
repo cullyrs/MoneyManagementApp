@@ -42,6 +42,9 @@ progress.prog-goal::-webkit-progress-value{
 progress.prog-goal::-moz-progress-bar{
   background-color: #0c5460;
 }
+money {
+  text-align: right;
+}
 
 body {
   font-family: Arial, sans-serif;

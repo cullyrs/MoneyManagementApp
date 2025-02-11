@@ -11,6 +11,7 @@
  * and handles UI interactions for switching between income and expense 
  * categories, as well as adding new transactions.
  */
+const USD = new Intl.NumberFormat('en-US',{style:'currency', currency:'USD'});
 
 document.addEventListener("DOMContentLoaded", async () => {
     //Check user login
@@ -157,11 +158,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             const goalTarget = recentGoal ? recentGoal._doc.targetAmount.value : 9999.00;
 
             document.getElementById("budget-display").innerHTML =
-                    `<progress class="prog-budget" max="100" value="${(50/budgetTarget)*100}" data-label="Budget - $${budgetCurrent}/${budgetTarget}"></progress>`;
+                    `<progress class="prog-budget" max="100" value="${(50/budgetTarget)*100}" data-label="Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetTarget)}"></progress>`;
             document.getElementById("goal-display").innerHTML =
-                    `<progress class="prog-goal" max="100" value="${(goalCurrent/goalTarget)*100}" data-label="Goal - $${goalCurrent}/${goalTarget}"></progress>`;
+                    `<progress class="prog-goal" max="100" value="${(goalCurrent/goalTarget)*100}" data-label="Goal - ${USD.format(goalCurrent)}/${USD.format(goalTarget)}"></progress>`;
             console.log("Dashboard updated:", result);
-            console.log("Number:", budgetTarget)
         } else {
             console.error("Failed to load dashboard data:", result.error);
         }
@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     <td>${categoryDisplay}</td>
     <td>${descriptionDisplay}</td>
     <td>${displayDate}</td>
-    <td>${transactions.type == 1?"":"-"}$${displayAmount}</td>
+    <td>${transactions.type == 1?"":"-"}${USD.format(displayAmount)}</td>
   `;
 
         return row;
@@ -310,10 +310,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 tableBody.innerHTML = "";
                 const sortedTransactions = sortData(filteredTransactions, "date", "desc");
+                let x = 0;
                 sortedTransactions.forEach((transaction) => {
                     const row = renderTransactionRow(transaction);
                     tableBody.appendChild(row);
+                    if(transaction.type == 1) {
+                        x+=transaction.amount;
+                    } else {
+                        x-=transaction.amount;
+                    }
                 });
+                document.getElementById("Income").innerHTML =
+                `${new Intl.NumberFormat('en-US',{style:'currency', currency:'USD'}).format(x)}`;
             } else {
                 console.error("Failed to load transactions:", result.error);
             }
