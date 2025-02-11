@@ -1185,6 +1185,7 @@ header img {
   cursor: pointer;
   transition: background-color 0.3s ease;
   border-radius: 0;
+}
 .login .login-container {
   width: 100%;
   max-width: 400px;
@@ -1221,6 +1222,7 @@ header img {
 .login .tab-buttons button:hover {
   background-color: #0062cc;
   color: white;
+}
 .login .tab-buttons button:first-child {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
@@ -1280,6 +1282,7 @@ header img {
   border-radius: 5px;
   font-size: 14px;
   background-color: #f9f9f9;
+}
 .login .tab-buttons button#signup-tab.active {
   background-color: #28a745;
   color: white;
@@ -1328,6 +1331,7 @@ header img {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
 .login .tab-content form input:focus {
   border-color: #007bff;
   outline: none;
@@ -1343,6 +1347,7 @@ header img {
   transition: background-color 0.3s ease, transform 0.2s ease;
   background-color: #007bff;
   color: white;
+}
 .login .tab-content form button {
   padding: 12px;
   font-size: 16px;
@@ -1357,12 +1362,14 @@ header img {
 .login .tab-content form button:hover {
   background-color: #0062cc;
   transform: scale(1.05);
+}
 .login .tab-content form button:hover {
   background-color: #0062cc;
   transform: scale(1.05);
 }
 .login .tab-content form button:active {
   transform: scale(1);
+}
 .login .tab-content form button:active {
   transform: scale(1);
 }
