@@ -172,6 +172,29 @@ const updateBudgetCategory = async (userID, budgetID, newCategoryID) => {
     return null;
 };
 
+/**
+ * 
+ * @param {String} userID 
+ * @param {String} budgetID 
+ */
+const getSpentAmount = async(userID, budgetID) => {
+    const user = await User.findOne({ _id: userID });
+    const budget = Budget.findOne({ _id: budgetID });
+    const Transactions = await Transaction.where('userID').equals(userID);
+    var spentAmount = 0;
+    if (user && budget && transaction[0]){
+        Transactions.forEach((transaction) => {
+            if(transaction.categoryID == budget.categoryID && transaction.type == 0){
+                spentAmount += transaction.amount;
+            }
+        });
+        budget.set('spentAmount', spentAmount);
+        budget.save();
+        return spentAmount;
+    }
+    return spentAmount;
+}
+
 module.exports = { addBudget, getBudget, removeBudget, updateBudgetName,
     updateBudgetAmount, updateBudgetCategory
 };

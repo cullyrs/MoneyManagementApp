@@ -25,6 +25,7 @@ const BudgetSchema = new Schema({
     type: Date,
     default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000) 
   },
+  spentAmount: {type: Double, default: 0},
   categoryID: { type: Int32, default: 0 },
   version: { type: Int32, default: 1 }
 }, { collection: 'Budget', timestamps: true });

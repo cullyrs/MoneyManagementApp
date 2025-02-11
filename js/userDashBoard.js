@@ -150,15 +150,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function refreshDashboard() {
         console.log("Refreshing dashboard...");
         const result = await window.electronAPI.invoke("getDashboardData", userId);
+        console.log("salt:", result.recentBudget._id);
         if (result.success) {
             const {recentBudget, recentGoal} = result;
-            const budgetCurrent = recentBudget ? 50 : 0.00;
+            const budgetCurrent = recentBudget ? recentBudget._doc.spentAmount.value : 0.00;
             const budgetTarget = recentBudget ? recentBudget._doc.amount.value : 9999.00;
             const goalCurrent = recentGoal ? recentGoal._doc.savedAmount.value : 0.00;
             const goalTarget = recentGoal ? recentGoal._doc.targetAmount.value : 9999.00;
 
             document.getElementById("budget-display").innerHTML =
-                    `<progress class="prog-budget" max="100" value="${(50/budgetTarget)*100}" data-label="Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetTarget)}"></progress>`;
+                    `<progress class="prog-budget" max="100" value="${(budgetCurrent/budgetTarget)*100}" data-label="Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetTarget)}"></progress>`;
             document.getElementById("goal-display").innerHTML =
                     `<progress class="prog-goal" max="100" value="${(goalCurrent/goalTarget)*100}" data-label="Goal - ${USD.format(goalCurrent)}/${USD.format(goalTarget)}"></progress>`;
             console.log("Dashboard updated:", result);
