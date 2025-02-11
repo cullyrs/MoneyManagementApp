@@ -41,9 +41,9 @@ async function test() {
     const spentAmount = await getSpentAmount(userID, newBudget._id);
     console.log("Total Spent:", spentAmount);
 
-    // console.log("\n Removing budget...");
-    // const removedBudget = await removeBudget(userID, newBudget._id);
-    // console.log(" Removed Budget:", removedBudget);
+    console.log("\n Removing budget...");
+    const removedBudget = await removeBudget(userID, newBudget._id);
+    console.log(" Removed Budget:", removedBudget);
 
   } catch (error) {
     console.error("Error:", error);
@@ -53,3 +53,5 @@ async function test() {
 }
 
 test();
+
+// this is the test file for the budget functions: addBudget, getBudget, removeBudget, updateBudgetName, updateBudgetAmount, updateBudgetCategory, getSpentAmount

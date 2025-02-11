@@ -35,42 +35,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     const addExpenseButton = document.getElementById("add-expense-button");
     const addExpenseContainer = document.getElementById("add-expense-container");
     const closeExpenseButton = document.getElementById("close-add-expense");
+    const tableHeaders = document.querySelectorAll("thead th");
 
     let currentType = 0; // 0 = Expense, 1 = Income
     let incomeCategories = [];
     let expenseCategories = [];
 
-   /** Fetch Categories from DB */
-async function fetchCategories() {
-    try {
-        const response = await fetch("/api/categories", {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+    /** Fetch Categories from DB */
+    async function fetchCategories() {
+        try {
+            const response = await fetch("/api/categories", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-        const categories = await response.json();
+            const categories = await response.json();
 
-        // **Store category names & ObjectId for later**
-        incomeCategories = categories
-            .filter(cat => cat.type === "income")
-            .map(cat => ({ id: cat._id, name: cat.name })); // Store ObjectId & Name
+            // **Store category names & ObjectId for later**
+            incomeCategories = categories
+                .filter(cat => cat.type === "income")
+                .map(cat => ({ id: cat._id, name: cat.name })); // Store ObjectId & Name
 
-        expenseCategories = categories
-            .filter(cat => cat.type === "expense")
-            .map(cat => ({ id: cat._id, name: cat.name }));
+            expenseCategories = categories
+                .filter(cat => cat.type === "expense")
+                .map(cat => ({ id: cat._id, name: cat.name }));
 
-        // Populate initial categories (Expense is default)
-        populateCategories(expenseCategories);
-    } catch (error) {
-        console.error("Error fetching categories:", error);
+            // Populate initial categories (Expense is default)
+            populateCategories(expenseCategories);
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
     }
-}
 
- /** Populate Category Dropdown */
-function populateCategories(categories) {
-    categorySelect.innerHTML = categories
-        .map(cat => `<option value="${cat.id}">${cat.name}</option>`) // Use ObjectId as value
-        .join("");
-}
+    /** Populate Category Dropdown */
+    function populateCategories(categories) {
+        categorySelect.innerHTML = categories
+            .map(cat => `<option value="${cat.id}">${cat.name}</option>`) // Use ObjectId as value
+            .join("");
+    }
 
     /** Toggle Between Income & Expense */
     function activateButton(activeButton, inactiveButton, categories, newType) {
@@ -137,111 +138,179 @@ function populateCategories(categories) {
     /** Refresh Transactions Table */
     async function refreshTransactionTable() {
         const tableBody = document.getElementById("expense-table-body");
-    
+
         try {
             const response = await fetch(`/api/transactions/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-    
-            const { transactions } = await response.json(); //get transactions array
-    
-            console.log("Transactions Received:", transactions); //Debugging
-    
+
+            const data = await response.json();
+            transactions = data.transactions;
+
             if (!Array.isArray(transactions)) {
                 console.error("Transactions data is not an array:", transactions);
                 return;
             }
-    
-            tableBody.innerHTML = transactions.map(transaction => `
-                <tr>
-                    <td>${transaction.category?.name || "Uncategorized"}</td>  <!-- somehow fixed category Name -->
-                    <td>${transaction.description || ""}</td>
-                    <td>${new Date(transaction.date).toLocaleDateString()}</td>
-                    <td>$${transaction.amount.toFixed(2)}</td>
-                </tr>
-            `).join("");
-    
+            // Default sort by date descending
+            transactions = sortData(transactions, "date", "desc");
+            // Update the header for the default sorting
+            const dateHeader = document.querySelector('thead th[data-key="date"]');
+            if (dateHeader) {
+                dateHeader.setAttribute("data-order", "desc");
+            }
+
+            renderTableRows(transactions);
         } catch (error) {
             console.error("Error fetching transactions:", error);
         }
     }
+
+    // needed to get correct date format. Was getting -1 day
+    function formatDate(dateString) {
+        if (!dateString) return "Invalid Date"; // potential undefined values handling
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return "Invalid Date"; // Check for invalid date
     
-/** Handle Adding a Transaction */
-async function handleAddTransaction(event) {
-    event.preventDefault();
-
-    const userID = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
-
-    const dateInput = document.getElementById("date").value;
-    const amount = parseFloat(document.getElementById("amount").value);
-    const categoryId = document.getElementById("category").value; //  stores ObjectId
-    const description = document.getElementById("description").value.trim();
-    const customCategoryInput = document.getElementById("custom-category");
-
-    const customCategory = (categoryId === "custom" && customCategoryInput) ? customCategoryInput.value.trim() : "";
-
-    // get transaction type Expense or Income
-    const type = (document.getElementById("income-button").classList.contains("active")) ? "income" : "expense";
-
-    if (isNaN(amount) || amount <= 0) {
-        alert("Enter a valid amount.");
-        return;
+        return new Intl.DateTimeFormat("en-US", { timeZone: "UTC" }).format(date);
     }
-    if (!dateInput) {
-        alert("Please enter a date.");
-        return;
-    }
-    if (!categoryId || (categoryId === "custom" && !customCategory)) {
-        alert("Please select or enter a category.");
-        return;
+    
+    /** Render Table Rows */
+    function renderTableRows(data) {
+        const tableBody = document.getElementById("expense-table-body");
+        tableBody.innerHTML = data.map(transaction => `
+            <tr>
+                <td>${transaction.category?.name || "Uncategorized"}</td>
+                <td>${transaction.description || ""}</td>
+                <td>${formatDate(transaction.date)}</td>
+                <td>$${transaction.amount.toFixed(2)}</td>
+            </tr>
+        `).join("");
     }
 
-    // Prepare transaction data
-    const transactionData = {
-        userID,
-        amount,
-        type,
-        date: dateInput,
-        category: categoryId, // ObjectId from DB
-        description,
-        version: 1,
+    /** Sort Data */
+    const sortData = (data, key, order) => {
+        return data.sort((a, b) => {
+            let valA = a[key];
+            let valB = b[key];
+
+            // Handle category name sorting
+            if (key === "category" && valA && valB) {
+                valA = valA.name.toLowerCase(); // Convert to lowercase for case-insensitive sorting
+                valB = valB.name.toLowerCase();
+            }
+
+            // Handle date sorting
+            if (key === "date") {
+                valA = new Date(valA);
+                valB = new Date(valB);
+            }
+
+            // Handle description sorting (case-insensitive)
+            if (key === "description" && valA && valB) {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+            }
+
+            // Handle numeric sorting for amount
+            if (key === "amount") {
+                valA = parseFloat(valA);
+                valB = parseFloat(valB);
+            }
+
+            // Sort ascending or descending
+            if (valA < valB) return order === "asc" ? -1 : 1;
+            if (valA > valB) return order === "asc" ? 1 : -1;
+            return 0;
+        });
     };
 
-    // Log data to debug
-    console.log("Transaction Data Being Sent:", JSON.stringify(transactionData, null, 2));
 
-    try {
-        // **Send the transaction request**
-        const response = await fetch("/api/transactions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(transactionData),
+    /** Handle Header Clicks for Sorting */
+    tableHeaders.forEach((header) => {
+        header.addEventListener("click", () => {
+            const key = header.getAttribute("data-key");
+            const currentOrder = header.getAttribute("data-order") || "asc";
+            const newOrder = currentOrder === "asc" ? "desc" : "asc";
+
+            tableHeaders.forEach((h) => h.removeAttribute("data-order"));
+            header.setAttribute("data-order", newOrder);
+
+            const sortedData = sortData(transactions, key, newOrder);
+            renderTableRows(sortedData);
         });
+    });
+    /** Handle Adding a Transaction */
+    async function handleAddTransaction(event) {
+        event.preventDefault();
 
-        // Check response status
-        console.log("Server Response Status:", response.status);
+        const userID = localStorage.getItem("userId");
+        const token = localStorage.getItem("token");
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error("Server Response Body:", errorText);
-            throw new Error(`Failed to add transaction. Server Response: ${errorText}`);
+        const dateInput = document.getElementById("date").value;
+        const amount = parseFloat(document.getElementById("amount").value);
+        const categoryId = document.getElementById("category").value; //  stores ObjectId
+        const description = document.getElementById("description").value.trim();
+        const customCategoryInput = document.getElementById("custom-category");
+
+        const customCategory = (categoryId === "custom" && customCategoryInput) ? customCategoryInput.value.trim() : "";
+
+        // get transaction type Expense or Income
+        const type = (document.getElementById("income-button").classList.contains("active")) ? "income" : "expense";
+
+        if (isNaN(amount) || amount <= 0) {
+            alert("Enter a valid amount.");
+            return;
+        }
+        if (!dateInput) {
+            alert("Please enter a date.");
+            return;
+        }
+        if (!categoryId || (categoryId === "custom" && !customCategory)) {
+            alert("Please select or enter a category.");
+            return;
         }
 
-        alert("Transaction added successfully!");
-        document.querySelector(".add-expense-form").reset();
-        refreshTransactionTable();
-    } catch (error) {
-        console.error("Error adding transaction:", error);
+        // Prepare transaction data
+        const transactionData = {
+            userID,
+            amount,
+            type,
+            date: dateInput,
+            category: categoryId, // ObjectId from DB
+            description,
+            version: 1,
+        };
+
+        // Log data to debug
+        console.log("Transaction Data Being Sent:", JSON.stringify(transactionData, null, 2));
+
+        try {
+            // **Send the transaction request**
+            const response = await fetch("/api/transactions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(transactionData),
+            });
+
+            // Check response status
+            console.log("Server Response Status:", response.status);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Server Response Body:", errorText);
+                throw new Error(`Failed to add transaction. Server Response: ${errorText}`);
+            }
+
+            alert("Transaction added successfully!");
+            document.querySelector(".add-expense-form").reset();
+            refreshTransactionTable();
+        } catch (error) {
+            console.error("Error adding transaction:", error);
+        }
     }
-}
-
-
-
-
 
 
     document.querySelector(".add-expense-form").addEventListener("submit", handleAddTransaction);

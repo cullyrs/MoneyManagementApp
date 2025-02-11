@@ -54,13 +54,13 @@ const addTransaction = async (userID, amount, type, category, date, description 
     }
 
     //  date properly formatted. had an issue with this happening
-    const formattedDate = new Date(date);
+    const formattedDate = new Date(`${date}T00:00:00Z`);  // Force UTC conversion
     if (isNaN(formattedDate.getTime())) {
         console.error("Invalid date provided:", date);
         return null;
     }
 
-    console.log("Category found:", categoryData.name, "✔ Date Validated:", formattedDate);
+    console.log("Category found:", categoryData.name, "Date Validated:", formattedDate);
 
     // Create transaction
     const transaction = await Transactions.create({

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="6" failures="6" errors="0" time="3.055">
+  <testsuite name="User Dashboard" errors="0" failures="2" skipped="0" timestamp="2025-02-11T20:46:05" time="0.752" tests="2">
+    <testcase classname="User Dashboard should fetch categories and populate dropdown" name="User Dashboard should fetch categories and populate dropdown" time="0.02">
+      <failure>TypeError: userDashBoard.fetchCategories is not a function
+    at Object.fetchCategories (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\__tests__\userDashBoard.test.js:23:29)
+    at Promise.then.completed (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:444:34)
+    at Object.worker (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="User Dashboard should toggle between income and expense categories" name="User Dashboard should toggle between income and expense categories" time="0.003">
+      <failure>TypeError: userDashBoard.activateButton is not a function
+    at Object.activateButton (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\__tests__\userDashBoard.test.js:31:23)
+    at Promise.then.completed (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:444:34)
+    at Object.worker (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\testWorker.js:106:12)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="User Profile" errors="0" failures="2" skipped="0" timestamp="2025-02-11T20:46:05" time="0.99" tests="2">
+    <testcase classname="User Profile should fetch and display user profile information" name="User Profile should fetch and display user profile information" time="0.015">
+      <failure>TypeError: userProfile.loadUserProfile is not a function
+    at Object.loadUserProfile (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\__tests__\userProfile.test.js:18:27)
+    at Promise.then.completed (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:444:34)
+    at Object.worker (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="User Profile should log out user and clear session storage" name="User Profile should log out user and clear session storage" time="0.006">
+      <failure>Error: expect(received).toBeNull()
+
+Received: &quot;123&quot;
+    at Object.toBeNull (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\__tests__\userProfile.test.js:27:48)
+    at Promise.then.completed (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:444:34)
+    at Object.worker (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\testWorker.js:106:12)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="User Authentication" errors="0" failures="2" skipped="0" timestamp="2025-02-11T20:46:05" time="0.978" tests="2">
+    <testcase classname="User Authentication should show an alert if login fields are empty" name="User Authentication should show an alert if login fields are empty" time="0.019">
+      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+Expected: &quot;Please enter a valid username and password.&quot;
+
+Number of calls: 0
+    at Object.toHaveBeenCalledWith (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\__tests__\initializeUser.test.js:21:30)
+    at Promise.then.completed (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:444:34)
+    at Object.worker (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="User Authentication should store token and redirect on successful login" name="User Authentication should store token and redirect on successful login" time="0.006">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: &quot;testToken&quot;
+Received: &quot;token123&quot;
+    at Object.toBe (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\__tests__\initializeUser.test.js:35:47)
+    at Promise.then.completed (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\runTest.js:444:34)
+    at Object.worker (C:\Users\naeem\Documents\_CMSC 495 Project\MoneyManagementApp\node_modules\jest-runner\build\testWorker.js:106:12)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

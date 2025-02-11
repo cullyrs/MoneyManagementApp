@@ -21,7 +21,7 @@ const transactionSchema = new Schema(
   {
     userID: { type: ObjectId, ref: "User", required: true },
     amount: { type: Double, required: true },
-    date: { type: String, required: true },
+    date: { type: Date, required: true }, // Store as Date instead of String
     category: { type: ObjectId, ref: "Category", required: true }, 
     description: { type: String, trim: true },
     type: {

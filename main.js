@@ -5,7 +5,7 @@ const { connectToDB } = require("./db/dbconnect");
 // Import functions
 const budgetFunctions = require("./db/budgetFunctions");
 const userFunctions = require("./db/userFunctions");
-// const categoryFunctions = require("./db/categoryFunctions"); // not used
+const categoryFunctions = require("./db/categoryFunctions");
 const goalFunctions = require("./db/goalFunctions");
 const transactionsFunctions = require("./db/transactionsFunctions");
 
