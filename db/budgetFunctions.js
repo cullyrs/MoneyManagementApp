@@ -13,7 +13,7 @@
 const Category = require('./models/Category.js');
 const Budget = require('./models/Budget.js');
 const User = require('./models/User.js');
-const Transaction = require('./models/Transactions.js'); // Added from db branch
+const Transactions = require('./models/Transactions.js'); // Added from db branch
 
 /**
  * Function to add a budget to the Budget collection of the 
@@ -175,7 +175,7 @@ const getSpentAmount = async (userID, budgetID) => {
     const budget = await Budget.findOne({ _id: budgetID });
     if (!budget) return 0;
 
-    const transactions = await Transaction.find({ userID, categoryID: budget.categoryID, type: 0 });
+    const transactions = await Transactions.find({ userID, categoryID: budget.categoryID, type: 0 });
 
     let spentAmount = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
     budget.spentAmount = spentAmount;

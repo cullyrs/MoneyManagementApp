@@ -1,33 +1,22 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const mongoose = require('mongoose');
 const { username, password } = require('../api.json');
 
-const uri = `mongodb+srv://${username}:${password}@expensemanager1.3yfoo.mongodb.net/?retryWrites=true&w=majority&appName=ExpenseManager1`;
+// const uri = `mongodb+srv://${username}:${password}@expensemanager1.3yfoo.mongodb.net/?retryWrites=true&w=majority&appName=ExpenseManager1`;
 
-  async function testConnection() {
-    let client;
+// backup database connection string
 
+async function connectToDB() {
     try {
-      client = new MongoClient(uri, {
-        serverApi: {
-          version: ServerApiVersion.v1,
-          strict: true,
-          deprecationErrors: true
-        }
-      });
-
-      await client.connect();
-      console.log('Successfully connected to MongoDB');
-
-      // Verify the connection by pinging the database
-      await client.db('admin').command({ ping: 1 });
-      console.log('Pinged the deployment. Connection is successful!');
-
-      // Close connection after testing
-      await client.close();
-      console.log('Connection closed');
-    } catch (error) {
-      console.error('MongoDB Connection Failed:', error);
+        await mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('Connected to MongoDB via mongoose!');
+    } catch (err) {
+        console.error('Failed to connect to MongoDB via mongoose:', err);
+        throw err;
     }
-  }
+}
 
-testConnection();
+
+connectToDB();
