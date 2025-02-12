@@ -32,12 +32,13 @@ const addGoal = async(userID, name, targetAmount, savedAmount = 0,
                      savedToDate = new Date(Date.now() + 30 * 24 * 3600 * 1000), 
                      categoryID = 0) =>{    
     const user = await User.findOne({_id : userID});
-    categoryID = parseInt(categoryID);
+    categoryID = Number.isInteger(Number(categoryID)) ? parseInt(categoryID) : 0;
     targetAmount = parseFloat(targetAmount);
     savedAmount = parseFloat(savedAmount);
     
     const category_exist = await Category.findOne({categoryID : categoryID});
     if(!category_exist){
+        console.warn(`Category ID ${categoryID} does not exist, setting categoryID to 0.`);
         categoryID = 0;
     }
      if(user && name && targetAmount > 0 ){

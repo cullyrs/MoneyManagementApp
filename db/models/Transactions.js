@@ -14,6 +14,7 @@ const { Schema } = mongoose;
 require("mongoose-double")(mongoose);
 const mongooseInt32 = require("mongoose-int32");
 mongooseInt32.loadType(mongoose);
+const SchemaTypes = Schema.Types;
 
 const { ObjectId, Double, Int32 } = Schema.Types;
 

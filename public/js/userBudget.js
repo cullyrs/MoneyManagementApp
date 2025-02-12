@@ -1,4 +1,4 @@
-/** INCOMPLETE
+/*
  * Name : Cully Stearns
  * Date : 1/31/2025
  * File Name : userBudget.js
@@ -8,36 +8,20 @@
  * It retrieves the logged-in user's budget data from the dashboard via IPC,
  * displays the current budget, and handles the form submission for updating
  * the budget. Client-side validation ensures that only valid data is processed.
- * INCOMPLETE
  */
 
-
-/**
- * Function to load and update the user's budget in the Expense Tracker Accounts database.
- * This function executes when the DOM content is fully loaded. It performs the following tasks:
- * 1. Retrieves the logged-in user's ID from localStorage. If no user ID is found, the function alerts the user
- *    and redirects to the login page.
- * 2. Loads the current budget by invoking the "getDashboardData" IPC handler and displays it in the UI.
- * 3. Sets up an event listener for the budget update form submission. When the form is submitted:
- *      - It validates the new budget name and the new budget amount (ensuring that the amount is a non-negative number).
- *      - If the input is valid, it invokes the "addBudget" IPC handler with the provided details.
- *      - On successful budget update, it updates the displayed budget and redirects the user to the dashboard.
- * @returns {void}
- * Returns early if:
- *   1. No logged-in user is detected in localStorage.
- *   2. The new budget name is empty.
- *   3. The new budget amount is either not a number or is a negative value.
- */
-
-// HAVE NOT UPDATED YET
+//This works
 document.addEventListener("DOMContentLoaded", async () => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-        alert("You must be logged in to update your budget.");
+    const userId = sessionStorage.getItem("userId");
+    const token = sessionStorage.getItem("token");
+
+    if (!userId || !token) {
+        console.error("No logged-in user found. Redirecting to login page.");
         window.location.href = "login.html";
         return;
     }
-    console.log("Logged-in userId:", userId);
+    console.log("User logged in:", userId);
+
 
     const currentBudgetDiv = document.getElementById("current-budget");
     const budgetForm = document.getElementById("budget-form");
@@ -45,28 +29,71 @@ document.addEventListener("DOMContentLoaded", async () => {
     const budgetInput = document.getElementById("budget-input");
     const budgetCategorySelect = document.getElementById("budget-category");
 
-    async function loadCurrentBudget() {
+
+    async function refreshDashboard() {
         try {
-            const result = await window.electronAPI.invoke("getDashboardData", userId);
-            console.log("Dashboard data:", result);
-            if (result.success && result.recentBudget) {
-                const budget = result.recentBudget;
-                currentBudgetDiv.innerText = `Current Budget: $${budget.amount}`;
-            } else {
+
+            const budgetsData = sessionStorage.getItem("budgets");
+            const budgets = budgetsData ? JSON.parse(budgetsData) : [];
+            console.log("Parsed budgets:", budgets);
+            
+            const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
+            
+            if (!currentBudget) {
                 currentBudgetDiv.innerText = "Current Budget: $0";
+            } else {
+                const budgetCurrent = currentBudget.current || currentBudget.amount || 0;
+                const budgetTarget = currentBudget.target || currentBudget.totalAmount || 0;
+                const budgetPercent = budgetTarget > 0 ? (budgetCurrent / budgetTarget) * 100 : 0;
+                currentBudgetDiv.innerHTML = `
+                    <progress class="prog-budget" max="100" value="${budgetPercent}" 
+                        data-label="Budget - $${budgetCurrent}/${budgetTarget}"></progress>
+                `;
             }
-        } catch (err) {
-            console.error("Error loading current budget:", err);
-            currentBudgetDiv.innerText = "Current Budget: $0";
+        } catch (error) {
+            console.error("Error loading dashboard:", error);
         }
     }
-    await loadCurrentBudget();
+
+    async function fetchCategories() {
+        try {
+            const response = await fetch(`/api/categories`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+    
+            if (!response.ok) {
+                console.error("Failed to fetch categories:", response.statusText);
+                return;
+            }
+    
+            const categories = await response.json(); // Directly get the array
+    
+            if (!Array.isArray(categories) || categories.length === 0) {
+                console.error("No categories returned from API.");
+                return;
+            }
+    
+            populateCategories(categories);
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    }
+    
+
+    function populateCategories(categories) {
+        budgetCategorySelect.innerHTML = categories
+            .map(cat => `<option value="${cat.categoryID}">${cat.name}</option>`)
+            .join("");
+    }
+
+    await fetchCategories();
 
     budgetForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+
         const newBudgetName = budgetNameInput.value.trim();
         const newBudgetValue = parseFloat(budgetInput.value.trim());
-        const budgetCategory = budgetCategorySelect.value;
+        const budgetCategory = budgetCategorySelect.value;  // CategoryID from the dropdown
 
         if (!newBudgetName) {
             alert("Please enter a budget name.");
@@ -78,24 +105,38 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            const result = await window.electronAPI.invoke("addBudget", {
-                userId,
-                newBudgetName,
-                newBudgetValue,
-                budgetCategory
+            const response = await fetch(`/api/users/${userId}/budgets/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: newBudgetName,
+                    amount: newBudgetValue,
+                    categoryID: budgetCategory
+                })
             });
+
+            const result = await response.json();
             console.log("addBudget result:", result);
-            if (result.success && result.budget) {
+
+            if (response.ok && result.budget) {
                 alert("Budget updated successfully!");
-                currentBudgetDiv.innerText = `Current Budget: $${result.budget.amount}`;
+                if (result.budgets) {
+                    sessionStorage.setItem("budgets", JSON.stringify(result.budgets));
+                } else {
+                    let storedBudgets = JSON.parse(sessionStorage.getItem("budgets") || "[]");
+                    storedBudgets.push(result.budget);
+                    sessionStorage.setItem("budgets", JSON.stringify(storedBudgets));
+                }
+
                 window.location.href = "dashboard.html";
             } else {
-                alert("Failed to update budget: " + result.error);
+                alert("Failed to update budget: " + (result.error || "Unknown error"));
             }
         } catch (err) {
             console.error("Error updating budget:", err);
             alert("Error updating budget: " + err.message);
         }
     });
+
 });
 

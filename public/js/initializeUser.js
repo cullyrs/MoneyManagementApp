@@ -51,8 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const result = await response.json();
             if (result.success) {
-                localStorage.setItem("token", result.token);
-                localStorage.setItem("userId", result.userId);
+                sessionStorage.setItem("token", result.token);
+                sessionStorage.setItem("userId", result.userId);
                 alert("Login successful!");
                 window.location.href = "./dashboard.html";
             } else {

@@ -1,15 +1,15 @@
 const express = require("express");
 const path = require("path");
-const { connectToDB } = require("./db/dbconnect");
 
 // Import functions
+const { connectToDB } = require("./db/dbconnect");
 const budgetFunctions = require("./db/budgetFunctions");
 const userFunctions = require("./db/userFunctions");
 const categoryFunctions = require("./db/categoryFunctions");
 const goalFunctions = require("./db/goalFunctions");
 const transactionsFunctions = require("./db/transactionsFunctions");
 
-// routes
+// Import routes
 const authRoutes = require("./routes/authenRoutes"); 
 const userRoutes = require("./routes/userRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
@@ -37,21 +37,6 @@ app.use("/api/categories", categoryRoutes);
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
-
-// EXAMPLES
-// API Routes using controller functions update nonsense functions
-// app.get("/api/users", userFunctions.getUsers);
-// app.post("/api/users", userFunctions.createUser);
-
-// app.get("/api/budget", budgetFunctions.getBudget);
-// app.post("/api/budget", budgetFunctions.createBudget);
-
-// app.get("/api/goals", goalFunctions.getGoals);
-// app.post("/api/goals", goalFunctions.createGoal);
-
-// app.get("/api/transactions", transactionsFunctions.getTransactions);
-// app.post("/api/transactions", transactionsFunctions.createTransaction);
-
 
 // Start the server after connecting to the database
 const PORT = 8000;

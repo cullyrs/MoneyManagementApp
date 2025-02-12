@@ -1,40 +1,56 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const { loginUser, addUser } = require("../db/userFunctions");
+const { loginUser, addUser, findUser, getUser } = require("../db/userFunctions");
 require("dotenv").config();
 
 const router = express.Router();
+
 const { password } = require("../api.json");
 
 const SECRET_KEY = password || "defaultSecretKey"; // Secret from api.json
 
+
 if (!SECRET_KEY) {
     console.error("ERROR: SECRET_KEY is missing in api.json file");
-    process.exit(1); // End the server if no secret key is found
+    process.exit(1);
 }
 
-// Store blacklisted tokens
+// In-memory store for blacklisted tokens.
 const blacklistedTokens = new Set();
 
-//  Login Route: Authenticates user credentials
+// Use the login function to get the user data, goals, budgets, and transactions
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-        return res.status(400).json({ success: false, error: "All fields are required." });
+        return res
+            .status(400)
+            .json({ success: false, error: "All fields are required." });
     }
 
     try {
         const userData = await loginUser(username, password);
-
         if (!userData) {
-            return res.status(401).json({ success: false, error: "Invalid credentials." });
+            return res
+                .status(401)
+                .json({ success: false, error: "Invalid credentials." });
         }
 
-        const user = userData[0]; // Extract user object
+        const user = userData[0];      
+        const transactions = userData[1];  
+        const budgets = userData[2];        
+        const goals = userData[3];          
+
         const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: "1h" });
 
-        res.json({ success: true, token, userId: user._id });
+        res.json({ 
+            success: true, 
+            token, 
+            userId: user._id,
+            transactions,
+            budgets,
+            goals
+        });
     } catch (error) {
         console.error("Login Error:", error);
         res.status(500).json({ success: false, error: "Server error." });
@@ -46,20 +62,57 @@ router.post("/signup", async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-        return res.status(400).json({ success: false, error: "All fields are required." });
+        return res
+            .status(400)
+            .json({ success: false, error: "All fields are required." });
     }
 
     try {
         const newUser = await addUser(username, password, email);
 
         if (!newUser) {
-            return res.status(400).json({ success: false, error: "Invalid user data or duplicate username." });
+            return res.status(400).json({
+                success: false,
+                error: "Invalid user data or duplicate username."
+            });
         }
 
         res.json({ success: true, message: "User registered successfully." });
     } catch (error) {
         console.error("Signup Error:", error);
         res.status(500).json({ success: false, error: "Server error." });
+    }
+});
+
+
+
+router.get('/:userID', async (req, res) => {
+    const userID = req.params.userID;
+
+    try {
+        const user = await findUser(userID);
+        if (!user) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+        res.json({ success: true, user });
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
+
+
+router.get('/by-email/:email', async (req, res) => {
+    const email = req.params.email;
+    try {
+        const user = await getUser(email);
+        if (!user) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+        res.json({ success: true, user });
+    } catch (error) {
+        console.error('Error fetching user by email:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
     }
 });
 

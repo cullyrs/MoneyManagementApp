@@ -31,12 +31,13 @@ const Transactions = require('./models/Transactions.js'); // Added from db branc
  */
 const addBudget = async (userID, name, amount, categoryID = 0) => {
     amount = parseFloat(amount);
-    categoryID = parseInt(categoryID);
+    categoryID = Number.isInteger(Number(categoryID)) ? parseInt(categoryID) : 0;
 
     const user = await User.findOne({ _id: userID });
     const categoryExist = await Category.findOne({ categoryID: categoryID });
 
     if (!categoryExist) {
+        console.warn(`Category ID ${categoryID} does not exist, setting categoryID to 0.`);
         categoryID = 0;
     }
 

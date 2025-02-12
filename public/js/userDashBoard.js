@@ -14,8 +14,8 @@
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Check if user is logged in
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
+    const token = sessionStorage.getItem("token");
 
     if (!userId || !token) {
         console.error("No logged-in user found. Redirecting to login page.");
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // UI Elements
     const categorySelect = document.getElementById("category");
-    const customCategoryContainer = document.getElementById("custom-category-container");
+    // const customCategoryContainer = document.getElementById("custom-category-container"); // DEPRECATED
     const incomeButton = document.getElementById("income-button");
     const expenseButton = document.getElementById("expense-button");
     const budgetDisplay = document.getElementById("budget-display");
@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const closeExpenseButton = document.getElementById("close-add-expense");
     const tableHeaders = document.querySelectorAll("thead th");
 
-    let currentType = 0; // 0 = Expense, 1 = Income
     let incomeCategories = [];
     let expenseCategories = [];
 
@@ -74,20 +73,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /** Toggle Between Income & Expense */
-    function activateButton(activeButton, inactiveButton, categories, newType) {
+    function activateButton(activeButton, inactiveButton, categories) {
         activeButton.classList.add("active");
         inactiveButton.classList.remove("active");
         populateCategories(categories);
-        currentType = newType;
-        customCategoryContainer.style.display = "none";
     }
+
+
+
 
     incomeButton.addEventListener("click", () => activateButton(incomeButton, expenseButton, incomeCategories, 1));
     expenseButton.addEventListener("click", () => activateButton(expenseButton, incomeButton, expenseCategories, 0));
 
-    categorySelect.addEventListener("change", () => {
-        customCategoryContainer.style.display = categorySelect.value === "custom" ? "block" : "none";
-    });
+    // DEPRECATED: Custom Category Input
+    // categorySelect.addEventListener("change", () => {
+    //     customCategoryContainer.style.display = categorySelect.value === "custom" ? "block" : "none";
+    // });
 
     closeExpenseButton.addEventListener("click", () => {
         addExpenseContainer.classList.remove("active");
@@ -116,20 +117,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     /** Refresh Dashboard Data */
     async function refreshDashboard() {
         try {
-            const response = await fetch(`/api/users/${userId}/dashboard`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const { budget, goal } = await response.json();
+            const budgetsData = sessionStorage.getItem("budgets");
+            const goalsData = sessionStorage.getItem("goals");
 
-            budgetDisplay.innerHTML = `
-                <progress class="prog-budget" max="100" value="${(budget.current / budget.target) * 100}" 
-                    data-label="Budget - $${budget.current}/${budget.target}"></progress>
-            `;
+            console.log("budgetsData (raw):", budgetsData);
+            console.log("goalsData (raw):", goalsData);
 
-            goalDisplay.innerHTML = `
-                <progress class="prog-goal" max="100" value="${(goal.current / goal.target) * 100}" 
-                    data-label="Goal - $${goal.current}/${goal.target}"></progress>
-            `;
+            const budgets = budgetsData ? JSON.parse(budgetsData) : [];
+            const goals = goalsData ? JSON.parse(goalsData) : [];
+
+            console.log("Parsed budgets:", budgets);
+            console.log("Parsed goals:", goals);
+
+            const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
+            const currentGoal = goals.length ? goals[goals.length - 1] : null;
+
+            if (!currentBudget) {
+                budgetDisplay.innerText = "Current Budget: $0";
+            } else {
+                const budgetCurrent = currentBudget.current || currentBudget.amount || 0;
+                const budgetTarget = currentBudget.target || currentBudget.totalAmount || 0;
+                const budgetPercent = budgetTarget > 0 ? (budgetCurrent / budgetTarget) * 100 : 0;
+                budgetDisplay.innerHTML = `
+                    <progress class="prog-budget" max="100" value="${budgetPercent}" 
+                        data-label="Budget - $${budgetCurrent}/${budgetTarget}"></progress>
+                `;
+            }
+
+            if (!currentGoal) {
+                goalDisplay.innerText = "No goal set.";
+            } else {
+                const goalCurrent = currentGoal.current || currentGoal.savedAmount || 0;
+                const goalTarget = currentGoal.target || currentGoal.targetAmount || 0;
+                const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
+                goalDisplay.innerHTML = `
+                    <progress class="prog-goal" max="100" value="${goalPercent}" 
+                        data-label="Goal - $${goalCurrent}/${goalTarget}"></progress>
+                `;
+            }
         } catch (error) {
             console.error("Error loading dashboard:", error);
         }
@@ -170,10 +195,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!dateString) return "Invalid Date"; // potential undefined values handling
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return "Invalid Date"; // Check for invalid date
-    
+
         return new Intl.DateTimeFormat("en-US", { timeZone: "UTC" }).format(date);
     }
-    
+
     /** Render Table Rows */
     function renderTableRows(data) {
         const tableBody = document.getElementById("expense-table-body");
@@ -243,16 +268,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function handleAddTransaction(event) {
         event.preventDefault();
 
-        const userID = localStorage.getItem("userId");
-        const token = localStorage.getItem("token");
+        const userID = sessionStorage.getItem("userId");
+        const token = sessionStorage.getItem("token");
 
         const dateInput = document.getElementById("date").value;
         const amount = parseFloat(document.getElementById("amount").value);
         const categoryId = document.getElementById("category").value; //  stores ObjectId
         const description = document.getElementById("description").value.trim();
-        const customCategoryInput = document.getElementById("custom-category");
+        // const customCategoryInput = document.getElementById("custom-category");
 
-        const customCategory = (categoryId === "custom" && customCategoryInput) ? customCategoryInput.value.trim() : "";
+        // const customCategory = (categoryId === "custom" && customCategoryInput) ? customCategoryInput.value.trim() : "";
 
         // get transaction type Expense or Income
         const type = (document.getElementById("income-button").classList.contains("active")) ? "income" : "expense";
@@ -265,10 +290,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert("Please enter a date.");
             return;
         }
-        if (!categoryId || (categoryId === "custom" && !customCategory)) {
-            alert("Please select or enter a category.");
-            return;
-        }
+        // if (!categoryId || (categoryId === "custom" && !customCategory)) {
+        //     alert("Please select or enter a category.");
+        //     return;
+        // }
 
         // Prepare transaction data
         const transactionData = {
@@ -318,6 +343,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     /** Redirects */
     if (budgetDisplay) budgetDisplay.addEventListener("click", () => window.location.href = "budget.html");
     if (goalDisplay) goalDisplay.addEventListener("click", () => window.location.href = "goal.html");
+
+    // Ensure Expense is the default active selection
+    expenseButton.classList.add("active");
+    incomeButton.classList.remove("active");
 
     // Initialize Dashboard
     await fetchCategories();
