@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Retrieved userId:", userId);
 
     try {
-        // Fetch user information from the backend
+
         const response = await fetch(`/api/users/${userId}`, {
             method: "GET",
             headers: {
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         alert("Failed to load user profile. Please try again.");
     }
 
-    // Handle Logout Button Click
+
     const logoutButton = document.getElementById("logout");
     if (logoutButton) {
         logoutButton.addEventListener("click", async () => {

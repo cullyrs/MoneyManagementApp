@@ -1,22 +1,18 @@
 const express = require("express");
 const path = require("path");
-const { connectToDB } = require("./db/dbconnect");
 
-// Import functions
+const { connectToDB } = require("./db/dbconnect");
 const budgetFunctions = require("./db/budgetFunctions");
 const userFunctions = require("./db/userFunctions");
-// const categoryFunctions = require("./db/categoryFunctions"); // not used
 const goalFunctions = require("./db/goalFunctions");
 const transactionsFunctions = require("./db/transactionsFunctions");
-
-// routes
 const authRoutes = require("./routes/authenRoutes"); 
 const userRoutes = require("./routes/userRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 
-// Initialize Express app
+
 const app = express();
 
 // Body Parser Middleware (Needed for post and put requests)

@@ -175,7 +175,7 @@ const getSpentAmount = async (userID, budgetID) => {
     const budget = await Budget.findOne({ _id: budgetID });
     if (!budget) return 0;
 
-    const transactions = await Transaction.find({ userID, categoryID: budget.categoryID, type: 0 });
+    const transactions = await Transactions.find({ userID, categoryID: budget.categoryID, type: 0 });
 
     let spentAmount = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
     budget.spentAmount = spentAmount;

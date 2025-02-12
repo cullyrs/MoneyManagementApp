@@ -1,5 +1,5 @@
 /**
- * Name : Naeem
+ * Name : Naeem Lovitt
  * Date : 1/31/2025
  * File Name : dateScript.js
  * Course  : CMSC 495 Capstone in Computer Science

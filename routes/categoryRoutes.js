@@ -1,69 +1,74 @@
 const express = require("express");
-const Category = require("../db/models/Category");
+const { initializeCategories, getCategoryName } = require("../db/categoryFunctions");
 
 const router = express.Router();
 
-/**
- * Get all categories
- * @route GET /api/categories
- * @returns {Array} List of income and expense categories
- */
-router.get("/", async (req, res) => {
+
+router.get("/initializeCategories", async (req, res) => {
     try {
-        const categories = await Category.find({}, "name type").lean();
-        res.json(categories);
+        await initializeCategories();
+        res.json({ success: true, message: 'Categories have been initialized.' });
     } catch (error) {
-        console.error("Error fetching categories:", error);
-        res.status(500).json({ error: "Server error" });
+        console.error("Error initializing categories:", error);
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
-/**
- * Add a new category
- * @route POST /api/categories
- * @param {String} name - The name of the category
- * @param {String} type - "income" or "expense"
- */
-router.post("/", async (req, res) => {
-    const { name, type } = req.body;
-
-    if (!name || !type || (type !== "income" && type !== "expense")) {
-        return res.status(400).json({ error: "Invalid category data" });
-    }
-
+router.get("/categoryName", async (req, res) => {
     try {
-        // Check if category already exists
-        const existingCategory = await Category.findOne({ name });
-        if (existingCategory) {
-            return res.status(400).json({ error: "Category already exists" });
+        
+        const rawParam = req.query.categoryID;
+        if (!rawParam) {
+            return res.status(400).json({ success: false, message: "Missing categoryID query parameter." });
         }
-
-        const newCategory = await Category.create({ name, type, createdAt: new Date(), updatedAt: new Date() });
-        res.json({ success: true, category: newCategory });
-    } catch (error) {
-        console.error("Error adding category:", error);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-/**
- * Delete a category by name
- * @route DELETE /api/categories/:name
- */
-router.delete("/:name", async (req, res) => {
-    const categoryName = req.params.name;
-
-    try {
-        const deletedCategory = await Category.findOneAndDelete({ name: categoryName });
-        if (!deletedCategory) {
-            return res.status(404).json({ error: "Category not found" });
+        
+        const cleanParam = rawParam.split(":")[0];
+        const categoryID = parseInt(cleanParam, 10);
+        
+        if (isNaN(categoryID)) {
+            return res.status(400).json({ success: false, message: "Invalid categoryID provided." });
         }
-
-        res.json({ success: true, message: `Category '${categoryName}' deleted.` });
+        
+        const categoryName = await getCategoryName(categoryID);
+        if (categoryName) {
+            res.json({ success: true, categoryName });
+        } else {
+            res.status(404).json({ success: false, message: "Category not found" });
+        }
     } catch (error) {
-        console.error("Error deleting category:", error);
-        res.status(500).json({ error: "Server error" });
+        console.error("Error fetching category name:", error);
+        res.status(500).json({ success: false, error: error.message });
     }
 });
+
+//Combined the two above used for all category loads
+router.get("/allCategories", async (req, res) => {
+    try {
+  
+        await initializeCategories();
+        
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+  
+        const numCategories = 10;
+        let categories = [];
+        for (let i = 0; i < numCategories; i++) {
+ 
+            const categoryName = await getCategoryName(i);
+            if (categoryName) {
+                categories.push({ categoryID: i, name: categoryName });
+            } else {
+                console.warn(`Category with ID ${i} not found.`);
+            }
+        }
+        
+        res.json({ success: true, categories });
+    } catch (error) {
+        console.error("Error fetching all categories:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 
 module.exports = router;

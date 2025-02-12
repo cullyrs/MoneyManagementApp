@@ -1,93 +1,131 @@
-/**
- * Name : Cully Stearns
- * Contributors : 
- * Date : 1/31/2025
- * File Name : userGoal.js
- * Course : CMSC 495 Capstone in Computer Science
- * Project : Expense Tracker Capstone Project
- * Description  : This module manages the user's goal functionality within the
- * Expense Tracker application. It retrieves the logged-in user's
- * current goal, displays it on the page, and handles form submission
- * for updating the goal, ensuring that only valid goal data is processed.
- */
 
-// HAVE NOT UPDATED YET
+//This works 
 document.addEventListener("DOMContentLoaded", async () => {
-    
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-        alert("You must be logged in to update your goal.");
+
+    const userId = sessionStorage.getItem("userId");
+    const token = sessionStorage.getItem("token");
+
+    if (!userId || !token) {
+        console.error("No logged-in user found. Redirecting to login page.");
         window.location.href = "login.html";
         return;
     }
-    console.log("Logged-in userId:", userId);
+    console.log("User logged in:", userId);
+
 
     const currentGoalDiv = document.getElementById("current-goal");
     const goalForm = document.getElementById("goal-form");
-    const goalInput = document.getElementById("goal-input");
     const goalNameInput = document.getElementById("goal-name");
+    const goalTargetInput = document.getElementById("goal-input");
+    const goalCategorySelect = document.getElementById("goal-category");
+    const goalSavedInput = document.getElementById("goal-saved");
+    const goalDueDateInput = document.getElementById("goal-due-date");
 
-        /**
-     * Asynchronously loads the current goal for the logged-in user.
-     * It invokes the "getDashboardData" IPC handler and updates the goal display element
-     * with the retrieved goal information.
-     *
-     * @async
-     * @function loadCurrentGoal
-     * @returns {Promise<void>} Resolves when the goal data is loaded and the display is updated.
-     * If no goal is found or an error occurs, a default message is displayed.
-     */
+
     async function loadCurrentGoal() {
         try {
-            const result = await window.electronAPI.invoke("getDashboardData", userId);
+            const response = await fetch(`/api/users/${userId}/dashboard`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+            const result = await response.json();
             console.log("Dashboard data:", result);
-            if (result.success && result.recentGoal) {
-                const goal = result.recentGoal;
-                currentGoalDiv.innerText = `Current Goal: ${goal.name || "Unnamed"} - $${goal.savedAmount || 0}/${goal.targetAmount || "9,999"}`;
+            if (result.goal) {
+                currentGoalDiv.innerText = `Goal: $${result.goal.target} (Saved: $${result.goal.current})`;
             } else {
-                currentGoalDiv.innerText = "Current Goal: $0/9,999";
+                currentGoalDiv.innerText = "No goal set.";
             }
         } catch (err) {
-            console.error("Error loading goal:", err);
-            currentGoalDiv.innerText = "Current Goal: $0/9,999";
+            console.error("Error loading current goal:", err);
+            currentGoalDiv.innerText = "No goal set.";
+        }
+    }
+    await loadCurrentGoal();
+
+
+    async function fetchGoalCategories() {
+        try {
+            const response = await fetch("/api/categories/allCategories", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await response.json();
+            console.log("Categories fetched:", data);
+            if (!data.success) {
+                console.error("Failed to fetch categories:", data.error);
+                return;
+            }
+            
+            const categories = data.categories;
+            if (!categories || !Array.isArray(categories)) {
+                console.error("No categories returned from allCategories endpoint.");
+                return;
+            }
+            
+            populateGoalCategories(categories);
+        } catch (error) {
+            console.error("Error fetching goal categories:", error);
         }
     }
 
-    await loadCurrentGoal();
+    function populateGoalCategories(categories) {
+        goalCategorySelect.innerHTML = categories
+            .map(cat => `<option value="${cat.categoryID}">${cat.name}</option>`)
+            .join("");
+    }
 
-    /**
-     * Asynchronous event handler for goal update form submission.
-     * It retrieves and validates the new goal name and target value from the form,
-     * then invokes the "addGoal" IPC handler with the provided data.
-     * On success, it updates the goal display and redirects the user to the dashboard.
-     *
-     * @async
-     * @function (anonymous) - goal form submit handler.
-     * @param {Event} e - The form submission event.
-     * @returns {Promise<void>} Resolves when the goal update process is complete.
-     */
+  
+    await fetchGoalCategories();
+
     goalForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const newGoalValue = parseFloat(goalInput.value.trim());
+
         const newGoalName = goalNameInput.value.trim();
+        const newGoalTarget = parseFloat(goalTargetInput.value.trim());
+        const goalCategory = goalCategorySelect.value;
+        const newGoalSaved = goalSavedInput ? parseFloat(goalSavedInput.value.trim()) : 0;
+        const newGoalDueDate = goalDueDateInput ? goalDueDateInput.value.trim() : "";
+        
         if (!newGoalName) {
             alert("Please enter a goal name.");
             return;
         }
-        if (isNaN(newGoalValue) || newGoalValue <= 0) {
-            alert("Please enter a valid goal target.");
+        if (isNaN(newGoalTarget) || newGoalTarget <= 0) {
+            alert("Please enter a valid goal target amount (must be greater than 0).");
             return;
         }
+
         try {
-            const result = await window.electronAPI.invoke("addGoal", {userId, newGoalName, newGoalValue});
-            console.log("updateGoal result:", result);
-            if (result.success && result.goal) {
+            const response = await fetch(`/api/users/${userId}/goals/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: newGoalName,
+                    targetAmount: newGoalTarget,
+                    savedAmount: newGoalSaved,
+                    savedToDate: newGoalDueDate,
+                    categoryID: goalCategory
+                })
+            });
+
+            const result = await response.json();
+            console.log("addGoal result:", result);
+
+            if (response.ok && result.success) {
                 alert("Goal updated successfully!");
-                currentGoalDiv.innerText = `Current Goal: ${result.goal.name || "Unnamed"}
-                     - $${result.goal.savedAmount || 0}/${result.goal.targetAmount || "9,999"}`;
+                if (result.goals) {
+                    sessionStorage.setItem("goals", JSON.stringify(result.goals));
+                } else {
+  
+                    let storedGoals = JSON.parse(sessionStorage.getItem("goals") || "[]");
+                    storedGoals.push(result.goal);
+                    sessionStorage.setItem("goals", JSON.stringify(storedGoals));
+                }
+
                 window.location.href = "dashboard.html";
             } else {
-                alert("Failed to update goal: " + result.error);
+                alert("Failed to update goal: " + (result.error || "Unknown error"));
             }
         } catch (err) {
             console.error("Error updating goal:", err);
@@ -95,5 +133,3 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 });
-
-

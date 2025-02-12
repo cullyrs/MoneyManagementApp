@@ -25,17 +25,11 @@
  *      error {String} - An error message if login fails.
  */
 
-
-// TODO: remove alerts later, instead have a div that displays the error message, change to block if error, none if no error
-
-document.addEventListener("DOMContentLoaded", () => {
-    const login = document.getElementById("login");
-    const signup = document.getElementById("signup");
-
-    login.addEventListener("click", async () => {
+//Updated to store dashboard data in session storage for initialization. All data
+//comes from the login function.
+login.addEventListener("click", async () => {
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value.trim();
-
 
         if (!username || !password) {
             alert("Please enter a valid username and password.");
@@ -51,8 +45,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const result = await response.json();
             if (result.success) {
-                localStorage.setItem("token", result.token);
-                localStorage.setItem("userId", result.userId);
+                // Save the returned data in sessionStorage
+                sessionStorage.setItem("token", result.token);
+                sessionStorage.setItem("userId", result.userId);
+                sessionStorage.setItem("transactions", JSON.stringify(result.transactions));
+                sessionStorage.setItem("budgets", JSON.stringify(result.budgets));
+                sessionStorage.setItem("goals", JSON.stringify(result.goals));
+
                 alert("Login successful!");
                 window.location.href = "./dashboard.html";
             } else {
@@ -63,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Something went wrong. Please try again.");
         }
     });
+
 
     /**
  * Function to register a new user in the Expense Tracker Accounts database.
@@ -112,5 +112,5 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Something went wrong. Please try again.");
         }
     });
-});
+
 

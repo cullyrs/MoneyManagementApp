@@ -12,7 +12,7 @@
 
 
 const Category = require('./models/Category.js');
-const Transactions = require ('./models/Transactions.js');
+const Transaction = require ('./models/Transactions.js');
 const User = require ('./models/User.js');
 
 /**
@@ -31,60 +31,38 @@ const User = require ('./models/User.js');
  *      3. Type is not {Expense : 0, Income : 1} The bit interpretation of transaction type.
  */
 
-const addTransaction = async (userID, amount, type, category, date, description = "") => {
-    console.log("[Processing Transaction] =================="); //debugging
-    console.log("Parameters Received:", { userID, amount, type, category, date, description });
-
-    amount = parseFloat(amount);
-
-    // Validate user
-    const user = await User.findOne({ _id: userID });
-    if (!user || amount <= 0 || !["expense", "income"].includes(type)) {
-        console.error("Invalid user or transaction data.");
-        return null;
-    }
-
-    console.log("Checking category exists for ID:", category);
-    
-    // check category is not being overwritten. had an issue with this happening
-    const categoryData = await Category.findById(category);
-    if (!categoryData) {
-        console.error(`Category "${category}" not found.`);
-        return null;
-    }
-
-    //  date properly formatted. had an issue with this happening
-    const formattedDate = new Date(date);
-    if (isNaN(formattedDate.getTime())) {
-        console.error("Invalid date provided:", date);
-        return null;
-    }
-
-    console.log("Category found:", categoryData.name, "✔ Date Validated:", formattedDate);
-
-    // Create transaction
-    const transaction = await Transactions.create({
-        userID: user._id,
-        amount,
-        type,
-        date: formattedDate, // Make sure this is correctly formatted
-        category: categoryData._id, // Store category ObjectId
-        description,
-    });
-
-    console.log("Transaction Created:", transaction);
-
-    // Update user's transaction list
-    user.transactionList.push(transaction._id);
-
-    // Adjust totalAmount based on transaction type
-    user.totalAmount = (type === "expense")
-        ? user.totalAmount - transaction.amount
-        : user.totalAmount + transaction.amount;
-
-    await user.save();
-    return transaction;
-};
+const addTransaction = async(userID, amount, type, categoryID = 0, date = Date.now(), description ="") => {
+  
+    type = parseInt(type);
+    const user = await User.findOne({_id : userID});
+    if(user && amount > 0 && (type == 0 || type == 1)){    
+        
+        const category_exist = await Category.findOne({categoryID : categoryID});
+        if(!category_exist){
+            categoryID = 0;
+        }
+        const transaction = await Transaction.create({
+            userID : user._id,
+            amount : parseFloat(amount),
+            type : type,
+            date : new Date(date),
+            categoryID : categoryID,
+            description : description
+       });       
+        // Updates transactionList with created transtion _id.
+        user.transactionList.push(transaction._id);
+        
+        // Increments/Decrements totalAmount in accordance with type.
+        user.totalAmount = (transaction.type == 0) ?
+                            user.totalAmount-= transaction.amount:
+                            user.totalAmount+= transaction.amount;
+        await user.save();
+        await transaction.save(); // #### test and remove (unecessary)
+        return transaction;
+        
+     }
+     return null
+}
 
 
 
@@ -274,34 +252,10 @@ const updateTransactionDate = async(userID, transactionID, newDate) =>{
     }
     return null;
 }
-/**
- * Function to retrieve all transactions for a user.
- * @param {String} userID - The unique _id of the associated User instance.
- * @returns {Array} Array of transactions, or empty array if none found.
- */
-const getUserTransactions = async (userID) => {
-    try {
-        const user = await User.findOne({ _id: userID }).lean();
-        if (!user) return []; // Ensure we always return an array
 
-        // Fetch transactions associated with the user, include category details
-        const transactions = await Transactions.find({ userID })
-            .sort({ date: -1 })
-            .populate("category", "name type") // Ensure category details are populated
-            .lean();
-        console.log("transactions", transactions);
-        // print variable type
-        console.log("type", typeof transactions);
-
-        return transactions || []; // Always return an array
-    } catch (error) {
-        console.error("Error fetching transactions:", error);
-        return []; 
-    }
-};
 
 
 
 module.exports = {addTransaction, getTransaction, removeTransaction, updateTransactionType,
-       updateTransactionAmount, updateTransactionDate, updateTransactionCategory, getUserTransactions,
+       updateTransactionAmount, updateTransactionDate, updateTransactionCategory
 }; 
