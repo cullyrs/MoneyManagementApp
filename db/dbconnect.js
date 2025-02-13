@@ -9,7 +9,7 @@
  */
 
 const mongoose = require('mongoose');
-const {username, password} = require('../api.json');
+const {username, password} = require('./api.json');
 
 // OLD DB
 const uri = `mongodb+srv://${username}:${password}@expensemanager1.3yfoo.mongodb.net/Accounts?retryWrites=true&w=majority&appName=ExpenseManager1`;

@@ -22,69 +22,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const goalDueDateInput = document.getElementById("goal-due-date");
 
 
-    async function loadCurrentGoal() {
-        try {
-            const response = await fetch(`/api/users/${userId}/dashboard`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error: ${response.status}`);
-            }
-            const result = await response.json();
-            console.log("Dashboard data:", result);
-            if (result.goal) {
-                currentGoalDiv.innerText = `Goal: $${result.goal.target} (Saved: $${result.goal.current})`;
-            } else {
-                currentGoalDiv.innerText = "No goal set.";
-            }
-        } catch (err) {
-            console.error("Error loading current goal:", err);
-            currentGoalDiv.innerText = "No goal set.";
-        }
-    }
-    await loadCurrentGoal();
-
-
-
-    async function fetchGoalCategories() {
-        try {
-            const response = await fetch(`/api/categories`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            if (!response.ok) {
-                console.error("Failed to fetch categories:", response.statusText);
-                return;
-            }
-
-            const categories = await response.json(); // Directly get the array
-
-            if (!Array.isArray(categories) || categories.length === 0) {
-                console.error("No categories returned from API.");
-                return;
-            }
-
-            populateGoalCategories(categories);
-        } catch (error) {
-            console.error("Error fetching categories:", error);
-        }
-    }
-
-    function populateGoalCategories(categories) {
-        goalCategorySelect.innerHTML = categories
-            .map(cat => `<option value="${cat.categoryID}">${cat.name}</option>`)
-            .join("");
-    }
-
-
-    await fetchGoalCategories();
-
     goalForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const newGoalName = goalNameInput.value.trim();
         const newGoalTarget = parseFloat(goalTargetInput.value.trim());
-        const goalCategory = goalCategorySelect.value;
         const newGoalSaved = goalSavedInput ? parseFloat(goalSavedInput.value.trim()) : 0;
         const newGoalDueDate = goalDueDateInput ? goalDueDateInput.value.trim() : "";
 
@@ -106,7 +48,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     targetAmount: newGoalTarget,
                     savedAmount: newGoalSaved,
                     savedToDate: newGoalDueDate,
-                    categoryID: goalCategory
                 })
             });
 

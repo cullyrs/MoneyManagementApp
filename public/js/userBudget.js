@@ -30,70 +30,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const budgetCategorySelect = document.getElementById("budget-category");
 
 
-    async function refreshDashboard() {
-        try {
 
-            const budgetsData = sessionStorage.getItem("budgets");
-            const budgets = budgetsData ? JSON.parse(budgetsData) : [];
-            console.log("Parsed budgets:", budgets);
-            
-            const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
-            
-            if (!currentBudget) {
-                currentBudgetDiv.innerText = "Current Budget: $0";
-            } else {
-                const budgetCurrent = currentBudget.current || currentBudget.amount || 0;
-                const budgetTarget = currentBudget.target || currentBudget.totalAmount || 0;
-                const budgetPercent = budgetTarget > 0 ? (budgetCurrent / budgetTarget) * 100 : 0;
-                currentBudgetDiv.innerHTML = `
-                    <progress class="prog-budget" max="100" value="${budgetPercent}" 
-                        data-label="Budget - $${budgetCurrent}/${budgetTarget}"></progress>
-                `;
-            }
-        } catch (error) {
-            console.error("Error loading dashboard:", error);
-        }
-    }
-
-    async function fetchCategories() {
-        try {
-            const response = await fetch(`/api/categories`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-    
-            if (!response.ok) {
-                console.error("Failed to fetch categories:", response.statusText);
-                return;
-            }
-    
-            const categories = await response.json(); // Directly get the array
-    
-            if (!Array.isArray(categories) || categories.length === 0) {
-                console.error("No categories returned from API.");
-                return;
-            }
-    
-            populateCategories(categories);
-        } catch (error) {
-            console.error("Error fetching categories:", error);
-        }
-    }
-    
-
-    function populateCategories(categories) {
-        budgetCategorySelect.innerHTML = categories
-            .map(cat => `<option value="${cat.categoryID}">${cat.name}</option>`)
-            .join("");
-    }
-
-    await fetchCategories();
 
     budgetForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const newBudgetName = budgetNameInput.value.trim();
         const newBudgetValue = parseFloat(budgetInput.value.trim());
-        const budgetCategory = budgetCategorySelect.value;  // CategoryID from the dropdown
+        //const budgetCategory = budgetCategorySelect.value;  // CategoryID from the dropdown
 
         if (!newBudgetName) {
             alert("Please enter a budget name.");
@@ -111,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 body: JSON.stringify({
                     name: newBudgetName,
                     amount: newBudgetValue,
-                    categoryID: budgetCategory
+//                    categoryID: budgetCategory
                 })
             });
 
