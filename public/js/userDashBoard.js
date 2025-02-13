@@ -135,6 +135,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!currentBudget) {
                 budgetDisplay.innerText = "Current Budget: $0";
             } else {
+                //added to check what budget is currently returning
+                console.log("check", [currentBudget])
                 const budgetCurrent = currentBudget.current || currentBudget.amount || 0;
                 const budgetTarget = currentBudget.target || currentBudget.totalAmount || 0;
                 const budgetPercent = budgetTarget > 0 ? (budgetCurrent / budgetTarget) * 100 : 0;
