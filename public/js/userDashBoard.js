@@ -165,9 +165,10 @@ async function refreshDashboard() {
             if (!currentGoal) {
                 goalDisplay.innerText = "No goal set.";
             } else {
-                const goalCurrent = currentGoal.current || 0;
-                const goalTarget = currentGoal.target || 9999;
+                const goalCurrent = currentGoal.savedAmount || 0;
+                const goalTarget = currentGoal.targetAmount || 9999;
                 const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
+
                 goalDisplay.innerHTML = `
                     <div id="goal-progress-container">    
                     <progress class="prog-goal" max="100" value="${goalPercent}" 
