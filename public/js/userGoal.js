@@ -15,28 +15,33 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const currentGoalDiv = document.getElementById("current-goal");
     const goalForm = document.getElementById("goal-form");
-    const goalNameInput = document.getElementById("goal-name");
     const goalTargetInput = document.getElementById("goal-input");
-    const goalCategorySelect = document.getElementById("goal-category");
     const goalSavedInput = document.getElementById("goal-saved");
     const goalDueDateInput = document.getElementById("goal-due-date");
 
 
     async function loadCurrentGoal() {
         try {
-            const response = await fetch(`/api/users/${userId}/dashboard`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error: ${response.status}`);
-            }
-            const result = await response.json();
-            console.log("Dashboard data:", result);
-            if (result.goal) {
-                currentGoalDiv.innerText = `Goal: $${result.goal.target} (Saved: $${result.goal.current})`;
-            } else {
+            const goalsData = sessionStorage.getItem("goals");
+            const goals = goalsData ? JSON.parse(goalsData) : [];
+            console.log("Parsed goals:", goals);
+            
+            const currentGoal = goals.length ? goals[goals.length - 1] : null;
+            if (!currentGoal) {
                 currentGoalDiv.innerText = "No goal set.";
+            } else {
+                const goalCurrent = currentGoal.current || 0;
+                const goalTarget = currentGoal.target || 9999;
+                const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
+                currentGoalDiv.innerHTML = `
+                    <div id="goal-progress-container">    
+                    <progress class="prog-goal" max="100" value="${goalPercent}" 
+                        data-label="Goal - $${goalCurrent}/${goalTarget}"></progress>
+                    <span class="progress-text">Goal - $${goalCurrent}/${goalTarget}</span>
+                    </div>
+                `;
             }
+            
         } catch (err) {
             console.error("Error loading current goal:", err);
             currentGoalDiv.innerText = "No goal set.";
@@ -64,16 +69,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            populateGoalCategories(categories);
         } catch (error) {
             console.error("Error fetching categories:", error);
         }
-    }
-
-    function populateGoalCategories(categories) {
-        goalCategorySelect.innerHTML = categories
-            .map(cat => `<option value="${cat.categoryID}">${cat.name}</option>`)
-            .join("");
     }
 
 
@@ -81,17 +79,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     goalForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-
-        const newGoalName = goalNameInput.value.trim();
         const newGoalTarget = parseFloat(goalTargetInput.value.trim());
-        const goalCategory = goalCategorySelect.value;
         const newGoalSaved = goalSavedInput ? parseFloat(goalSavedInput.value.trim()) : 0;
         const newGoalDueDate = goalDueDateInput ? goalDueDateInput.value.trim() : "";
 
-        if (!newGoalName) {
-            alert("Please enter a goal name.");
-            return;
-        }
         if (isNaN(newGoalTarget) || newGoalTarget <= 0) {
             alert("Please enter a valid goal target amount (must be greater than 0).");
             return;
@@ -102,11 +93,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    name: newGoalName,
                     targetAmount: newGoalTarget,
                     savedAmount: newGoalSaved,
                     savedToDate: newGoalDueDate,
-                    categoryID: goalCategory
                 })
             });
 

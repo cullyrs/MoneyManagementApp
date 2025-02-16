@@ -20,8 +20,8 @@ const { ObjectId, Double, Int32 } = Schema.Types;
 
 const goalSchema = new Schema({
   userID: { type: ObjectId, ref: 'User', required: true },
-  current: { type: Double, default: 0 },
-  target: { type: Double, required: true },
+  savedAmount: { type: Double, default: 0 },
+  targetAmount: { type: Double, required: true },
   savedToDate: { 
     type: Date, 
     default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000) 

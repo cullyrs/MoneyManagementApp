@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function refreshDashboard() {
         try {
-
             const budgetsData = sessionStorage.getItem("budgets");
             const budgets = budgetsData ? JSON.parse(budgetsData) : [];
             console.log("Parsed budgets:", budgets);
@@ -40,14 +39,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
             
             if (!currentBudget) {
-                currentBudgetDiv.innerText = "Current Budget: $0";
+                currentBudgetDiv.innerText = "No Budget Set";
             } else {
-                const budgetCurrent = currentBudget.current || currentBudget.amount || 0;
-                const budgetTarget = currentBudget.target || currentBudget.totalAmount || 0;
-                const budgetPercent = budgetTarget > 0 ? (budgetCurrent / budgetTarget) * 100 : 0;
-                currentBudgetDiv.innerHTML = `
+                const budgetCurrent = currentBudget.current || 0;
+                const budgetSpent = currentBudget.totalAmount || 9999;
+                const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
+                //added to check what budget is currently returning
+                console.log("check", [currentBudget.current, currentBudget.totalAmount, budgetPercent])
+                budgetDisplay.innerHTML = `
+                    <div id="budget-progress-container">    
                     <progress class="prog-budget" max="100" value="${budgetPercent}" 
-                        data-label="Budget - $${budgetCurrent}/${budgetTarget}"></progress>
+                        data-label="Budget - $${budgetCurrent}/${budgetSpent}"></progress>
+                    <span class="progress-text">Budget - $${budgetCurrent}/${budgetSpent}</span>
+                    </div>
                 `;
             }
         } catch (error) {

@@ -18,8 +18,9 @@ const User = require('./models/User.js');
  * Expense Tracker Accounts database. The goalList array in the 
  * User collection is updated with the unique goal _id.
  * @param {String} userID - The unique _id of the associated User instance.
- * @param {Double} target - The targeted goal amount to save.
- * @param {Int32} current - The current amount saved towards target goal.
+ * @param {Double} targetAmount - The targeted goal amount to save.
+ * @param {Int32} savedAmount - The current amount saved towards target goal.
+ * @param {Date} savedToDate - The targeted date to save until.
  * @returns {Object} The created instance of the goal object.
  * Returns null if :
  *   1. Invalid userID is provided.

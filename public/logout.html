@@ -1,0 +1,53 @@
+<!--
+    INCOMPLETE
+    Name : Cully Stearns
+    Date : 1/31/2025
+    File Name : logout.html
+    Course : CMSC 495 Capstone in Computer Science
+    Project : Expense Tracker Capstone Project
+    Description : This HTML file handles the logout process for the Expense Tracker application.
+    It invokes the logout IPC handler (NEED TO ADD) , clears stored user session data,
+    and redirects the user to the login page upon successful logout.
+    INCOMPLETE
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Money Management App">
+    <meta name="keywords" content="money, management, app, budget, finance">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <title>Logging Out...</title>
+    <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        try {
+            // Optionally, invoke the logout IPC handler if implemented.
+            const result = await fetch(`/api/users/logout`);
+            if (result.success) {
+            // Clear stored session information.
+            localStorage.removeItem("userId");
+            localStorage.removeItem("user");
+            alert(result.message);
+            window.location.href = "./login.html"; // Redirect to login page.
+        } else {
+        alert("Logout failed: " + result.error);
+        window.location.href = "./login.html"; // Redirect to login page
+        }
+        } catch (err) {
+        console.error("Error during logout:", err);
+        //alert("Logout failed: " + err.message);
+        window.location.href = "./login.html"; // Redirect to login page
+        }
+        });
+    </script>
+</head>
+<body>
+    <p>Logging out, please wait...</p>
+</body>
+</html>

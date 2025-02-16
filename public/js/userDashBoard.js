@@ -133,29 +133,45 @@ document.addEventListener("DOMContentLoaded", async () => {
             const currentGoal = goals.length ? goals[goals.length - 1] : null;
 
             if (!currentBudget) {
-                budgetDisplay.innerText = "Current Budget: $0";
+                budgetDisplay.innerText = "No Budget Set";
             } else {
+                const budgetCurrent = currentBudget.current || 0;
+                const budgetSpent = currentBudget.totalAmount || 9999;
+                const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
                 //added to check what budget is currently returning
-                console.log("check", [currentBudget])
-                const budgetCurrent = currentBudget.current || currentBudget.amount || 0;
-                const budgetTarget = currentBudget.target || currentBudget.totalAmount || 0;
-                const budgetPercent = budgetTarget > 0 ? (budgetCurrent / budgetTarget) * 100 : 0;
+                console.log("check", [currentBudget.current, currentBudget.totalAmount, budgetPercent])
                 budgetDisplay.innerHTML = `
+                    <div id="budget-progress-container">    
                     <progress class="prog-budget" max="100" value="${budgetPercent}" 
-                        data-label="Budget - $${budgetCurrent}/${budgetTarget}"></progress>
+                        data-label="Budget - $${budgetCurrent}/${budgetSpent}"></progress>
+                    <span class="budget-progress-text">Budget - $${budgetCurrent}/${budgetSpent}</span>
+                    </div>
                 `;
+                const budgetProgressBar = document.querySelector(".prog-budget");
+                if (budgetProgressBar) {
+                    budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
+                    budgetProgressBar.textContent = `Budget - $${budgetCurrent}/${budgetSpent}`;
+                }
             }
 
             if (!currentGoal) {
                 goalDisplay.innerText = "No goal set.";
             } else {
-                const goalCurrent = currentGoal.current || currentGoal.savedAmount || 0;
-                const goalTarget = currentGoal.target || currentGoal.targetAmount || 0;
+                const goalCurrent = currentGoal.current || 0;
+                const goalTarget = currentGoal.target || 9999;
                 const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
                 goalDisplay.innerHTML = `
+                    <div id="goal-progress-container">    
                     <progress class="prog-goal" max="100" value="${goalPercent}" 
                         data-label="Goal - $${goalCurrent}/${goalTarget}"></progress>
+                    <span class="goal-progress-text">Goal - $${goalCurrent}/${goalTarget}</span>
+                    </div>
                 `;
+                const goalProgressBar = document.querySelector(".prog-goal");
+                if (goalProgressBar) {
+                    goalProgressBar.style.background = `linear-gradient(to right, #0c5460 ${goalPercent}%, #d1ecf1 ${goalPercent}%)`;
+                    //goalProgressBar.textContent = `Goal - $${goalCurrent}/${goalTarget}`;
+                }
             }
         } catch (error) {
             console.error("Error loading dashboard:", error);
@@ -355,3 +371,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     await refreshDashboard();
     await refreshTransactionTable();
 });
+
