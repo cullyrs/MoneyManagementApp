@@ -64,12 +64,12 @@ const addTransaction = async (userID, amount, type, category, date, description 
 
     // Create transaction
     const transaction = await Transactions.create({
-        userID: user._id,
-        amount,
-        type,
-        date: formattedDate, // Make sure this is correctly formatted
-        category: categoryData._id, // Store category ObjectId
-        description,
+        userID : user._id,
+        amount : amount,
+        type : type,
+        date : formattedDate, // Make sure this is correctly formatted
+        category : categoryData._id, // Store category ObjectId
+        description : description,
     });
 
     console.log("Transaction Created:", transaction);

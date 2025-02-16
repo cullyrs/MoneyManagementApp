@@ -11,6 +11,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const userId = sessionStorage.getItem("userId");
     const token = sessionStorage.getItem("token");
+    
 
     if (!userId || !token) {
         console.error("No logged-in user found. Redirecting to login page.");
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const user = await response.json();
+        console.log("user:",  user)
         const profileInfo = document.querySelector(".profile-info");
 
         if (profileInfo) {
@@ -45,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <p><strong>Join Date:</strong> ${new Date(user.createdAt).toLocaleDateString() || "N/A"}</p>
             `;
         } else {
-            console.error("Profile info container not found.");
+            console.warn("Profile info container not found.");
         }
     } catch (err) {
         console.error("Error retrieving user info:", err);
@@ -53,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Handle Logout Button Click
-    const logoutButton = document.getElementById("logout");
+    /* const logoutButton = document.getElementById("logout");
     if (logoutButton) {
         logoutButton.addEventListener("click", async () => {
             try {
@@ -83,5 +85,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     } else {
         console.error("Logout button not found in the DOM.");
-    }
+    } */
 });

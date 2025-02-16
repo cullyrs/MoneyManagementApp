@@ -11,6 +11,7 @@
  */
 
 //This works
+const USD = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'});
 document.addEventListener("DOMContentLoaded", async () => {
     const userId = sessionStorage.getItem("userId");
     const token = sessionStorage.getItem("token");
@@ -32,28 +33,39 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function refreshDashboard() {
         try {
-
             const budgetsData = sessionStorage.getItem("budgets");
             const budgets = budgetsData ? JSON.parse(budgetsData) : [];
+            // TODO: remove these logs to keep data more secure
             console.log("Parsed budgets:", budgets);
-            
             const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
-            
             if (!currentBudget) {
-                currentBudgetDiv.innerText = "Current Budget: $0";
+                currentBudgetDiv.innerText = "No Budget Set";
             } else {
-                const budgetCurrent = currentBudget.current || currentBudget.amount || 0;
-                const budgetTarget = currentBudget.target || currentBudget.totalAmount || 0;
-                const budgetPercent = budgetTarget > 0 ? (budgetCurrent / budgetTarget) * 100 : 0;
+                const budgetCurrent = currentBudget.current || 0;
+                const budgetSpent = currentBudget.totalAmount || 9999;
+                const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
+                // TODO: remove these logs to keep data more secure
+                //added to check what budget is currently returning
+                console.log("check", [currentBudget.current, currentBudget.totalAmount, budgetPercent])
                 currentBudgetDiv.innerHTML = `
+                    <div id="budget-progress-container">    
                     <progress class="prog-budget" max="100" value="${budgetPercent}" 
-                        data-label="Budget - $${budgetCurrent}/${budgetTarget}"></progress>
+                        data-label="Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetSpent)}"></progress>
+                    <span class="budget-progress-text">Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetSpent)}</span>
+                    </div>
                 `;
+                const budgetProgressBar = document.querySelector(".prog-budget");
+                if (budgetProgressBar) {
+                    budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
+
+                }
             }
         } catch (error) {
             console.error("Error loading dashboard:", error);
+            currentBudgetDiv.innerText("No Budget Set.");
         }
     }
+    await refreshDashboard();
 
     async function fetchCategories() {
         try {
@@ -93,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const newBudgetName = budgetNameInput.value.trim();
         const newBudgetValue = parseFloat(budgetInput.value.trim());
-        const budgetCategory = budgetCategorySelect.value;  // CategoryID from the dropdown
+        //const budgetCategory = budgetCategorySelect.value;  // CategoryID from the dropdown
 
         if (!newBudgetName) {
             alert("Please enter a budget name.");
@@ -111,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 body: JSON.stringify({
                     name: newBudgetName,
                     amount: newBudgetValue,
-                    categoryID: budgetCategory
+//                    categoryID: budgetCategory
                 })
             });
 
