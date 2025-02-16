@@ -55,33 +55,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadCurrentGoal();
 
 
-
-    async function fetchGoalCategories() {
-        try {
-            const response = await fetch(`/api/categories`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            if (!response.ok) {
-                console.error("Failed to fetch categories:", response.statusText);
-                return;
-            }
-
-            const categories = await response.json(); // Directly get the array
-
-            if (!Array.isArray(categories) || categories.length === 0) {
-                console.error("No categories returned from API.");
-                return;
-            }
-
-        } catch (error) {
-            console.error("Error fetching categories:", error);
-        }
-    }
-
-
-    await fetchGoalCategories();
-
     goalForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const newGoalTarget = parseFloat(goalTargetInput.value.trim());
