@@ -53,10 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (result.success) {
                 sessionStorage.setItem("token", result.token);
                 sessionStorage.setItem("userId", result.userId);
-                sessionStorage.setItem("netbalance", result.totalAmount);
-                sessionStorage.setItem("transactions", JSON.stringify(result.transactions));
-                sessionStorage.setItem("budgets", JSON.stringify(result.budgets));
-                sessionStorage.setItem("goals", JSON.stringify(result.goals));
                 alert("Login successful!");
                 window.location.href = "./dashboard.html";
             } else {

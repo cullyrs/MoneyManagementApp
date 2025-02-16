@@ -1,4 +1,5 @@
 const express = require("express");
+// const { findUser } = require("../db/userFunctions");
 const { getSpentAmount, getBudget, addBudget, removeBudget } = require("../db/budgetFunctions");
 const { getSavedAmount, getTargetAmount, getGoal, addGoal, removeGoal } = require("../db/goalFunctions");
 
@@ -8,9 +9,9 @@ const router = express.Router();
 
 router.post("/:id/budgets/add", async (req, res) => {
     const userID = req.params.id;
-    const { name, amount} = req.body;
+    const { name, amount, categoryID } = req.body;
     try {
-        const budget = await addBudget(userID, name, amount);
+        const budget = await addBudget(userID, name, amount, categoryID);
         if (budget) {
             res.status(201).json({ budget });
         } else {
@@ -46,10 +47,9 @@ router.post("/:id/budgets/remove", async (req, res) => {
 
 router.post("/:id/goals/add", async (req, res) => {
     const userID = req.params.id;
-    const { targetAmount, savedAmount, savedToDate} = req.body;
-    console.log("Hello?" , [targetAmount, savedAmount, savedToDate])
+    const { name, targetAmount, savedAmount, savedToDate, categoryID } = req.body;
     try {
-        const goal = await addGoal(userID, targetAmount, savedAmount, savedToDate);
+        const goal = await addGoal(userID, name, targetAmount, savedAmount, savedToDate, categoryID);
         if (goal) {
             res.status(201).json({ success: true, goal });
         } else {

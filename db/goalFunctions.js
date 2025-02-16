@@ -18,27 +18,38 @@ const User = require('./models/User.js');
  * Expense Tracker Accounts database. The goalList array in the 
  * User collection is updated with the unique goal _id.
  * @param {String} userID - The unique _id of the associated User instance.
+ * @param {String} name - The name of the associated goal instance.
  * @param {Double} targetAmount - The targeted goal amount to save.
- * @param {Int32} savedAmount - The current amount saved towards target goal.
- * @param {Date} savedToDate - The targeted date to save until.
+ * @param {Int32} savedAmount - The current amount saved towards target goal.  * 
+ * @param {Int32} categoryID - The categoryID that categorizes the goal. 
  * @returns {Object} The created instance of the goal object.
  * Returns null if :
  *   1. Invalid userID is provided.
+ *   2. No name is provided.
  *   3. Invalid targetAmount is provided.
  */
-const addGoal = async(userID, targetAmount, savedAmount = 0, 
-                     savedToDate = new Date(Date.now() + 30 * 24 * 3600 * 1000)) =>{    
+const addGoal = async(userID, name, targetAmount, savedAmount = 0, 
+                     savedToDate = new Date(Date.now() + 30 * 24 * 3600 * 1000), 
+                     categoryID = 0) =>{    
     const user = await User.findOne({_id : userID});
+    categoryID = Number.isInteger(Number(categoryID)) ? parseInt(categoryID) : 0;
     targetAmount = parseFloat(targetAmount);
     savedAmount = parseFloat(savedAmount);
     
-    if(user && targetAmount > 0 ){
+    const category_exist = await Category.findOne({categoryID : categoryID});
+    if(!category_exist){
+        console.warn(`Category ID ${categoryID} does not exist, setting categoryID to 0.`);
+        categoryID = 0;
+    }
+     if(user && name && targetAmount > 0 ){
        
         const goal = await Goal.create({
             userID : userID,
+            name : name,
             targetAmount : targetAmount,
             savedAmount : savedAmount,            
-            savedToDate : new Date(savedToDate)
+            savedToDate : new Date(savedToDate),
+            categoryID : categoryID
         });
         user.goalList.push(goal._id);
         user.save();
@@ -112,7 +123,7 @@ const getSavedAmount = async(userID, goalID)=>{
 
     if(user && index >= 0){
         const goal = await Goal.findOne({_id : goalID});
-        return goal.current;
+        return goal.savedAmount;
     }
     return null;
 }
@@ -133,7 +144,56 @@ const getTargetAmount = async(userID, goalID)=>{
 
     if(user && index >= 0){
         const goal = await Goal.findOne({_id : goalID});
-        return goal.target;
+        return goal.targetAmount;
+    }
+    return null;
+}
+
+/**
+ * Function to change a goal's name in the Goal collection of the 
+ * Expense Tracker Accounts database. 
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} goalID - The unique _id of the goal.
+ * @param {String} newName - The updated goal name.  
+ * @returns {Object} The updated instance of the goal object.
+ * Returns null if :
+ *      1. Invalid userID is provided.
+ *      2. Invalid newName is provided. (Empty String)
+ *      3. goalID is not associated with the User instance provided.
+ */
+const updateGoalName = async(userID, goalID, newName) =>{
+    const user = await User.findOne({_id : userID});
+    const index = user.goalList.indexOf(goalID);
+    if(user && newName && index >= 0){
+        const goal = await Goal.findOne({_id : goalID});
+        goal.set('name' , newName);
+        await goal.save();
+        return goal;
+    }
+    return null;
+}
+
+/**
+ * Function to change a goal's amount in the goal collection 
+ * of the Expense Tracker Accounts database. 
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} goalID - The unique _id of the goal. 
+ * @param {Double} newCategoryID - The new categoryId that categorizes the object.
+ * @returns {Object} The updated instance of the goal object.
+ * Returns null if :
+ *      1. Invalid userID is provided.
+ *      2. Invalid categoryID is provided.
+ *      3. goalID is not associated with the User instance provided.
+ */
+const updateGoalCategory = async(userID, goalID, newCategoryID) =>{
+    const user = await User.findOne({_id : userID});
+    const index = user.goalList.indexOf(goalID);
+    const category = await Category.findOne({categoryID : newCategoryID});
+    if(user && category && index >= 0){
+        const goal = await Goal.findOne({_id : goalID});
+        goal.set('categoryID', newCategoryID);
+        await goal.save();
+        return goal;        
     }
     return null;
 }
@@ -157,7 +217,7 @@ const updateTargetAmount = async(userID, goalID, newTargetAmount) => {
         const goal = await Goal.findOne({_id : goalID});      
      
         // Update and save goal instance.
-        goal.set('target' , newTargetAmount);
+        goal.set('targetAmount' , newTargetAmount);
         await goal.save();
         return goal;
     }
@@ -183,7 +243,7 @@ const updateSavedAmount = async(userID, goalID, newSavedAmount) => {
         const goal = await Goal.findOne({_id : goalID});      
      
         // Update and save goal instance.
-        goal.set('current' , newSavedAmount);
+        goal.set('savedAmount' , newSavedAmount);
         await goal.save();
         return goal;
     }
@@ -208,13 +268,14 @@ const increaseSavedAmount = async(userID, goalID, amount) => {
         const goal = await Goal.findOne({_id : goalID});      
      
         // Update and save goal instance.
-        goal.set('current' , goal.current + amount);
+        goal.set('savedAmount' , goal.savedAmount + amount);
         await goal.save();
         return goal;
     }
     return null;
 }
-module.exports ={addGoal, removeGoal, getGoal, updateTargetAmount,
-    updateSavedAmount, increaseSavedAmount, getSavedAmount,
-    getTargetAmount
+module.exports ={addGoal, removeGoal, getGoal, updateGoalName, 
+    updateGoalCategory, updateTargetAmount, updateSavedAmount, 
+    increaseSavedAmount, getSavedAmount, getTargetAmount
+
 };

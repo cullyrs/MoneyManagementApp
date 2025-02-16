@@ -5,8 +5,8 @@
     Course : CMSC 495 Capstone in Computer Science
     Project : Expense Tracker Capstone Project
     Description : This HTML file provides the user interface for updating the user's budget.
-    It includes a form for entering a new budget amount and budget name.
-    The page also features a header with navigation to various sections
+    It includes a form for entering a new budget amount, budget name, and selecting a
+    budget category. The page also features a header with navigation to various sections
     of the application.
 -->
 
@@ -14,19 +14,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Money Management App">
-    <meta name="keywords" content="money, management, app, budget, finance">
-    <link rel="stylesheet" href="css/stylesheet.css">
-    <link rel="apple-touch-icon" sizes="180x180" href="imgs/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <!-- Scripts -->
-    <script src="js/logout.js"></script>
-    <script src="js/userBudget.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Update Budget</title>
+    <link rel="stylesheet" href="css/stylesheet.css" />
 </head>
 
 <body>
@@ -46,7 +37,7 @@
                         </ul>
                     </nav>
                 </li>
-                <li id="logout"><a id="logout-link" href="logout.html">Log Out</a></li>
+                <li id="logout"><a href="">Log Out</a></li>
             </ul>
         </nav>
     </header>
@@ -63,6 +54,8 @@
             <label for="budget-input">New Budget Amount:</label>
             <input type="number" id="budget-input" name="budget-input" placeholder="Enter new budget amount" required />
 
+            <label for="budget-category">Budget Category:</label>
+            <select id="budget-category" name="budget-category">
              </select>
 
             <button type="submit">Update Budget</button>
@@ -73,6 +66,7 @@
         <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
     </footer>
 
+    <script src="js/userBudget.js"></script>
 </body>
 
 </html>

@@ -20,12 +20,14 @@ const { ObjectId, Double, Int32 } = Schema.Types;
 
 const goalSchema = new Schema({
   userID: { type: ObjectId, ref: 'User', required: true },
-  savedAmount: { type: Double, default: 0 },
+  name: { type: String, required: true },
   targetAmount: { type: Double, required: true },
+  savedAmount: { type: Double, default: 0 },
   savedToDate: { 
     type: Date, 
     default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000) 
   },
+  categoryID: { type: Int32, default: 0 },
   version: { type: Int32, default: 1 }
 }, { collection: 'Goal', timestamps: true });
 

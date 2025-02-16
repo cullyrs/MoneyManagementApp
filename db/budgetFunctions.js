@@ -21,24 +21,32 @@ const Transactions = require('./models/Transactions.js'); // Added from db branc
  * User collection is updated with the unique budget _id.
  * @param {String} userID - The unique _id of the associated User instance.
  * @param {String} name - The name of the associated Budget instance.
- * @param {Double} totalAmount - The budget amount.
+ * @param {Double} amount - The budget amount.
+ * @param {Int32} categoryID - The categoryID that categorizes the budget. 
  * @returns {Object} The created instance of the budget object.
  * Returns null if :
  *   1. Invalid userID is provided.
  *   2. No name is provided.
  *   3. Invalid amount is provided.
  */
-const addBudget = async (userID, name, totalAmount) => {
-    totalAmount = parseFloat(totalAmount);
+const addBudget = async (userID, name, amount, categoryID = 0) => {
+    amount = parseFloat(amount);
+    categoryID = Number.isInteger(Number(categoryID)) ? parseInt(categoryID) : 0;
 
     const user = await User.findOne({ _id: userID });
+    const categoryExist = await Category.findOne({ categoryID: categoryID });
 
-    if (user && name && totalAmount > 0) {
+    if (!categoryExist) {
+        console.warn(`Category ID ${categoryID} does not exist, setting categoryID to 0.`);
+        categoryID = 0;
+    }
+
+    if (user && name && amount > 0) {
         const budget = await Budget.create({
-            userID : userID,
-            name : name,
-            current : 0,
-            totalAmount : totalAmount
+            userID,
+            name,
+            amount,
+            categoryID
         });
 
         await getSpentAmount(userID, budget._id); // Ensure spentAmount is set
@@ -103,7 +111,7 @@ const updateBudgetName = async (userID, budgetID, newName) => {
     if (!user || !newName || !user.budgetList.includes(budgetID)) return null;
 
     const budget = await Budget.findOne({ _id: budgetID });
-    budget.set('name' , newName);
+    budget.name = newName;
     await budget.save();
     return budget;
 };
@@ -126,7 +134,32 @@ const updateBudgetAmount = async (userID, budgetID, newAmount) => {
     if (!user || newAmount <= 0 || !user.budgetList.includes(budgetID)) return null;
 
     const budget = await Budget.findOne({ _id: budgetID });
-    budget.set('totalAmount' , newAmount);
+    budget.amount = newAmount;
+    await budget.save();
+    return budget;
+};
+/**
+ * Function to change a budget's category in the Budget collection 
+ * of the Expense Tracker Accounts database. 
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} budgetID - The unique _id of the budget. 
+ * @param {Double} newCategoryID - The new categoryID that categorizes the budget.
+ * @returns {Object} The updated instance of the budget object.
+ * Returns null if :
+ *      1. Invalid userID is provided.
+ *      2. Invalid categoryID is provided.
+ *      3. budgetID is not associated with the User instance provided.
+ */
+const updateBudgetCategory = async (userID, budgetID, newCategoryID) => {
+    newCategoryID = parseInt(newCategoryID);
+    const user = await User.findOne({ _id: userID });
+    if (!user || !user.budgetList.includes(budgetID)) return null;
+
+    const category = await Category.findOne({ categoryID: newCategoryID });
+    if (!category) return null;
+
+    const budget = await Budget.findOne({ _id: budgetID });
+    budget.categoryID = newCategoryID;
     await budget.save();
     return budget;
 };
@@ -146,7 +179,7 @@ const getSpentAmount = async (userID, budgetID) => {
     const transactions = await Transactions.find({ userID, categoryID: budget.categoryID, type: 0 });
 
     let spentAmount = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
-    budget.current = spentAmount;
+    budget.spentAmount = spentAmount;
     await budget.save();
     return spentAmount;
 };
@@ -157,5 +190,6 @@ module.exports = {
     removeBudget,
     updateBudgetName,
     updateBudgetAmount,
+    updateBudgetCategory,
     getSpentAmount
 };

@@ -5,5 +5,5 @@ nbproject/
 api.json
 list.js
 __tests__
-tests/
-test-results/
+tests
+test-results
