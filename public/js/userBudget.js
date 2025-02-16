@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const newBudgetName = budgetNameInput.value.trim();
         const newBudgetValue = parseFloat(budgetInput.value.trim());
-        const budgetCategory = budgetCategorySelect.value;  // CategoryID from the dropdown
+        //const budgetCategory = budgetCategorySelect.value;  // CategoryID from the dropdown
 
         if (!newBudgetName) {
             alert("Please enter a budget name.");
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 body: JSON.stringify({
                     name: newBudgetName,
                     amount: newBudgetValue,
-                    categoryID: budgetCategory
+//                    categoryID: budgetCategory
                 })
             });
 
