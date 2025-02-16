@@ -85,10 +85,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     incomeButton.addEventListener("click", () => activateButton(incomeButton, expenseButton, incomeCategories, 1));
     expenseButton.addEventListener("click", () => activateButton(expenseButton, incomeButton, expenseCategories, 0));
 
-    // DEPRECATED: Custom Category Input
-    // categorySelect.addEventListener("change", () => {
-    //     customCategoryContainer.style.display = categorySelect.value === "custom" ? "block" : "none";
-    // });
 
     closeExpenseButton.addEventListener("click", () => {
         addExpenseContainer.classList.remove("active");
@@ -115,22 +111,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     /** Refresh Dashboard Data */
-    async function refreshDashboard() {
-        try {
-            const budgetsData = sessionStorage.getItem("budgets");
-            const goalsData = sessionStorage.getItem("goals");
+async function refreshDashboard() {
+    try {
+        const budgetsData = sessionStorage.getItem("budgets");
+        const goalsData = sessionStorage.getItem("goals");
+        const netIncome = sessionStorage.getItem("netbalance");
 
             console.log("budgetsData (raw):", budgetsData);
             console.log("goalsData (raw):", goalsData);
 
-            const budgets = budgetsData ? JSON.parse(budgetsData) : [];
-            const goals = goalsData ? JSON.parse(goalsData) : [];
+        const budgets = budgetsData ? JSON.parse(budgetsData) : [];
+        const goals = goalsData ? JSON.parse(goalsData) : [];
+        const netbalance = netIncome ? JSON.parse(netIncome) : 0; // Ensure it's a number
 
             console.log("Parsed budgets:", budgets);
             console.log("Parsed goals:", goals);
 
             const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
             const currentGoal = goals.length ? goals[goals.length - 1] : null;
+            const currentNetBalance = document.getElementById("Income");
+
+            if (!netbalance) {
+                currentNetBalance.innerText = "No display"; // Show a fallback message when balance is unavailable
+            } else {
+                currentNetBalance.innerText = `$${netbalance.toFixed(2)}`; // Display the formatted balance
+            }
 
             if (!currentBudget) {
                 budgetDisplay.innerText = "Current Budget: $0";
@@ -147,9 +152,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!currentGoal) {
                 goalDisplay.innerText = "No goal set.";
             } else {
-                const goalCurrent = currentGoal.current || currentGoal.savedAmount || 0;
-                const goalTarget = currentGoal.target || currentGoal.targetAmount || 0;
+                const goalCurrent = currentGoal.savedAmount || 0;
+                const goalTarget = currentGoal.targetAmount || 9999;
                 const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
+
                 goalDisplay.innerHTML = `
                     <progress class="prog-goal" max="100" value="${goalPercent}" 
                         data-label="Goal - $${goalCurrent}/${goalTarget}"></progress>
@@ -161,109 +167,131 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /** Refresh Transactions Table */
-    async function refreshTransactionTable() {
-        const tableBody = document.getElementById("expense-table-body");
+async function refreshTransactionTable() {
+    const tableBody = document.getElementById("expense-table-body");
 
-        try {
-            const response = await fetch(`/api/transactions/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+    try {
+        const response = await fetch(`/api/transactions/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-            const data = await response.json();
-            transactions = data.transactions;
+        const data = await response.json();
+        transactions = data.transactions;
 
-            if (!Array.isArray(transactions)) {
-                console.error("Transactions data is not an array:", transactions);
-                return;
-            }
-            // Default sort by date descending
-            transactions = sortData(transactions, "date", "desc");
-            // Update the header for the default sorting
-            const dateHeader = document.querySelector('thead th[data-key="date"]');
-            if (dateHeader) {
-                dateHeader.setAttribute("data-order", "desc");
-            }
-
-            renderTableRows(transactions);
-        } catch (error) {
-            console.error("Error fetching transactions:", error);
+        if (!Array.isArray(transactions)) {
+            console.error("Transactions data is not an array:", transactions);
+            return;
         }
-    }
 
-    // needed to get correct date format. Was getting -1 day
+        //sort transactions by month/year
+        const [selectedYear, selectedMonth] = currentMonth.split("-").map(Number); 
+
+        console.log(`Filtering transactions for: ${selectedMonth}/${selectedYear}`);
+
+
+        const filteredTransactions = transactions.filter(transaction => {
+            if (!transaction.date) return false;
+
+            const transactionDate = new Date(transaction.date);
+
+            const transactionYear = transactionDate.getFullYear();
+            const transactionMonth = transactionDate.getMonth() + 1; 
+
+            return transactionYear === selectedYear && transactionMonth === selectedMonth;
+        });
+
+        console.log("Filtered transactions:", filteredTransactions); // Debugging
+
+        if (filteredTransactions.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center;">No transactions found for this month.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        const sortedTransactions = sortData(filteredTransactions, "date", "desc");
+
+        const dateHeader = document.querySelector('thead th[data-key="date"]');
+        if (dateHeader) {
+            dateHeader.setAttribute("data-order", "desc");
+        }
+
+        renderTableRows(sortedTransactions);
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
+    }
+}
+
     function formatDate(dateString) {
-        if (!dateString) return "Invalid Date"; // potential undefined values handling
+        if (!dateString) return "Invalid Date"; 
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return "Invalid Date"; // Check for invalid date
+        if (isNaN(date.getTime())) return "Invalid Date"; 
 
         return new Intl.DateTimeFormat("en-US", { timeZone: "UTC" }).format(date);
     }
 
     /** Render Table Rows */
-    function renderTableRows(data) {
-        const tableBody = document.getElementById("expense-table-body");
-        tableBody.innerHTML = data.map(transaction => `
-            <tr>
-                <td>${transaction.category?.name || "Uncategorized"}</td>
-                <td>${transaction.description || ""}</td>
-                <td>${formatDate(transaction.date)}</td>
-                <td>$${transaction.amount.toFixed(2)}</td>
-            </tr>
-        `).join("");
-    }
+function renderTableRows(data) {
+    const tableBody = document.getElementById("expense-table-body");
+    tableBody.innerHTML = data.map(transaction => `
+        <tr>
+            <td>${transaction.category ? transaction.category.name : "Uncategorized"}</td>
+            <td>${transaction.description || ""}</td>
+            <td>${formatDate(transaction.date)}</td>
+            <td>$${transaction.amount.toFixed(2)}</td>
+        </tr>
+    `).join("");
+}
 
     /** Sort Data */
-    const sortData = (data, key, order) => {
+   function sortData(data, key, order) {
         return data.sort((a, b) => {
-            let valA = a[key];
-            let valB = b[key];
-
-            // Handle category name sorting
-            if (key === "category" && valA && valB) {
-                valA = valA.name.toLowerCase(); // Convert to lowercase for case-insensitive sorting
-                valB = valB.name.toLowerCase();
-            }
-
-            // Handle date sorting
-            if (key === "date") {
-                valA = new Date(valA);
-                valB = new Date(valB);
-            }
-
-            // Handle description sorting (case-insensitive)
-            if (key === "description" && valA && valB) {
-                valA = valA.toLowerCase();
-                valB = valB.toLowerCase();
-            }
-
-            // Handle numeric sorting for amount
-            if (key === "amount") {
-                valA = parseFloat(valA);
-                valB = parseFloat(valB);
-            }
-
-            // Sort ascending or descending
-            if (valA < valB) return order === "asc" ? -1 : 1;
-            if (valA > valB) return order === "asc" ? 1 : -1;
+            if (a[key] < b[key])
+                return order === "asc" ? -1 : 1;
+            if (a[key] > b[key])
+                return order === "asc" ? 1 : -1;
             return 0;
         });
-    };
+    }
 
+    const prevMonthBtn = document.getElementById("prev-month");
+    const nextMonthBtn = document.getElementById("next-month");
+    const monthSelector = document.getElementById("month-selector");
 
-    /** Handle Header Clicks for Sorting */
-    tableHeaders.forEach((header) => {
-        header.addEventListener("click", () => {
-            const key = header.getAttribute("data-key");
-            const currentOrder = header.getAttribute("data-order") || "asc";
-            const newOrder = currentOrder === "asc" ? "desc" : "asc";
+    let currentMonth = new Date().toISOString().slice(0, 7);
+    monthSelector.value = currentMonth;
 
-            tableHeaders.forEach((h) => h.removeAttribute("data-order"));
-            header.setAttribute("data-order", newOrder);
+    /**
+     * Function to change the currently selected month by a given increment.
+     * It updates the global `currentMonth` variable, sets the month selector's value,
+     * and refreshes the transaction table.
+     *
+     * @param {Number} increment - The number of months to add (or subtract if negative).
+     * @returns {void}
+     */
+    function changeMonth(increment) {
+        const [year, month] = currentMonth.split("-").map(Number);
+        const date = new Date(year, month - 1 + increment);
+        currentMonth = date.toISOString().slice(0, 7);
+        monthSelector.value = currentMonth;
+        refreshTransactionTable();
+    }
 
-            const sortedData = sortData(transactions, key, newOrder);
-            renderTableRows(sortedData);
-        });
+    monthSelector.addEventListener("change", () => {
+        currentMonth = monthSelector.value;
+        refreshTransactionTable();
     });
+
+    prevMonthBtn.addEventListener("click", () => {
+        changeMonth(-1);
+    });
+
+    nextMonthBtn.addEventListener("click", () => {
+        changeMonth(1);
+    });
+
     /** Handle Adding a Transaction */
     async function handleAddTransaction(event) {
         event.preventDefault();
@@ -279,7 +307,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // const customCategory = (categoryId === "custom" && customCategoryInput) ? customCategoryInput.value.trim() : "";
 
-        // get transaction type Expense or Income
         const type = (document.getElementById("income-button").classList.contains("active")) ? "income" : "expense";
 
         if (isNaN(amount) || amount <= 0) {
@@ -290,10 +317,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert("Please enter a date.");
             return;
         }
-        // if (!categoryId || (categoryId === "custom" && !customCategory)) {
-        //     alert("Please select or enter a category.");
-        //     return;
-        // }
+
 
         // Prepare transaction data
         const transactionData = {

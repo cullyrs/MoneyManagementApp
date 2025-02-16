@@ -1,5 +1,4 @@
 const express = require("express");
-// const { findUser } = require("../db/userFunctions");
 const { getSpentAmount, getBudget, addBudget, removeBudget } = require("../db/budgetFunctions");
 const { getSavedAmount, getTargetAmount, getGoal, addGoal, removeGoal } = require("../db/goalFunctions");
 

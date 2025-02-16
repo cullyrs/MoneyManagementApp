@@ -5,7 +5,7 @@ require("dotenv").config();
 
 const router = express.Router();
 
-const { password } = require("../api.json");
+const { password } = require("../db/api.json");
 
 const SECRET_KEY = password || "defaultSecretKey"; // Secret from api.json
 
@@ -39,17 +39,19 @@ router.post("/login", async (req, res) => {
         const user = userData[0];      
         const transactions = userData[1];  
         const budgets = userData[2];        
-        const goals = userData[3];          
+        const goals = userData[3]; 
 
         const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: "1h" });
 
+        //what is needed from the user.
         res.json({ 
             success: true, 
             token, 
             userId: user._id,
             transactions,
             budgets,
-            goals
+            goals,
+            totalAmount: user.totalAmount
         });
     } catch (error) {
         console.error("Login Error:", error);
