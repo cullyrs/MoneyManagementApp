@@ -11,6 +11,7 @@
  * and handles UI interactions for switching between income and expense 
  * categories, as well as adding new transactions.
  */
+const USD = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'});
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Check if user is logged in
@@ -146,14 +147,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 budgetDisplay.innerHTML = `
                     <div id="budget-progress-container">    
                     <progress class="prog-budget" max="100" value="${budgetPercent}" 
-                        data-label="Budget - $${budgetCurrent}/${budgetSpent}"></progress>
-                    <span class="budget-progress-text">Budget - $${budgetCurrent}/${budgetSpent}</span>
+                        data-label="Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetSpent)}"></progress>
+                    <span class="budget-progress-text">Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetSpent)}</span>
                     </div>
                 `;
                 const budgetProgressBar = document.querySelector(".prog-budget");
                 if (budgetProgressBar) {
                     budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
-                    budgetProgressBar.textContent = `Budget - $${budgetCurrent}/${budgetSpent}`;
                 }
             }
 
@@ -166,8 +166,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 goalDisplay.innerHTML = `
                     <div id="goal-progress-container">    
                     <progress class="prog-goal" max="100" value="${goalPercent}" 
-                        data-label="Goal - $${goalCurrent}/${goalTarget}"></progress>
-                    <span class="goal-progress-text">Goal - $${goalCurrent}/${goalTarget}</span>
+                        data-label="Goal - ${USD.format(goalCurrent)}/${USD.format(goalTarget)}"></progress>
+                    <span class="goal-progress-text">Goal - ${USD.format(goalCurrent)}/${USD.format(goalTarget)}</span>
                     </div>
                 `;
                 const goalProgressBar = document.querySelector(".prog-goal");
@@ -294,8 +294,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const dateInput = document.getElementById("date").value;
         const amount = parseFloat(document.getElementById("amount").value);
-        const categoryId = document.getElementById("category").value; //  stores ObjectId
-        const description = document.getElementById("description").value.trim();
+        const categorySelect = document.getElementById("category");
+        const categoryId = categorySelect .value; //  stores ObjectId
+        const description = document.getElementById("description").value.trim() || 
+        categorySelect.options[categorySelect.selectedIndex].text;
         // const customCategoryInput = document.getElementById("custom-category");
 
         // const customCategory = (categoryId === "custom" && customCategoryInput) ? customCategoryInput.value.trim() : "";

@@ -11,6 +11,7 @@
  */
 
 //This works
+const USD = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'});
 document.addEventListener("DOMContentLoaded", async () => {
     const userId = sessionStorage.getItem("userId");
     const token = sessionStorage.getItem("token");
@@ -36,9 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const budgets = budgetsData ? JSON.parse(budgetsData) : [];
             // TODO: remove these logs to keep data more secure
             console.log("Parsed budgets:", budgets);
-            
             const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
-            
             if (!currentBudget) {
                 currentBudgetDiv.innerText = "No Budget Set";
             } else {
@@ -48,18 +47,25 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // TODO: remove these logs to keep data more secure
                 //added to check what budget is currently returning
                 console.log("check", [currentBudget.current, currentBudget.totalAmount, budgetPercent])
-                budgetDisplay.innerHTML = `
+                currentBudgetDiv.innerHTML = `
                     <div id="budget-progress-container">    
                     <progress class="prog-budget" max="100" value="${budgetPercent}" 
-                        data-label="Budget - $${budgetCurrent}/${budgetSpent}"></progress>
-                    <span class="progress-text">Budget - $${budgetCurrent}/${budgetSpent}</span>
+                        data-label="Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetSpent)}"></progress>
+                    <span class="budget-progress-text">Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetSpent)}</span>
                     </div>
                 `;
+                const budgetProgressBar = document.querySelector(".prog-budget");
+                if (budgetProgressBar) {
+                    budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
+
+                }
             }
         } catch (error) {
             console.error("Error loading dashboard:", error);
+            currentBudgetDiv.innerText("No Budget Set.");
         }
     }
+    await refreshDashboard();
 
     async function fetchCategories() {
         try {

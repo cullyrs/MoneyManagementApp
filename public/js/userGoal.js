@@ -1,5 +1,6 @@
 
 //This works 
+const USD = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'});
 document.addEventListener("DOMContentLoaded", async () => {
 
     const userId = sessionStorage.getItem("userId");
@@ -36,10 +37,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 currentGoalDiv.innerHTML = `
                     <div id="goal-progress-container">    
                     <progress class="prog-goal" max="100" value="${goalPercent}" 
-                        data-label="Goal - $${goalCurrent}/${goalTarget}"></progress>
-                    <span class="progress-text">Goal - $${goalCurrent}/${goalTarget}</span>
+                        data-label="Goal - ${USD.format(goalCurrent)}/${USD.format(goalTarget)}"></progress>
+                    <span class="goal-progress-text">Goal - ${USD.format(goalCurrent)}/${USD.format(goalTarget)}</span>
                     </div>
                 `;
+                const goalProgressBar = document.querySelector(".prog-goal");
+                if (goalProgressBar) {
+                    goalProgressBar.style.background = `linear-gradient(to right, #0c5460 ${goalPercent}%, #d1ecf1 ${goalPercent}%)`;
+                }
             }
             
         } catch (err) {
