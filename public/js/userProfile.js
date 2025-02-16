@@ -11,6 +11,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const userId = sessionStorage.getItem("userId");
     const token = sessionStorage.getItem("token");
+    
 
     if (!userId || !token) {
         console.error("No logged-in user found. Redirecting to login page.");
@@ -54,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Handle Logout Button Click
-    const logoutButton = document.getElementById("logout");
+    /* const logoutButton = document.getElementById("logout");
     if (logoutButton) {
         logoutButton.addEventListener("click", async () => {
             try {
@@ -84,5 +85,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     } else {
         console.error("Logout button not found in the DOM.");
-    }
+    } */
 });

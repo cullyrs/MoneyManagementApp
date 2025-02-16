@@ -84,47 +84,12 @@ router.post("/signup", async (req, res) => {
     }
 });
 
-
-
-router.get('/:userID', async (req, res) => {
-    const userID = req.params.userID;
-
-    try {
-        const user = await findUser(userID);
-        if (!user) {
-            return res.status(404).json({ success: false, error: 'User not found' });
-        }
-        res.json({ success: true, user });
-    } catch (error) {
-        console.error('Error fetching user:', error);
-        res.status(500).json({ success: false, error: 'Server error' });
-    }
-});
-
-
-router.get('/by-email/:email', async (req, res) => {
-    const email = req.params.email;
-    try {
-        const user = await getUser(email);
-        if (!user) {
-            return res.status(404).json({ success: false, error: 'User not found' });
-        }
-        res.json({ success: true, user });
-    } catch (error) {
-        console.error('Error fetching user by email:', error);
-        res.status(500).json({ success: false, error: 'Server error' });
-    }
-});
-
-
 //  Logout Route: Invalidates the JWT token
 router.post("/logout", (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
-
     if (!token) {
         return res.status(400).json({ success: false, error: "No token provided." });
     }
-
     blacklistedTokens.add(token); // Add token to blacklist
     res.json({ success: true, message: "User logged out successfully." });
 });
@@ -148,6 +113,35 @@ router.get("/validate-token", (req, res) => {
         res.json({ success: true, message: "Token is valid", userId: decoded.userId });
     } catch (error) {
         res.status(401).json({ error: "Invalid token." });
+    }
+});
+
+router.get('/by-email/:email', async (req, res) => {
+    const email = req.params.email;
+    try {
+        const user = await getUser(email);
+        if (!user) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+        res.json({ success: true, user });
+    } catch (error) {
+        console.error('Error fetching user by email:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
+
+router.get('/:userID', async (req, res) => {
+    const userID = req.params.userID;
+
+    try {
+        const user = await findUser(userID);
+        if (!user) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+        res.json({ success: true, user });
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
     }
 });
 

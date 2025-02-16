@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             const budgetsData = sessionStorage.getItem("budgets");
             const budgets = budgetsData ? JSON.parse(budgetsData) : [];
+            // TODO: remove these logs to keep data more secure
             console.log("Parsed budgets:", budgets);
             
             const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
@@ -44,6 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const budgetCurrent = currentBudget.current || 0;
                 const budgetSpent = currentBudget.totalAmount || 9999;
                 const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
+                // TODO: remove these logs to keep data more secure
                 //added to check what budget is currently returning
                 console.log("check", [currentBudget.current, currentBudget.totalAmount, budgetPercent])
                 budgetDisplay.innerHTML = `

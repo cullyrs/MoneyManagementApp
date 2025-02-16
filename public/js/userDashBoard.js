@@ -120,12 +120,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             const budgetsData = sessionStorage.getItem("budgets");
             const goalsData = sessionStorage.getItem("goals");
 
+            // TODO: remove these logs to keep data more secure
             console.log("budgetsData (raw):", budgetsData);
             console.log("goalsData (raw):", goalsData);
 
             const budgets = budgetsData ? JSON.parse(budgetsData) : [];
             const goals = goalsData ? JSON.parse(goalsData) : [];
 
+            // TODO: remove these logs to keep data more secure
             console.log("Parsed budgets:", budgets);
             console.log("Parsed goals:", goals);
 
@@ -138,6 +140,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const budgetCurrent = currentBudget.current || 0;
                 const budgetSpent = currentBudget.totalAmount || 9999;
                 const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
+                // TODO: remove these logs to keep data more secure
                 //added to check what budget is currently returning
                 console.log("check", [currentBudget.current, currentBudget.totalAmount, budgetPercent])
                 budgetDisplay.innerHTML = `
@@ -325,6 +328,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         // Log data to debug
+        // TODO: remove these logs to keep data more secure
         console.log("Transaction Data Being Sent:", JSON.stringify(transactionData, null, 2));
 
         try {
