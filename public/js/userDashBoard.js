@@ -124,15 +124,18 @@ async function refreshDashboard() {
 
         const budgets = budgetsData ? JSON.parse(budgetsData) : [];
         const goals = goalsData ? JSON.parse(goalsData) : [];
-        const netbalance = netIncome ? JSON.parse(netIncome) : 0; // Ensure it's a number
+        const netbalance = netIncome ? JSON.parse(netIncome) : 0; 
 
             // TODO: remove these logs to keep data more secure
             console.log("Parsed budgets:", budgets);
             console.log("Parsed goals:", goals);
+            
+
 
             const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
             const currentGoal = goals.length ? goals[goals.length - 1] : null;
-            const currentNetBalance = document.getElementById("Income");
+            const currentNetBalance = document.getElementById("TotalBalance");
+            
 
             if (!netbalance) {
                 currentNetBalance.innerText = "No display"; // Show a fallback message when balance is unavailable
@@ -222,7 +225,29 @@ async function refreshTransactionTable() {
         });
 
         console.log("Filtered transactions:", filteredTransactions); // Debugging
+        
+        //Calculate Monthly Balance
+        let totalIncome = 0;
+        let totalExpense = 0;
 
+        filteredTransactions.forEach(transaction => {
+            const amt = Number(transaction.amount);
+            
+            if (transaction.type && transaction.type.toLowerCase() === "income") {
+                totalIncome += amt;
+            } else {
+                totalExpense += amt;
+            }
+        });
+
+        const monthlyBalance = totalIncome - totalExpense;
+       
+        const monthBalance = document.getElementById("Income");
+        if (monthBalance) {
+            monthBalance.innerText = `$${monthlyBalance.toFixed(2)}`;
+        }
+        
+        
         if (filteredTransactions.length === 0) {
             tableBody.innerHTML = `
                 <tr>
@@ -232,6 +257,7 @@ async function refreshTransactionTable() {
             return;
         }
 
+        //Sort Transactions
         const sortedTransactions = sortData(filteredTransactions, "date", "desc");
 
         const dateHeader = document.querySelector('thead th[data-key="date"]');
