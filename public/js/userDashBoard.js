@@ -250,13 +250,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
+            const sortedTransactions = sortData(filteredTransactions, "date", "desc");
+
             // Update the header for the default sorting
             const dateHeader = document.querySelector('thead th[data-key="date"]');
             if (dateHeader) {
                 dateHeader.setAttribute("data-order", "desc");
             }
 
-            renderTableRows(transactions);
+            renderTableRows(sortedTransactions);
         } catch (error) {
             console.error("Error fetching transactions:", error);
         }
@@ -299,8 +301,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // Handle date sorting
             if (key === "date") {
-                valA = new Date(valA);
-                valB = new Date(valB);
+                //valA = new Date(valA);
+                //valB = new Date(valB);
             }
 
             // Handle description sorting (case-insensitive)
@@ -324,19 +326,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     /** Handle Header Clicks for Sorting */
-    tableHeaders.forEach((header) => {
-        header.addEventListener("click", () => {
-            const key = header.getAttribute("data-key");
-            const currentOrder = header.getAttribute("data-order") || "asc";
-            const newOrder = currentOrder === "asc" ? "desc" : "asc";
+    async function setupTableSorting() {
+        const tableHeaders = document.querySelectorAll("[data-key]"); // Select all sortable headers
 
-            tableHeaders.forEach((h) => h.removeAttribute("data-order"));
-            header.setAttribute("data-order", newOrder);
+        try {
+            for (const header of tableHeaders) {
+                header.addEventListener("click", async () => {
+                    let transactions = await getTransactions();
+                    console.log("Testing transactions:", transactions);
+                    const [selectedYear, selectedMonth] = monthSelector.value.split("-").map(Number); 
 
-            const sortedData = sortData(transactions, key, newOrder);
-            renderTableRows(sortedData);
-        });
-    });
+                    console.log(`Filtering transactions for: ${selectedMonth}/${selectedYear}`);
+
+                    const filteredTransactions = transactions.filter(transaction => {
+                        if (!transaction.date) return false;
+
+                        const transactionDate = new Date(transaction.date);
+                        const transactionYear = transactionDate.getFullYear();
+                        const transactionMonth = transactionDate.getMonth() + 1;
+
+                        return transactionYear === selectedYear && transactionMonth === selectedMonth;
+                    });
+                    const key = header.getAttribute("data-key");
+                    const currentOrder = header.getAttribute("data-order") || "asc";
+                    const newOrder = currentOrder === "asc" ? "desc" : "asc";
+
+                    tableHeaders.forEach((h) => h.removeAttribute("data-order"));
+                    header.setAttribute("data-order", newOrder);
+
+                    const sortedData = sortData(filteredTransactions, key, newOrder);
+                    renderTableRows(sortedData);
+                });
+            }
+        } catch (error) {
+            console.error("Error found in setupTableSorting:", error);
+        }
+    }
+    setupTableSorting();
     /** Month Navigation Controls */
     const prevMonthBtn = document.getElementById("prev-month");
     const nextMonthBtn = document.getElementById("next-month");
