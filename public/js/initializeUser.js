@@ -32,16 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const login = document.getElementById("login");
     const signup = document.getElementById("signup");
 
-    login.addEventListener("click", async () => {
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
-
-
-        if (!username || !password) {
-            alert("Please enter a valid username and password.");
-            return;
-        }
-
+    async function loggingIn(username, password) {
         try {
             const response = await fetch("/api/auth/login", {
                 method: "POST",
@@ -57,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 sessionStorage.setItem("transactions", JSON.stringify(result.transactions));
                 sessionStorage.setItem("budgets", JSON.stringify(result.budgets));
                 sessionStorage.setItem("goals", JSON.stringify(result.goals));
-                alert("Login successful!");
                 window.location.href = "./dashboard.html";
             } else {
                 alert("Login failed: " + result.error);
@@ -66,6 +56,19 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Login Error:", error);
             alert("Something went wrong. Please try again.");
         }
+    };
+
+    login.addEventListener("click", async () => {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+
+        if (!username || !password) {
+            alert("Please enter a valid username and password.");
+            return;
+        }
+
+        loggingIn(username, password);
     });
 
     /**
@@ -107,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const result = await response.json();
             if (result.success) {
-                alert(`Sign Up successful! Welcome, ${username}`);
+                loggingIn(username, password);
             } else {
                 alert(`Sign Up failed: ${result.error}`);
             }
@@ -117,4 +120,3 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
-

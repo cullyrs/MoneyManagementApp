@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <p><strong>Join Date:</strong> ${new Date(user.createdAt).toLocaleDateString() || "N/A"}</p>
       `;
     } else {
+
       console.warn("Profile info container not found.");
     }
   } catch (err) {
@@ -50,3 +51,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
 });
+

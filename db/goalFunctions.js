@@ -112,7 +112,7 @@ const getSavedAmount = async(userID, goalID)=>{
 
     if(user && index >= 0){
         const goal = await Goal.findOne({_id : goalID});
-        return goal.current;
+        return goal.savedAmount;
     }
     return null;
 }
@@ -183,7 +183,7 @@ const updateSavedAmount = async(userID, goalID, newSavedAmount) => {
         const goal = await Goal.findOne({_id : goalID});      
      
         // Update and save goal instance.
-        goal.set('current' , newSavedAmount);
+        goal.set('savedAmount' , newSavedAmount);
         await goal.save();
         return goal;
     }
@@ -208,7 +208,7 @@ const increaseSavedAmount = async(userID, goalID, amount) => {
         const goal = await Goal.findOne({_id : goalID});      
      
         // Update and save goal instance.
-        goal.set('current' , goal.current + amount);
+        goal.set('savedAmount' , goal.savedAmount + amount);
         await goal.save();
         return goal;
     }

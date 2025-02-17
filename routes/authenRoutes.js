@@ -36,22 +36,21 @@ router.post("/login", async (req, res) => {
                 .json({ success: false, error: "Invalid credentials." });
         }
 
-        const user = userData[0];      
-        const transactions = userData[1];  
-        const budgets = userData[2];        
-        const goals = userData[3]; 
+        const user = userData[0];
+        const transactions = userData[1];
+        const budgets = userData[2];
+        const goals = userData[3];
 
         const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: "1h" });
-
-        //what is needed from the user.
-        res.json({ 
-            success: true, 
-            token, 
+        
+        res.json({
+            success: true,
+            token,
             userId: user._id,
             transactions,
             budgets,
             goals,
-            totalAmount: user.totalAmount
+            totalAmount: user.totalAmount,
         });
     } catch (error) {
         console.error("Login Error:", error);
@@ -89,9 +88,11 @@ router.post("/signup", async (req, res) => {
 //  Logout Route: Invalidates the JWT token
 router.post("/logout", (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
+
     if (!token) {
         return res.status(400).json({ success: false, error: "No token provided." });
     }
+
     blacklistedTokens.add(token); // Add token to blacklist
     res.json({ success: true, message: "User logged out successfully." });
 });
