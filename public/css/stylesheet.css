@@ -6,32 +6,47 @@ progress {
   position: relative;
   font-weight: 800;
   font-size: 1.2rem;
-  -webkit-text-stroke: .5px;
+  overflow: hidden;
+  
 }
 progress.prog-budget{
   color: #000000;
-  -webkit-text-stroke-color: #f8d7da;
 }
 progress.prog-goal{
   color: #000000;
   -webkit-text-stroke-color: #d1ecf1;
 }
-progress:before {
-  content: attr(data-label);
-  font-size: 0.8em;
-  vertical-align: 0;
-  position: absolute;
-  left: 0;
-  right: 0;
+#budget-progress-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
 }
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  color: #000000;
+  font-size: 1rem;
+  z-index: 10;
+}
+#goal-progress-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
 progress.prog-budget::-webkit-progress-bar{
-  background-color: #f8d7da;
+  background-color: #f8d7da !important;
 }
 progress.prog-budget::-webkit-progress-value{
-  background-color: #721c24;
+  background-color: #721c24 !important;
 }
 progress.prog-budget::-moz-progress-bar{
-  background-color: #721c24;
+  background-color: #721c24 !important;
 }
 progress.prog-goal::-webkit-progress-bar{
   background-color: #d1ecf1;
