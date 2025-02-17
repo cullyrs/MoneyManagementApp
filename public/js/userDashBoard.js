@@ -232,8 +232,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
                 return;
             }
-            // Default sort by date descending
-            const sortedTransactions = sortData(filteredTransactions, "date", "desc");
+
             // Update the header for the default sorting
             const dateHeader = document.querySelector('thead th[data-key="date"]');
             if (dateHeader) {
