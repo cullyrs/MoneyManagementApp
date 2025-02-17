@@ -47,7 +47,6 @@ router.post("/:id/budgets/remove", async (req, res) => {
 router.post("/:id/goals/add", async (req, res) => {
     const userID = req.params.id;
     const { targetAmount, savedAmount, savedToDate} = req.body;
-    console.log("Hello?" , [targetAmount, savedAmount, savedToDate])
     try {
         const goal = await addGoal(userID, targetAmount, savedAmount, savedToDate);
         if (goal) {

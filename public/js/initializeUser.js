@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 sessionStorage.setItem("transactions", JSON.stringify(result.transactions));
                 sessionStorage.setItem("budgets", JSON.stringify(result.budgets));
                 sessionStorage.setItem("goals", JSON.stringify(result.goals));
-                alert("Login successful!");
                 window.location.href = "./dashboard.html";
             } else {
                 alert("Login failed: " + result.error);
@@ -111,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const result = await response.json();
             if (result.success) {
-                alert(`Sign Up successful! Welcome, ${username}`);
                 loggingIn(username, password);
             } else {
                 alert(`Sign Up failed: ${result.error}`);

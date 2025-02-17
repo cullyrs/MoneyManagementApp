@@ -93,8 +93,10 @@ document.addEventListener("DOMContentLoaded", () => {
     exportButton.addEventListener("click", async (event) => {
         await exportTransactionsToCSV(userID, token);
     });
-    // Attach click event listener
-    exportButton2.addEventListener("click", async (event) => {
-        await exportTransactionsToCSV(userID, token);
-    });
+    if(exportButton2) {
+        // Attach click event listener
+        exportButton2.addEventListener("click", async (event) => {
+            await exportTransactionsToCSV(userID, token);
+        });
+    }
 });

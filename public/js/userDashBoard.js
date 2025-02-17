@@ -152,7 +152,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
                     // TODO: remove these logs to keep data more secure
                     //added to check what budget is currently returning
-                    console.error("check", {budgetCurrent, budgetSpent, budgetPercent})
                     budgetDisplay.innerHTML = `
                         <div id="budget-progress-container">    
                         <progress class="prog-budget" max="100" value="${budgetPercent}" 
@@ -172,7 +171,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const goalCurrent = currentGoal.savedAmount || 0;
                     const goalTarget = currentGoal.targetAmount || 9999;
                     const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
-                    console.error("checking", {goalCurrent, goalTarget, goalPercent})
                     goalDisplay.innerHTML = `
                         <div id="goal-progress-container">    
                         <progress class="prog-goal" max="100" value="${goalPercent}" 
@@ -301,8 +299,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // Handle date sorting
             if (key === "date") {
-                //valA = new Date(valA);
-                //valB = new Date(valB);
+                valA = new Date(valA);
+                valB = new Date(valB);
             }
 
             // Handle description sorting (case-insensitive)

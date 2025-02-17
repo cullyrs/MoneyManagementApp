@@ -40,9 +40,6 @@ const addBudget = async (userID, name, totalAmount) => {
             current : 0,
             totalAmount : totalAmount
         });
-
-        await getSpentAmount(userID, budget._id); // Ensure spentAmount is set
-        user.budgetList.push(budget._id);
         await user.save();
         return budget;
     }
@@ -109,6 +106,28 @@ const updateBudgetName = async (userID, budgetID, newName) => {
 };
 
 /**
+ * Function to change a budget's name in the Budget collection of the 
+ * Expense Tracker Accounts database. 
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} budgetID - The unique _id of the budget.
+ * @param {String} newName - The updated budget name.  
+ * @returns {Object} The updated instance of the budget object.
+ * Returns null if :
+ *      1. Invalid userID is provided.
+ *      2. Invalid newName is provided. (Empty String)
+ *      3. budgetID is not associated with the User instance provided.
+ */
+const updateBudgetCurrent = async (userID, budgetID, amountToAdd) => {
+    const user = await User.findOne({ _id: userID });
+    if (!user || !amountToAdd || !user.budgetList.includes(budgetID)) return null;
+
+    const budget = await Budget.findOne({ _id: budgetID });
+    budget.set('current' , budget.current+amountToAdd);
+    await budget.save();
+    return budget;
+};
+
+/**
  * Function to change a budget's amount in the Budget collection 
  * of the Expense Tracker Accounts database. 
  * @param {String} userID - The unique _id of the associated User instance. 
@@ -146,8 +165,8 @@ const getSpentAmount = async (userID, budgetID) => {
     const transactions = await Transactions.find({ userID, categoryID: budget.categoryID, type: 0 });
 
     let spentAmount = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
-    budget.current = spentAmount;
-    await budget.save();
+    //budget.current = spentAmount;
+    //await budget.save();
     return spentAmount;
 };
 
@@ -157,5 +176,6 @@ module.exports = {
     removeBudget,
     updateBudgetName,
     updateBudgetAmount,
+    updateBudgetCurrent,
     getSpentAmount
 };
