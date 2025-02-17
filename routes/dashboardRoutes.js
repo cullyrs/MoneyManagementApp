@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/:id/budgets/add", async (req, res) => {
     const userID = req.params.id;
-    const { name, amount} = req.body;
+    const { name, amount } = req.body;
     try {
         const budget = await addBudget(userID, name, amount);
         if (budget) {
