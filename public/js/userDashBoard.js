@@ -273,6 +273,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     /** Render Table Rows */
     function renderTableRows(data) {
         const tableBody = document.getElementById("expense-table-body");
+        console.error("checking category", data)
         tableBody.innerHTML = data.map(transaction => `
             <tr>
                 <td>${transaction.category ? transaction.category.name : "Uncategorized"}</td>
