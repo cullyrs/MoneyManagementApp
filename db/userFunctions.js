@@ -9,10 +9,10 @@
  * the Expense Tracker Accounts database.
  */
 
-const User = require ('./models/User.js');
-const Transactions  = require ('./models/Transactions.js');
-const Budget  = require ('./models/Budget.js');
-const Goal  = require ('./models/Goal.js');
+const User = require('./models/User.js');
+const Transactions = require('./models/Transactions.js');
+const Budget = require('./models/Budget.js');
+const Goal = require('./models/Goal.js');
 const { hashed, compareEntry } = require('../utils/helper.js');
 
 /**
@@ -29,16 +29,16 @@ const { hashed, compareEntry } = require('../utils/helper.js');
  */
 const addUser = async (username, entry, email) => {
     console.log("addUser inputs:", { username, entry, email });
-  if(username && entry && email){
-    const user = await User.create({
-      userName: username,
-      password: await hashed(entry),
-      email: email,
-      totalAmount: 0
-    });
-    return user;
-  }
-  return null;
+    if (username && entry && email) {
+        const user = await User.create({
+            userName: username,
+            password: await hashed(entry),
+            email: email,
+            totalAmount: 0
+        });
+        return user;
+    }
+    return null;
 }
 /**
  * Function to find a user instance with an email in the User collection of the 
@@ -47,10 +47,10 @@ const addUser = async (username, entry, email) => {
  * @returns {Object} The instance of the associated user object.
  * Returns null if User collection is unassociated with email provided.
  */
-const getUser = async(email) => {
+const getUser = async (email) => {
     email = email.toLowerCase();
-    const user = await User.findOne({email : email});
-    if(user){
+    const user = await User.findOne({ email: email });
+    if (user) {
         return user;
     }
     return null;
@@ -63,10 +63,17 @@ const getUser = async(email) => {
  * @returns {Object} The instance of the associated user object.
  * Returns null if User collection is unassociated with email provided.
  */
-const findUser = async(userID) => {
-    const user = await User.findOne({_id : userID});
-    if(user){
+const findUser = async (userID) => {
+    try {
+        const user = await User.findById(userID)
+            .populate("budgetList") // Fetch full budget objects
+            .populate("goalList") // Fetch full goal objects
+            .lean(); // Convert to plain JS object
+
         return user;
+    } catch (error) {
+        console.error("Error finding user:", error);
+        return null;
     }
     return null;
 }
@@ -84,14 +91,14 @@ const findUser = async(userID) => {
  *      1. User collection is unassociated with email provided.
  *      2. Invalid entry is provided. (Current entry mismatch)
  */
-const loginUser = async(userName, entry) => {
+const loginUser = async (userName, entry) => {
     const name = userName.toLowerCase();
-    const user = await User.findOne({userName : name});
-    if(user && await compareEntry(entry, user.password)){        
+    const user = await User.findOne({ userName: name });
+    if (user && await compareEntry(entry, user.password)) {
         const transactions = await Transactions.where("userID").equals(user._id);
         const budgets = await Budget.where("userID").equals(user._id);
         const goals = await Goal.where("userID").equals(user._id);
-        return [user,transactions,budgets, goals];
+        return [user, transactions, budgets, goals];
     }
     return null;
 }
@@ -105,10 +112,10 @@ const loginUser = async(userName, entry) => {
  *      1. Invalid userID is provided.
  *      2. Invalid amount is provided (Positive values only)
  */
-const updateTotalAmount = async(userID, newAmount)=>{
-    
+const updateTotalAmount = async (userID, newAmount) => {
+
     const user = await User.findById(userID).exec();
-    if(user && newAmount > 0){
+    if (user && newAmount > 0) {
         user.totalAmount = parseFloat(newAmount);
         await user.save();
         return user;
@@ -126,9 +133,9 @@ const updateTotalAmount = async(userID, newAmount)=>{
  *      1. Invalid userID is provided.
  *      2. Invalid newName is provided. (Empty String)
  */
-const updateUserName = async(userID, newName)=> {
+const updateUserName = async (userID, newName) => {
     const user = await User.findById(userID).exec();
-    if(user && newName){
+    if (user && newName) {
         user.userName = newName;
         await user.save();
         return user;
@@ -149,17 +156,17 @@ const updateUserName = async(userID, newName)=> {
  *      2. Invalid newEmail is provided. (Empty String)
  *      3. Unassociated email is provided.
  */
-const updateEmail = async (userID, oldEmail, newEmail) => { 
+const updateEmail = async (userID, oldEmail, newEmail) => {
     oldEmail = oldEmail.toLowerCase();
-    newEmail = newEmail.toLowerCase();   
-    const user = await User.findOne({_id : userID}).where("email").equals(oldEmail);
+    newEmail = newEmail.toLowerCase();
+    const user = await User.findOne({ _id: userID }).where("email").equals(oldEmail);
     console.log(user);
-    if(user && newEmail){
-        try{
+    if (user && newEmail) {
+        try {
             user.email = newEmail;
             await user.save();
             return user;
-        }catch(error){
+        } catch (error) {
             return null;
         }
     }
@@ -178,9 +185,9 @@ const updateEmail = async (userID, oldEmail, newEmail) => {
  *      2.  Invalid oldEntry is provided. (Current entry mismatch)
  *      3. Invalid newEntry is provided. (Empty String)
  */
-const updatePassword = async(userID, oldEntry, newEntry) => {
-    const user = await User.findOne({_id : userID});
-    if(await loginUser(user.email, oldEntry) && newEntry){
+const updatePassword = async (userID, oldEntry, newEntry) => {
+    const user = await User.findOne({ _id: userID });
+    if (await loginUser(user.email, oldEntry) && newEntry) {
         user.set('password', await hashed(newEntry));
         await user.save();
         return user;
@@ -188,6 +195,7 @@ const updatePassword = async(userID, oldEntry, newEntry) => {
     return null;
 }
 
-module.exports = {addUser, findUser, getUser, loginUser, updateEmail,
-        updatePassword, updateTotalAmount, updateUserName
+module.exports = {
+    addUser, findUser, getUser, loginUser, updateEmail,
+    updatePassword, updateTotalAmount, updateUserName
 };

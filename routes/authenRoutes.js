@@ -97,28 +97,6 @@ router.post("/logout", (req, res) => {
     res.json({ success: true, message: "User logged out successfully." });
 });
 
-/**
- * debug check if a token is blacklisted.
- */
-router.get("/validate-token", (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
-        return res.status(400).json({ error: "No token provided." });
-    }
-
-    if (blacklistedTokens.has(token)) {
-        return res.status(401).json({ error: "Token is blacklisted." });
-    }
-
-    try {
-        const decoded = jwt.verify(token, SECRET_KEY);
-        res.json({ success: true, message: "Token is valid", userId: decoded.userId });
-    } catch (error) {
-        res.status(401).json({ error: "Invalid token." });
-    }
-});
-
 router.get('/by-email/:email', async (req, res) => {
     const email = req.params.email;
     try {

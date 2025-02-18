@@ -12,134 +12,145 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Money Management App">
-        <meta name="keywords" content="money, management, app, budget, finance">
-        <link rel="stylesheet" href="css/stylesheet.css">
-        <link rel="apple-touch-icon" sizes="180x180" href="imgs/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Money Management App">
+    <meta name="keywords" content="money, management, app, budget, finance">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
 
-        <!-- scripts -->
-        <script src="js/userProfile.js"></script>
-        <script src="js/dateScript.js"></script>
-        <script src="js/userDashBoard.js"></script>
-        <script src="js/headerMenu.js"></script>
-        <script src="js/logout.js"></script>
-        <title>Dashboard</title>
-    </head>
+    <!-- scripts -->
+    <script src="js/userProfile.js"></script>
+    <script src="js/dateScript.js"></script>
+    <script src="/js/userDashBoard.js"></script>
+    <script src="js/headerMenu.js"></script>
+    <script src="js/logout.js"></script>
 
-    <body>
-        <header>
-            <a href="index.html"><img src="imgs/icon.png" alt="icon homepage"></a>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+    
 
-            <!-- dashboard if user logged in, login if not -->
-            <h2><a href="dashboard.html">Expense Tracker</a></h2>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                    <li class="dropdown">
-                        <div class="menu-title">Settings</div>
-                        <nav class="settings-dropdown">
-                            <ul class="menu-dropdown">
-                                <li><a href="#" id="export-csv">Export Data to CSV</a></li>
-                                <li><a href="profile.html">User Profile</a></li>
-                            </ul>
-                        </nav>
-                    </li>
-                    <li id="logout"><a id="logout-link" href="logout.html">Log Out</a></li>
-                </ul>
-            </nav>
-        </header>
 
-        <main class="dashboard">
-            <div class="budget-goals">
-                <div id="budget-display" class="clickable">
-                    Budget - $0/9,999
-                    <progress max="100" value=${budgetCurrent}/${budgetTarget}></progress> <!-- replace with db budget edit html LATER TODO:-->
-                </div>
-                <div id="goal-display" class="clickable">
-                    Goal - $0/9,999
-                </div>
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <header>
+        <a href="index.html"><img src="imgs/icon.png" alt="icon homepage"></a>
+
+        <!-- dashboard if user logged in, login if not -->
+        <h2><a href="dashboard.html">Expense Tracker</a></h2>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="dropdown">
+                    <div class="menu-title">Settings</div>
+                    <nav class="settings-dropdown">
+                        <ul class="menu-dropdown">
+                            <li><a href="#" id="export-csv">Export Data to CSV</a></li>
+                            <li><a href="profile.html">User Profile</a></li>
+                            <li><a href="manage-targets.html">Manage Budget and Goals</a></li>
+                        </ul>
+                    </nav>
+                </li>
+                <li id="logout"><a id="logout-link" href="logout.html">Log Out</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="dashboard">
+        <div class="budget-goals">
+            <div id="budget-display" class="clickable">
+                Budget - $0/9,999
+                <progress max="100" value=${budgetCurrent}/${budgetTarget}></progress>
+            </div>
+            <div id="goal-display" class="clickable">
+                Goal - $0/9,999
+            </div>
+        </div>
+
+        <div class="month-navigation">
+            <button id="prev-month" name="Previous Month">&lt;</button>
+
+            <!-- button directly opens the month selector -->
+            <input type="text" id="month-selector" placeholder="Select Month">
+            <button id="next-month" name="Next Month">&gt;</button>
+        </div>
+
+        <!-- script fills table -->
+        <div class="finance-container">
+            <div id="net-balance" class="total-text">
+                <span>Monthly Balance:</span> <span id="Income">$0.00</span>
+                <!-- income - expenses replace with db income -->
+                <button id="add-expense-button" aria-label="Add Expense">+</button>
             </div>
 
-            <div class="month-navigation">
-                <button id="prev-month" name="Previous Month">&lt;</button>
-
-                <!-- button directly opens the month selector -->
-                <input type="month" id="month-selector" name="Select Month" aria-label="Select Month">
-                <button id="next-month" name="Next Month">&gt;</button>
+            <div class="table">
+                <table>
+                    <thead>
+                        <tr>
+                            <!-- headers -->
+                            <th data-key="category">Category</th>
+                            <th data-key="description">Description</th>
+                            <th data-key="date">Date</th>
+                            <th data-key="amount">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expense-table-body">
+                        <!-- rows will be dynamically populated here -->
+                    </tbody>
+                </table>
             </div>
 
-            <!-- script fills table -->
-            <div class="finance-container">
-                <div id="net-balance" class="total-text">
-                    <span>Monthly Balance:</span> <span id="Income">$0.00</span>
-                    <!-- income - expenses replace with db income -->
-                    <button id="add-expense-button" aria-label="Add Expense">+</button>
-                </div>
-
-                <div class="table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <!-- headers -->
-                                <th data-key="category">Category</th>
-                                <th data-key="description">Description</th>
-                                <th data-key="date">Date</th>
-                                <th data-key="amount">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expense-table-body">
-                            <!-- rows will be dynamically populated here -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- replace with db total balance -->
-                <div id="total-balance" class="total-text">
-                    <span>Lifetime Balance:</span> <span id="TotalBalance">$0.00</span>
-                </div>
+            <!-- liftime balance -->
+            <div id="total-balance" class="total-text">
+                <span>Lifetime Balance:</span> <span id="TotalBalance">$0.00</span>
             </div>
+        </div>
 
-            <div id="add-expense-container">
-                <section class="add-expense">
-                    <button id="close-add-expense" aria-label="Close Menu">&times;</button>
-                    <h2>Add Expense</h2>
+        <div id="add-expense-container">
+            <section class="add-expense">
+                <button id="close-add-expense" aria-label="Close Menu">&times;</button>
+                <h2>Add Expense</h2>
 
-                    <!-- income and expense toggle Buttons -->
-                    <div class="toggle-buttons">
-                        <button id="income-button" class="toggle-button">Income</button>
-                        <button id="expense-button" class="toggle-button">Expense</button>
-                    </div>
+                <!-- income and expense toggle Buttons -->
+                <div class="toggle-buttons">
+                    <button id="income-button" class="toggle-button">Income</button>
+                    <button id="expense-button" class="toggle-button">Expense</button>
+                </div>
 
-                    <!-- replace form action? -->
-                    <form class="add-expense-form" action="/addExpense" method="post" name="add-expense-title">
-                        <label for="category">Category:</label>
-                        <select id="category" name="category"></select>
-                        <label for="date">Date:</label>
-                        <input type="date" id="date" name="date" required>
-                        <label for="amount">Amount:</label>
-                        <input type="number" id="amount" name="amount" step="0.01" required>
-                        <span id="amount-validation" class="validation-error"></span>
-                        <label for="description">Description:</label>
-                        <input type="text" id="description" name="description">
-                        <button type="submit" id="submit">Submit</button>
-                    </form>
+                <form class="add-expense-form" action="/addExpense" method="post" name="add-expense-title">
+                    <label for="category">Category:</label>
+                    <select id="category" name="category"></select>
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required>
+                    <label for="amount">Amount:</label>
+                    <!-- format to allow  00.00 only -->
+                    <input type="number" id="amount" name="amount" step="0.01" required>
+                    <span id="amount-validation" class="validation-error"></span>
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" name="description">
+                    <button type="submit" id="submit">Submit</button>
+                    <button type="button" id="edit-transaction">Edit</button>
+                    <button type="button" id="delete-transaction">Delete</button>
+                    <button type="button" id="cancel-transaction">Cancel</button>
+                </form>
+            </section>
+        </div>
 
-                </section>
-            </div>
+    </main>
 
-        </main>
+    <footer>
+        <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
+    </footer>
 
-        <footer>
-            <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
-        </footer>
-
-    </body>
+</body>
 
 </html>

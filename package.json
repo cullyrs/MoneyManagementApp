@@ -46,19 +46,22 @@
   "description": "Money Management Web Application",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "flatpickr": "^4.6.13",
     "jest": "^29.7.0",
     "jest-html-reporter": "^4.0.1",
     "jest-junit": "^16.0.0",
     "jsdom": "^26.0.0",
     "jsonwebtoken": "^9.0.2",
+    "less-watch-compiler": "^1.16.3",
     "moneymanagementapp": "file:",
     "mongoose": "^7.8.6",
     "mongoose-double": "^0.0.1",
     "mongoose-int32": "^0.6.0",
     "morgan": "^1.10.0",
     "node-fetch": "^3.3.2",
+    "nodemailer": "^6.10.0",
     "supertest": "^7.0.0"
   },
   "devDependencies": {

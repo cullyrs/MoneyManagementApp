@@ -1,5 +1,5 @@
 const express = require("express");
-const { getUserTransactions, addTransaction } = require("../db/transactionsFunctions");
+const { getUserTransactions, addTransaction, getTransaction, updateTransactionAmount, updateTransactionCategory, updateTransactionDate, removeTransaction } = require("../db/transactionsFunctions");
 
 const router = express.Router();
 
@@ -53,4 +53,63 @@ router.post("/", async (req, res) => {
     }
 });
 
+/**
+ * Update a transaction
+ * @route PUT /api/transactions/:userID/:transactionID
+ */
+router.put("/:userID/:transactionID", async (req, res) => {
+    const { userID, transactionID } = req.params;
+    const { amount, category, date, description } = req.body;
+
+    console.log(`Attempting to update transaction: ${transactionID} for user: ${userID}`);
+
+    if (!userID || !transactionID) {
+        return res.status(400).json({ success: false, error: "Missing user ID or transaction ID" });
+    }
+
+    try {
+        let transaction = await getTransaction(userID, transactionID);
+        if (!transaction) {
+            return res.status(404).json({ success: false, error: "Transaction not found" });
+        }
+
+        if (amount) await updateTransactionAmount(userID, transactionID, amount);
+        if (category) await updateTransactionCategory(userID, transactionID, category);
+        if (date) await updateTransactionDate(userID, transactionID, date);
+        if (description) transaction.description = description;
+
+        await transaction.save();
+
+        res.json({ success: true, message: "Transaction updated successfully", transaction });
+    } catch (error) {
+        console.error("Error updating transaction:", error);
+        res.status(500).json({ success: false, error: "Server error" });
+    }
+});
+
+/**
+ * Delete a transaction
+ * @route DELETE /api/transactions/:userID/:transactionID
+ */
+router.delete("/:userID/:transactionID", async (req, res) => {
+    const { userID, transactionID } = req.params;
+
+    console.log(`Attempting to delete transaction: ${transactionID} for user: ${userID}`);
+
+    if (!userID || !transactionID) {
+        return res.status(400).json({ success: false, error: "Missing user ID or transaction ID" });
+    }
+
+    try {
+        const transaction = await removeTransaction(userID, transactionID);
+        if (!transaction) {
+            return res.status(404).json({ success: false, error: "Transaction not found" });
+        }
+
+        res.json({ success: true, message: "Transaction deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting transaction:", error);
+        res.status(500).json({ success: false, error: "Server error" });
+    }
+});
 module.exports = router;

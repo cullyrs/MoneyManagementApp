@@ -1,9 +1,10 @@
 node_modules/
 nbproject/
-.env
+*.env
 *.log
 api.json
 list.js
 __tests__
 tests
 test-results
+*/less-watch-compiler.config.json

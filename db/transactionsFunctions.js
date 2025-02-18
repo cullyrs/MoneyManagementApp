@@ -192,20 +192,26 @@ const updateTransactionType = async (userID, transactionID, newType) =>{
  *      2. Invalid categoryID is provided.
  *      3. transactionID is not associated with the User instance provided.
  */
-const updateTransactionCategory = async(userID, transactionID, newCategoryID) =>{
-    newCategoryID = parseInt(newCategoryID);
-    const user = await User.findOne({_id : userID});
+const updateTransactionCategory = async (userID, transactionID, newCategoryID) => {
+    const user = await User.findOne({ _id: userID });
+    if (!user) return null;
+
     const index = user.transactionList.indexOf(transactionID);
-    const category = await Category.findOne({categoryID : newCategoryID});
-    
-    if(user && category && index >= 0){
-        const transaction = await Transactions.findOne({_id : transactionID});
-        transaction.set('categoryID', newCategoryID);
-        await transaction.save();
-        return transaction;        
-    }
-    return null;
-}
+    if (index === -1) return null; // check transaction belongs to user
+
+    const category = await Category.findById(newCategoryID); // lookup by _id
+    if (!category) return null; // check valid category
+
+    const transaction = await Transactions.findOne({ _id: transactionID });
+    if (!transaction) return null;
+
+    // set category to new ObjectId
+    transaction.set('category', category._id); 
+    await transaction.save();
+
+    return transaction;
+};
+
 
 /**
  * Function to change a transaction's amount in the Transaction collection 

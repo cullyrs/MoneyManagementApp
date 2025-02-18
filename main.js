@@ -15,6 +15,8 @@ const userRoutes = require("./routes/userRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+const alertRoutes = require("./routes/alertRoutes");
 
 // Initialize Express app
 const app = express();
@@ -29,9 +31,11 @@ app.use(express.static(path.join(__dirname, "public")));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/users", dashboardRoutes); 
+app.use("/api/dashboard", dashboardRoutes); 
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/categories", categoryRoutes); 
+app.use("/api/submitContactForm", contactRoutes);
+app.use("/api/alert", alertRoutes);
 
 // Homepage Route
 app.get("/", (req, res) => {

@@ -25,10 +25,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Fetch user information from the backend
         const response = await fetch(`/api/users/${userId}`, {
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }
         });
 
         if (!response.ok) {
@@ -51,39 +47,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     } catch (err) {
         console.error("Error retrieving user info:", err);
-        alert("Failed to load user profile. Please try again.");
     }
-
-    // Handle Logout Button Click
-    /* const logoutButton = document.getElementById("logout");
-    if (logoutButton) {
-        logoutButton.addEventListener("click", async () => {
-            try {
-                const response = await fetch("/api/auth/logout", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Logout failed: ${response.status}`);
-                }
-
-                // Clear client-side session storage
-                sessionStorage.removeItem("userId");
-                sessionStorage.removeItem("token");
-
-                alert("Logout successful!");
-                window.location.href = "./login.html"; // Redirect to login page
-
-            } catch (error) {
-                console.error("Logout Error:", error);
-                alert("Logout failed. Please try again.");
-            }
-        });
-    } else {
-        console.error("Logout button not found in the DOM.");
-    } */
 });

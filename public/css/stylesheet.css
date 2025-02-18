@@ -1,63 +1,3 @@
-progress {
-  text-align: center;
-  height: 1.5em;
-  width: 100%;
-  border: none;
-  position: relative;
-  font-weight: 800;
-  font-size: 1.2rem;
-  overflow: hidden;
-  background-color: none;
-}
-progress.prog-budget{
-  color: #000000;
-}
-progress.prog-goal{
-  color: #000000;
-  -webkit-text-stroke-color: #d1ecf1;
-}
-#budget-progress-container {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.progress-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  white-space: nowrap;
-  transform: translate(-50%, -50%);
-  font-weight: bold;
-  color: #000000;
-  font-size: 1rem;
-  z-index: 10;
-}
-#goal-progress-container {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-progress.prog-budget::-webkit-progress-bar{
-  background-color: #f8d7da;
-}
-progress.prog-budget::-webkit-progress-value{
-  background-color: #721c24;
-}
-progress.prog-budget::-moz-progress-bar{
-  background-color: #721c24;
-}
-progress.prog-goal::-webkit-progress-bar{
-  background-color: #d1ecf1;
-}
-progress.prog-goal::-webkit-progress-value{
-  background-color: #0c5460;
-}
-progress.prog-goal::-moz-progress-bar{
-  background-color: #0c5460;
-}
-
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -151,32 +91,121 @@ header img {
 .budget-goals #budget-display {
   flex: 1;
   text-align: center;
-  padding: 15px;
+  padding: 20px;
   border-radius: 8px;
   margin-right: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: background-color 0.3s ease;
+  position: relative;
   background-color: #f8d7da;
   color: #721c24;
 }
 .budget-goals #budget-display:hover {
   opacity: 0.8;
 }
+.budget-goals #budget-display .budget-progress-text,
+.budget-goals #budget-display .goal-progress-text {
+  position: relative;
+  font-weight: bold;
+  z-index: 2;
+}
+.budget-goals #budget-display progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  z-index: 1;
+}
+.budget-goals #budget-display progress::-webkit-progress-bar {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+.budget-goals #budget-display progress::-webkit-progress-value {
+  border-radius: 8px;
+}
+.budget-goals #budget-display progress::-moz-progress-bar {
+  border-radius: 8px;
+}
+.budget-goals #budget-display .prog-budget::-webkit-progress-value {
+  background: #da2939;
+}
+.budget-goals #budget-display .prog-budget::-moz-progress-bar {
+  background: #da2939;
+}
 .budget-goals #goal-display {
   flex: 1;
   text-align: center;
-  padding: 15px;
+  padding: 20px;
   border-radius: 8px;
   margin-right: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: background-color 0.3s ease;
+  position: relative;
   background-color: #d1ecf1;
   color: #0c5460;
 }
 .budget-goals #goal-display:hover {
   opacity: 0.8;
+}
+.budget-goals #goal-display .budget-progress-text,
+.budget-goals #goal-display .goal-progress-text {
+  position: relative;
+  font-weight: bold;
+  z-index: 2;
+}
+.budget-goals #goal-display progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  z-index: 1;
+}
+.budget-goals #goal-display progress::-webkit-progress-bar {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+.budget-goals #goal-display progress::-webkit-progress-value {
+  border-radius: 8px;
+}
+.budget-goals #goal-display progress::-moz-progress-bar {
+  border-radius: 8px;
+}
+.budget-goals #goal-display .prog-goal::-webkit-progress-value {
+  background: #39a8bd;
+}
+.budget-goals #goal-display .prog-goal::-moz-progress-bar {
+  background: #39a8bd;
+}
+.flatpickr-calendar {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto;
+  min-width: 150px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px;
+}
+.flatpickr-monthDropdown-months {
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+.flatpickr-months {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 0;
 }
 .month-navigation {
   display: flex;
@@ -184,34 +213,53 @@ header img {
   align-items: center;
   margin: 20px 0;
 }
-.month-navigation button,
-.month-navigation input[type="month"] {
+.month-navigation button {
   background-color: #007bff;
   color: white;
   border: 1px solid #000000;
   padding: 20px 25px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
   font-size: 20px;
   font-weight: bold;
   border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
 }
-.month-navigation button:hover,
-.month-navigation input[type="month"]:hover {
+.month-navigation button:hover {
   background-color: #0056b3;
   transform: scale(1.05);
 }
-.month-navigation button:active,
-.month-navigation input[type="month"]:active {
+.month-navigation button:active {
   transform: scale(1);
 }
-.month-navigation input[type="month"] {
+.month-navigation #month-selector {
   text-align: center;
-  appearance: none;
+  background-color: #007bff;
+  color: white;
   font-size: 18px;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 22px 12px;
+  width: 160px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  outline: none;
+  z-index: 12;
 }
-.month-navigation input[type="month"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
+.month-navigation #month-selector:hover {
+  background-color: #3395ff;
+}
+.month-navigation #month-selector:focus {
+  background-color: #66b0ff;
+  border-color: #0062cc;
+}
+.month-navigation .flatpickr-input[readonly] {
+  cursor: pointer;
+}
+.month-navigation #month-selector {
+  text-align: center;
+}
+.month-navigation #month-selector::placeholder {
+  text-align: center;
 }
 .month-navigation #prev-month {
   border-top-left-radius: 5px;
@@ -287,6 +335,12 @@ header img {
 }
 .finance-container .table::-webkit-scrollbar-thumb:hover {
   background-color: #0062cc;
+}
+@supports (-moz-appearance: none) {
+  .finance-container .table {
+    scrollbar-width: thin;
+    scrollbar-color: #007bff #bcc6cf;
+  }
 }
 .finance-container .table table {
   width: 100%;
@@ -461,6 +515,35 @@ header img {
   background-color: #e9808a;
   border-color: #e9808a;
 }
+#budget-progress-container,
+#goal-progress-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  color: #000000;
+  font-size: 1rem;
+  z-index: 10;
+}
+progress.prog-budget::-webkit-progress-bar {
+  background-color: #f8d7da !important;
+}
+progress.prog-budget::-webkit-progress-value {
+  background-color: #721c24 !important;
+}
+progress.prog-budget::-moz-progress-bar {
+  background-color: #721c24 !important;
+}
+progress.prog-goal::-webkit-progress-bar {
+  background-color: #d1ecf1 !important;
+}
 .about .app-description {
   max-width: 800px;
   margin: 50px auto;
@@ -537,7 +620,7 @@ header img {
 .contact form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 .contact form label {
   font-size: 16px;
@@ -547,6 +630,7 @@ header img {
 }
 .contact form input[type="text"],
 .contact form input[type="email"],
+.contact form select,
 .contact form textarea {
   width: 100%;
   padding: 10px;
@@ -560,13 +644,38 @@ header img {
 }
 .contact form input[type="text"]:focus,
 .contact form input[type="email"]:focus,
+.contact form select:focus,
 .contact form textarea:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
+.contact form input[type="text"]:disabled,
+.contact form input[type="email"]:disabled,
+.contact form select:disabled,
+.contact form textarea:disabled {
+  background-color: #e6e6e6;
+  cursor: not-allowed;
+}
+.contact form input[readonly] {
+  background-color: #e8e8e8;
+  color: #000000;
+  cursor: not-allowed;
+}
 .contact form textarea {
   resize: vertical;
+  min-height: 100px;
+}
+.contact form select {
+  appearance: none;
+  cursor: pointer;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000000' d='M7 10l5 5l5-5z'/%3E%3C/svg%3E") no-repeat right 10px center;
+  background-size: 12px;
+  padding-right: 30px;
+}
+.contact form select:hover,
+.contact form select:focus {
+  border-color: #0062cc;
 }
 .contact form button {
   background-color: #007bff;
@@ -636,84 +745,72 @@ header img {
   text-decoration: underline;
 }
 .manage-categories {
-  max-width: 800px;
+  max-width: 600px;
   margin: 50px auto;
   padding: 30px;
   background-color: #f8f9fa;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.manage-categories h1,
-.manage-categories h2 {
+.manage-categories h1 {
   text-align: center;
   color: #007bff;
   margin-bottom: 20px;
 }
-.manage-categories form {
+.manage-budgets-goals h1 {
+  text-align: center;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+.manage-budgets-goals #budget-goal-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-.manage-categories form label {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
+.month-section {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
 }
-.manage-categories form input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  color: #333;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: border-color 0.3s ease;
+.month-section:hover {
+  background-color: #ffffff;
 }
-.manage-categories form input[type="text"]:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+.month-section h2 {
+  text-align: left;
+  color: #007bff;
+  font-size: 20px;
+  margin-bottom: 10px;
 }
-.manage-categories form button#add-category-button {
-  align-self: flex-start;
-  background-color: #007bff;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-.manage-categories form button#add-category-button:hover {
-  background-color: #0062cc;
-  transform: scale(1.05);
-}
-.manage-categories form button#add-category-button:active {
-  transform: scale(1);
-}
-.manage-categories ul#categories-list {
+.month-section ul {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 10px 0;
 }
-.manage-categories ul#categories-list li {
+.month-section ul h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 8px;
+}
+.month-section ul li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
-  background-color: #f1f1f1;
+  padding: 10px;
+  background: #e9ecef;
   border-radius: 5px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 5px;
   transition: background-color 0.3s ease;
 }
-.manage-categories ul#categories-list li:hover {
-  background-color: #e9ecef;
+.month-section ul li:hover {
+  background-color: #dae0e5;
 }
-.manage-categories ul#categories-list li button.delete-category {
+.month-section ul li strong {
+  font-weight: bold;
+  color: #007bff;
+}
+.month-section ul li button {
   background-color: #dc3545;
   color: #fff;
   font-size: 14px;
@@ -721,14 +818,14 @@ header img {
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
 }
-.manage-categories ul#categories-list li button.delete-category:hover {
+.month-section ul li button:hover {
   background-color: #bd2130;
   transform: scale(1.05);
 }
-.manage-categories ul#categories-list li button.delete-category:active {
+.month-section ul li button:active {
   transform: scale(1);
 }
 .login {
@@ -844,6 +941,32 @@ header img {
 .login .tab-content form button:active {
   transform: scale(1);
 }
+#logging-out {
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  margin-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.loader {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #99caff;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .homepage .hero {
   display: flex;
   flex-direction: column;
@@ -933,6 +1056,84 @@ header img {
 .homepage .selling-points .points .point p {
   font-size: 1rem;
   color: #555;
+}
+/* Alert Box Styling */
+.alert-container {
+  top: -100px;
+  /* Keep hidden initially */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 400px;
+  padding: 15px;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 5px;
+  z-index: 1000;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: top 0.4s ease-in-out, opacity 0.5s;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  position: fixed;
+}
+#alert-close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+  font-weight: bold;
+}
+#alert-close:hover {
+  transform: scale(1.3);
+  color: #ffffff;
+}
+#alert-close:active {
+  transform: scale(1);
+}
+#alert-close::before {
+  content: "\00d7";
+  /* Unicode for "×" */
+  font-weight: bold;
+  display: inline-block;
+}
+.alert-container.show {
+  top: 20px;
+  /* Ensure it slides down correctly */
+  opacity: 1;
+}
+/* Ensure Hidden State is Applied */
+.alert-container.hidden {
+  top: -100px;
+  opacity: 0;
+}
+/* Alert Colors */
+.alert-success {
+  background-color: #4eb466;
+  color: white;
+}
+/* Green */
+.alert-error {
+  background-color: #dc3545;
+  color: white;
+}
+/* Red */
+.alert-warning {
+  background-color: #ff7f07;
+  color: white;
+  color: black;
+}
+/* Yellow */
+.alert-info {
+  background-color: #d7b727;
+  color: white;
 }
 footer {
   background-color: #004a99;

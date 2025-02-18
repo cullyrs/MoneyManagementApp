@@ -24,12 +24,13 @@
     <link rel="manifest" href="/site.webmanifest">
     <!-- Scripts -->
     <script src="js/logout.js"></script>
+    <script src="js/userContact.js"></script>
     <title>Contact Us</title>
 </head>
 
 <body>
     <header>
-        <img src="imgs/icon.png" alt="icon homepage">
+        <a href="index.html"><img src="imgs/icon.png" alt="icon homepage"></a>
 
         <!-- dashboard if user logged in, login if not -->
         <h2><a href="dashboard.html">Expense Tracker</a></h2>
@@ -43,6 +44,7 @@
                         <ul class="menu-dropdown">
                             <li><a href="#" id="export-csv">Export Data to CSV</a></li>
                             <li><a href="profile.html">User Profile</a></li>
+                            <li><a href="manage-targets.html">Manage Budget and Goals</a></li>
                         </ul>
                     </nav>
                 <li id="logout"><a id="logout-link" href="logout.html">Log Out</a></li>
@@ -54,13 +56,26 @@
         <h1>Contact Us</h1>
 
         <!-- default form and action, maybe send an email to creators? -->
-        <form action="/submitContactForm" method="post">
+        <form id="contact-form" onsubmit="submitContactForm(event)">
             <label for="name">Your Name:</label>
             <input type="text" id="name" name="name" required>
+        
             <label for="email">Your Email:</label>
-            <input type="email" id="email" name="email" required>
+            <input type="email" id="email" name="email" required readonly>
+        
+            <label for="category">Feedback Category:</label>
+            <select id="category" name="category" required>
+                <option value="general">General Inquiry</option>
+                <option value="bug">Report a Bug</option>
+                <option value="feature">Feature Request</option>
+                <option value="category">Category Suggestion</option>
+                <option value="account">Account Issue</option>
+                <option value="other">Other</option>
+            </select>
+        
             <label for="message">Your Message:</label>
             <textarea id="message" name="message" rows="5" required></textarea>
+        
             <button type="submit">Submit</button>
         </form>
     </main>

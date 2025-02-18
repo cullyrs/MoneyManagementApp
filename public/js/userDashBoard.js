@@ -13,6 +13,8 @@
  */
 const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
+
+
 document.addEventListener("DOMContentLoaded", async () => {
     // Check if user is logged in
     const userId = sessionStorage.getItem("userId");
@@ -20,6 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!userId || !token) {
         console.error("No logged-in user found. Redirecting to login page.");
+        showAlert("Please log in to view this page.", "error");
         window.location.href = "./login.html";
         return;
     }
@@ -36,7 +39,50 @@ document.addEventListener("DOMContentLoaded", async () => {
     const addExpenseButton = document.getElementById("add-expense-button");
     const addExpenseContainer = document.getElementById("add-expense-container");
     const closeExpenseButton = document.getElementById("close-add-expense");
-    const tableHeaders = document.querySelectorAll("thead th");
+    const cancelExpenseButton = document.getElementById("cancel-transaction");
+    const dateInput = document.getElementById("date");
+
+    // const tableHeaders = document.querySelectorAll("thead th"); // not in use?
+    async function showAlert(message, type) {
+        // Function to hide alert smoothly
+        function closeAlert(alertBox) {
+            alertBox.classList.remove("show");
+            setTimeout(() => alertBox.remove(), 500);
+        }
+
+        fetch("/api/alert", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message, type }),
+        })
+            .then(response => response.text())
+            .then(alertHtml => {
+                document.body.insertAdjacentHTML("beforeend", alertHtml);
+
+                const alertBox = document.querySelector(".alert-container:last-of-type");
+                if (!alertBox) return;
+
+                // Show alert
+                setTimeout(() => {
+                    alertBox.classList.add("show");
+                }, 100);
+
+                // Auto-hide alert after 5 seconds
+                setTimeout(() => closeAlert(alertBox), 5000);
+
+                // Close button functionality
+                alertBox.querySelector("#alert-close").addEventListener("click", () => closeAlert(alertBox));
+            })
+            .catch(error => {
+                console.error("Error triggering alert:", error);
+            });
+    }
+
+
+
+
+    const today = new Date().toISOString().split("T")[0]; // set today's date
+    dateInput.value = today;
 
     let incomeCategories = [];
     let expenseCategories = [];
@@ -44,13 +90,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     /** Fetch Categories from DB */
     async function fetchCategories() {
         try {
-            const response = await fetch("/api/categories", {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await fetch("/api/categories");
 
             const categories = await response.json();
 
-            // **Store category names & ObjectId for later**
+            // Store category names & ObjectId for later
             incomeCategories = categories
                 .filter(cat => cat.type === "income")
                 .map(cat => ({ id: cat._id, name: cat.name })); // Store ObjectId & Name
@@ -68,6 +112,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /** Populate Category Dropdown */
     function populateCategories(categories) {
+        const categorySelect = document.getElementById("category");
+
         categorySelect.innerHTML = categories
             .map(cat => `<option value="${cat.id}">${cat.name}</option>`) // Use ObjectId as value
             .join("");
@@ -86,10 +132,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     incomeButton.addEventListener("click", () => activateButton(incomeButton, expenseButton, incomeCategories, 1));
     expenseButton.addEventListener("click", () => activateButton(expenseButton, incomeButton, expenseCategories, 0));
 
+    document.addEventListener("click", (event) => {
+        const isInsideMenu = addExpenseContainer.contains(event.target);
+        const isButtonClick = event.target === addExpenseButton;
+        const isTableRow = event.target.closest("tr");
 
-    closeExpenseButton.addEventListener("click", () => {
-        addExpenseContainer.classList.remove("active");
+        if (!isInsideMenu && !isButtonClick && !isTableRow && addExpenseContainer.classList.contains("active")) {
+            closeExpenseMenu(true);
+        }
     });
+
+    function closeExpenseMenu(resetForm = false) {
+        addExpenseContainer.classList.remove("active");
+
+        // if resetForm is true, clear the form fields, else keep the data
+        if (resetForm) {
+            document.querySelector(".add-expense-form").reset();
+            const today = new Date().toISOString().split("T")[0];
+            dateInput.value = today;
+            expenseButton.classList.add("active");
+            incomeButton.classList.remove("active");
+            populateCategories(expenseCategories); // Show expense categories
+        }
+
+        // Reset Buttons
+        document.getElementById("edit-transaction").style.display = "none";
+        document.getElementById("delete-transaction").style.display = "none";
+        document.getElementById("submit").style.display = "inline-block";
+    }
+
+    cancelExpenseButton.addEventListener("click", () => closeExpenseMenu(true));
+    closeExpenseButton.addEventListener("click", () => closeExpenseMenu(true));
+
 
     addExpenseButton.addEventListener("click", () => {
         addExpenseContainer.classList.add("active");
@@ -110,6 +184,147 @@ document.addEventListener("DOMContentLoaded", async () => {
         let value = parseFloat(amountInput.value.trim());
         if (!isNaN(value) && value < 0) amountInput.value = Math.abs(value);
     });
+
+
+
+
+    // Hide edit & delete buttons initially
+    document.getElementById("edit-transaction").style.display = "none";
+    document.getElementById("delete-transaction").style.display = "none";
+
+    // Ensure only up to 2 decimal places to be typed in the amount field
+    document.getElementById("amount").addEventListener("input", function (event) {
+        let value = event.target.value;
+        if (!/^\d*\.?\d{0,2}$/.test(value)) {
+            event.target.value = value.slice(0, -1); // Remove last invalid character
+        }
+    });
+
+
+    /** Detect Click on Transaction Rows & Open Edit Menu */
+    document.getElementById("expense-table-body").addEventListener("click", async (event) => {
+        const row = event.target.closest("tr");
+        if (!row) return;
+
+        // Extract values from the clicked row
+        const transactionId = row.getAttribute("data-transaction-id");
+        const categoryName = row.cells[0].textContent.trim();
+        const description = row.cells[1].textContent.trim();
+        const date = row.cells[2].textContent.trim();
+        const amount = parseFloat(row.cells[3].textContent.replace("$", "").trim()).toFixed(2); // Remove $ sign and add 2 decimal places
+
+        if (!transactionId) {
+            console.error("Transaction ID missing from row");
+            return;
+        }
+
+        // Check if Transaction is Income or Expense
+        const transactionType = row.getAttribute("data-transaction-type"); // Now present in rows
+        const isIncome = transactionType === "income";
+
+        // toggle active Button Based on Type: Income or Expense
+        if (isIncome) {
+            incomeButton.classList.add("active");
+            expenseButton.classList.remove("active");
+            populateCategories(incomeCategories); // Show income categories
+        } else {
+            expenseButton.classList.add("active");
+            incomeButton.classList.remove("active");
+            populateCategories(expenseCategories); // Show expense categories
+        }
+
+        // Ensure Category Field is Correctly Selected
+        const categorySelect = document.getElementById("category");
+        let categoryId = null;
+
+        // Find category ObjectId from the fetched categories list
+        const allCategories = [...incomeCategories, ...expenseCategories];
+        const matchedCategory = allCategories.find(cat => cat.name === categoryName);
+
+        if (matchedCategory) {
+            categoryId = matchedCategory.id;
+        }
+
+        // Pre-fill the form with transaction data
+        categorySelect.value = categoryId || ""; // Default to empty if not found
+        document.getElementById("date").value = new Date(date).toISOString().split("T")[0];
+        document.getElementById("amount").value = amount;
+        document.getElementById("description").value = description;
+
+        // Store transaction ID for edits/deletion
+        document.getElementById("edit-transaction").setAttribute("data-transaction-id", transactionId);
+        document.getElementById("delete-transaction").setAttribute("data-transaction-id", transactionId);
+
+        // Show Edit/Delete Buttons & Hide Submit
+        document.getElementById("edit-transaction").style.display = "inline-block";
+        document.getElementById("delete-transaction").style.display = "inline-block";
+        document.getElementById("submit").style.display = "none";
+
+        // Slide In Transaction Menu Like Add Button
+        addExpenseContainer.classList.add("active");
+        setTimeout(() => document.getElementById("amount").focus(), 100);
+    });
+
+
+    document.getElementById("delete-transaction").addEventListener("click", async () => {
+        const transactionId = document.getElementById("delete-transaction").getAttribute("data-transaction-id");
+        const userId = sessionStorage.getItem("userId");
+
+        // Wait for confirmation
+        const confirmed = confirm("Are you sure you want to delete this transaction?");
+
+        if (!confirmed) return; // Stop execution if user cancels
+
+        try {
+            const response = await fetch(`/api/transactions/${userId}/${transactionId}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) throw new Error("Failed to delete transaction.");
+
+            showAlert("Transaction deleted successfully!", "success");
+            document.getElementById("add-expense-container").classList.remove("active");
+            refreshTransactionTable(); // Refresh the table after deleting
+        } catch (error) {
+            console.error("Error deleting transaction:", error);
+            showAlert("Error deleting transaction. Please try again.", "error");
+        }
+    });
+
+    document.getElementById("edit-transaction").addEventListener("click", async () => {
+        const transactionId = document.getElementById("edit-transaction").getAttribute("data-transaction-id");
+        const userId = sessionStorage.getItem("userId");
+
+
+        // Get updated form values
+        const updatedTransaction = {
+            category: document.getElementById("category").value,
+            date: document.getElementById("date").value,
+            amount: parseFloat(document.getElementById("amount").value),
+            description: document.getElementById("description").value.trim(),
+        };
+
+        try {
+            const response = await fetch(`/api/transactions/${userId}/${transactionId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedTransaction),
+            });
+
+            if (!response.ok) throw new Error("Failed to update transaction.");
+
+            showAlert("Transaction updated successfully!", "success");
+            document.getElementById("add-expense-container").classList.remove("active");
+            refreshTransactionTable();
+        } catch (error) {
+            console.error("Error updating transaction:", error);
+        }
+    });
+
+
+
 
     /** Refresh Dashboard Data */
     async function refreshDashboard() {
@@ -134,62 +349,56 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("Parsed budgets:", budgets);
             console.log("Parsed goals:", goals);
 
-                const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
-                const currentGoal = goals.length ? goals[goals.length - 1] : null;
-                const currentNetBalance = document.getElementById("Income");
+            const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
+            const currentGoal = goals.length ? goals[goals.length - 1] : null;
+            const currentNetBalance = document.getElementById("Income");
 
-                if (!netbalance) {
-                    currentNetBalance.innerText = "No display"; // Show a fallback message when balance is unavailable
-                } else {
-                    currentNetBalance.innerText = `$${netbalance.toFixed(2)}`; // Display the formatted balance
-                }
-
-                if (!currentBudget) {
-                    budgetDisplay.innerText = "No Budget Set";
-                } else {
-                    const budgetCurrent = currentBudget.current || 0;
-                    const budgetSpent = currentBudget.totalAmount || 9999;
-                    const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
-                    // TODO: remove these logs to keep data more secure
-                    //added to check what budget is currently returning
-                    console.error("check", {budgetCurrent, budgetSpent, budgetPercent})
-                    budgetDisplay.innerHTML = `
-                        <div id="budget-progress-container">    
-                        <progress class="prog-budget" max="100" value="${budgetPercent}" 
-                            data-label="Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetSpent)}"></progress>
-                        <span class="budget-progress-text">Budget - ${USD.format(budgetCurrent)}/${USD.format(budgetSpent)}</span>
-                        </div>
-                    `;
-                    const budgetProgressBar = document.querySelector(".prog-budget");
-                    if (budgetProgressBar) {
-                        budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
-                    }
-                }
-
-                if (!currentGoal) {
-                    goalDisplay.innerText = "No goal set.";
-                } else {
-                    const goalCurrent = currentGoal.savedAmount || 0;
-                    const goalTarget = currentGoal.targetAmount || 9999;
-                    const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
-                    console.error("checking", {goalCurrent, goalTarget, goalPercent})
-                    goalDisplay.innerHTML = `
-                        <div id="goal-progress-container">    
-                        <progress class="prog-goal" max="100" value="${goalPercent}" 
-                            data-label="Goal - ${USD.format(goalCurrent)}/${USD.format(goalTarget)}"></progress>
-                        <span class="goal-progress-text">Goal - ${USD.format(goalCurrent)}/${USD.format(goalTarget)}</span>
-                        </div>
-                    `;
-                    const goalProgressBar = document.querySelector(".prog-goal");
-                    if (goalProgressBar) {
-                        goalProgressBar.style.background = `linear-gradient(to right, #0c5460 ${goalPercent}%, #d1ecf1 ${goalPercent}%)`;
-                        //goalProgressBar.textContent = `Goal - $${goalCurrent}/${goalTarget}`;
-                    }
-                }
-            } catch (error) {
-                console.error("Error loading dashboard:", error);
+            if (!netbalance) {
+                currentNetBalance.innerText = "No display"; // Show a fallback message when balance is unavailable
+            } else {
+                currentNetBalance.innerText = `$${netbalance.toFixed(2)}`; // Display the formatted balance
             }
+
+            if (!currentBudget) {
+                budgetDisplay.innerText = "No Budget Set";
+            } else {
+                const budgetCurrent = currentBudget.current || 0;
+                const budgetSpent = currentBudget.totalAmount || 9999;
+                const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
+                // TODO: remove these logs to keep data more secure
+                //added to check what budget is currently returning
+                console.error("check", { budgetCurrent, budgetSpent, budgetPercent })
+                budgetDisplay.innerHTML = `
+                <span class="budget-progress-text">Budget - ${USD.format(budgetCurrent)} / ${USD.format(budgetSpent)}</span>
+                <progress class="prog-budget" max="100" value="${budgetPercent}"></progress>
+            `;
+                const budgetProgressBar = document.querySelector(".prog-budget");
+                if (budgetProgressBar) {
+                    budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
+                }
+            }
+
+            if (!currentGoal) {
+                goalDisplay.innerText = "No goal set.";
+            } else {
+                const goalCurrent = currentGoal.savedAmount || 0;
+                const goalTarget = currentGoal.targetAmount || 9999;
+                const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
+                console.error("checking", { goalCurrent, goalTarget, goalPercent })
+                goalDisplay.innerHTML = `
+                <span class="goal-progress-text">Goal - ${USD.format(goalCurrent)} / ${USD.format(goalTarget)}</span>
+                <progress class="prog-goal" max="100" value="${goalPercent}"></progress>
+            `;
+                // const goalProgressBar = document.querySelector(".prog-goal");
+                // if (goalProgressBar) {
+                //     goalProgressBar.style.background = `linear-gradient(to right, #0c5460 ${goalPercent}%, #d1ecf1 ${goalPercent}%)`;
+                //     //goalProgressBar.textContent = `Goal - $${goalCurrent}/${goalTarget}`;
+                // }
+            }
+        } catch (error) {
+            console.error("Error loading dashboard:", error);
         }
+    }
 
     /** Get Transactions */
     async function getTransactions() {
@@ -274,18 +483,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /** Render Table Rows */
-        function renderTableRows(data) {
-            const tableBody = document.getElementById("expense-table-body");
-            console.error("checking category", data)
+    function renderTableRows(data) {
+        const tableBody = document.getElementById("expense-table-body");
+        console.error("checking category", data)
+        // tranaction id added to each row for future useg
         tableBody.innerHTML = data.map(transaction => `
-                <tr>
-                    <td>${transaction.category?.name || "Uncategorized"}</td>
-                    <td>${transaction.description || ""}</td>
-                    <td>${formatDate(transaction.date)}</td>
-                    <td>$${transaction.amount.toFixed(2)}</td>
-                </tr>
-            `).join("");
-        }
+            <tr data-transaction-id="${transaction._id}" data-transaction-type="${transaction.type}">
+                <td>${transaction.category?.name || "Uncategorized"}</td>
+                <td>${transaction.description || ""}</td>
+                <td>${formatDate(transaction.date)}</td>
+                <td>$${transaction.amount.toFixed(2)}</td>
+            </tr>
+        `).join("");
+    }
 
     /** Sort Data */
     const sortData = (data, key, order) => {
@@ -301,8 +511,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // Handle date sorting
             if (key === "date") {
-                //valA = new Date(valA);
-                //valB = new Date(valB);
+                valA = new Date(valA);
+                valB = new Date(valB);
             }
 
             // Handle description sorting (case-insensitive)
@@ -334,7 +544,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 header.addEventListener("click", async () => {
                     let transactions = await getTransactions();
                     console.log("Testing transactions:", transactions);
-                    const [selectedYear, selectedMonth] = monthSelector.value.split("-").map(Number); 
+                    const [selectedYear, selectedMonth] = monthSelector.value.split("-").map(Number);
 
                     console.log(`Filtering transactions for: ${selectedMonth}/${selectedYear}`);
 
@@ -378,13 +588,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         const date = new Date(year, month - 1 + increment);
         currentMonth = date.toISOString().slice(0, 7);
         monthSelector.value = currentMonth;
-        console.log("changeMonth", monthSelector.value)
+
+        console.log("changeMonth", monthSelector.value);
+
+        //reset sort indicators
+        const tableHeaders = document.querySelectorAll("[data-key]");
+        tableHeaders.forEach(header => header.removeAttribute("data-order"));
+
         refreshTransactionTable();
     }
 
     // Event Listeners for Month Selection
     monthSelector.addEventListener("change", () => {
         currentMonth = monthSelector.value;
+
+        // reset
+        const tableHeaders = document.querySelectorAll("[data-key]");
+        tableHeaders.forEach(header => header.removeAttribute("data-order"));
+
         refreshTransactionTable();
     });
 
@@ -406,20 +627,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             categorySelect.options[categorySelect.selectedIndex].text;
         // const customCategoryInput = document.getElementById("custom-category");
 
+        const dateInputField = document.getElementById("date");
+        const dateInputValue = dateInputField.value;
+        const categoryInputValue = categorySelect.value;
+
         // const customCategory = (categoryId === "custom" && customCategoryInput) ? customCategoryInput.value.trim() : "";
 
         // get transaction type Expense or Income
         const type = (document.getElementById("income-button").classList.contains("active")) ? "income" : "expense";
-
-        if (isNaN(amount) || amount <= 0) {
-            alert("Enter a valid amount.");
-            return;
-        }
-        if (!dateInput) {
-            alert("Please enter a date.");
-            return;
-        }
-
 
         // Prepare transaction data
         const transactionData = {
@@ -437,7 +652,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Transaction Data Being Sent:", JSON.stringify(transactionData, null, 2));
 
         try {
-            // **Send the transaction request**
+            // Send the transaction request
             const response = await fetch("/api/transactions", {
                 method: "POST",
                 headers: {
@@ -456,11 +671,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 throw new Error(`Failed to add transaction. Server Response: ${errorText}`);
             }
 
-            alert("Transaction added successfully!");
+            showAlert("Transaction added successfully!", "success");
             document.querySelector(".add-expense-form").reset();
+
+
+            dateInputField.value = dateInputValue;
+            categorySelect.value = categoryInputValue;
             refreshTransactionTable();
         } catch (error) {
             console.error("Error adding transaction:", error);
+            showAlert("Failed to add transaction. Please try again.", "error");
         }
     }
 

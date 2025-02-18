@@ -11,6 +11,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             logoutLink.textContent = "Logout";
             logoutLink.href = "/logout.html";
         }
+        if (window.location.pathname.includes("login.html") && userId && token) {
+            window.location.href = "/dashboard.html";
+        }
+        // snappier redirect for index.html
+        if (window.location.pathname.includes("index.html") && userId && token) {
+            const getStartedButton = document.querySelector('.btn[href="login.html"]');
+            if (getStartedButton) {
+                getStartedButton.href = "dashboard.html";
+                getStartedButton.textContent = "Go to Dashboard";
+            }
+        }
     } catch (error) {
         console.error("Error checking login status:", error);
     }

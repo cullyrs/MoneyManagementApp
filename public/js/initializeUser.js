@@ -28,6 +28,41 @@
 
 // TODO: remove alerts later, instead have a div that displays the error message, change to block if error, none if no error
 
+async function showAlert(message, type) {
+    // **Function to hide alert smoothly**
+    function closeAlert(alertBox) {
+        alertBox.classList.remove("show");
+        setTimeout(() => alertBox.remove(), 500);
+    }
+
+    fetch("/api/alert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, type }),
+    })
+        .then(response => response.text())
+        .then(alertHtml => {
+            document.body.insertAdjacentHTML("beforeend", alertHtml);
+
+            const alertBox = document.querySelector(".alert-container:last-of-type");
+            if (!alertBox) return;
+
+
+            setTimeout(() => {
+                alertBox.classList.add("show");
+            }, 100);
+
+            // Auto-hide alert after 5 seconds
+            setTimeout(() => closeAlert(alertBox), 5000);
+
+            // Close button functionality
+            alertBox.querySelector("#alert-close").addEventListener("click", () => closeAlert(alertBox));
+        })
+        .catch(error => {
+            console.error("Error triggering alert:", error);
+        });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const login = document.getElementById("login");
     const signup = document.getElementById("signup");
@@ -48,26 +83,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 sessionStorage.setItem("transactions", JSON.stringify(result.transactions));
                 sessionStorage.setItem("budgets", JSON.stringify(result.budgets));
                 sessionStorage.setItem("goals", JSON.stringify(result.goals));
-                alert("Login successful!");
+                showAlert("Login successful!", "success");
                 window.location.href = "./dashboard.html";
             } else {
-                alert("Login failed: " + result.error);
+                showAlert("Login failed: " + result.error, "error");
             }
         } catch (error) {
             console.error("Login Error:", error);
-            alert("Something went wrong. Please try again.");
         }
     };
 
     login.addEventListener("click", async () => {
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value.trim();
-
-
-        if (!username || !password) {
-            alert("Please enter a valid username and password.");
-            return;
-        }
 
         loggingIn(username, password);
     });
@@ -93,12 +121,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = document.getElementById("signupPassword").value.trim();
 
         if (!username || !email || !password) {
-            alert("All fields are required.");
+            showAlert("All fields are required.", "error");
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showAlert("Invalid email address.", "error");
             return;
         }
 
         if (password.length < 6 || !(/[A-Za-z]/.test(password) && /\d/.test(password))) {
-            alert("Password must be at least 6 characters and contain both letters and numbers.");
+            showAlert("Password must be at least 6 characters and contain both letters and numbers.", "error");
             return;
         }
 
@@ -111,14 +144,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const result = await response.json();
             if (result.success) {
-                alert(`Sign Up successful! Welcome, ${username}`);
+                showAlert(`Sign Up successful! Welcome, ${username}`, "success");
                 loggingIn(username, password);
             } else {
-                alert(`Sign Up failed: ${result.error}`);
+                showAlert(`Sign Up failed: ${result.error}`, "error");
             }
         } catch (error) {
             console.error("Signup Error:", error);
-            alert("Something went wrong. Please try again.");
+            showAlert("Something went wrong. Please try again.", "error");
         }
     });
 });

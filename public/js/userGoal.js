@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const goalForm = document.getElementById("goal-form");
     const goalTargetInput = document.getElementById("goal-input");
     const goalSavedInput = document.getElementById("goal-saved");
-    const goalDueDateInput = document.getElementById("goal-due-date");
+    // const goalDueDateInput = document.getElementById("goal-due-date");
 
 
     async function loadCurrentGoal() {
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.preventDefault();
         const newGoalTarget = parseFloat(goalTargetInput.value.trim());
         const newGoalSaved = goalSavedInput ? parseFloat(goalSavedInput.value.trim()) : 0;
-        const newGoalDueDate = goalDueDateInput ? goalDueDateInput.value.trim() : "";
+        // const newGoalDueDate = goalDueDateInput ? goalDueDateInput.value.trim() : "";
 
         if (isNaN(newGoalTarget) || newGoalTarget <= 0) {
             alert("Please enter a valid goal target amount (must be greater than 0).");
@@ -67,13 +67,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            const response = await fetch(`/api/users/${userId}/goals/add`, {
+            const response = await fetch(`/api/dashboard/${userId}/goals/add`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     targetAmount: newGoalTarget,
                     savedAmount: newGoalSaved,
-                    savedToDate: newGoalDueDate,
+                    // savedToDate: newGoalDueDate,
                 })
             });
 
