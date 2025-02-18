@@ -376,10 +376,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <span class="budget-progress-text">Budget - ${USD.format(budgetCurrent)} / ${USD.format(budgetSpent)}</span>
                 <progress class="prog-budget" max="100" value="${budgetPercent}"></progress>
             `;
-                // const budgetProgressBar = document.querySelector(".prog-budget");
-                // if (budgetProgressBar) {
-                //     budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
-                // }
+                const budgetProgressBar = document.querySelector(".prog-budget");
+                if (budgetProgressBar) {
+                    budgetProgressBar.style.transform = `scaleX(-1)`;
+                }
             }
 
             if (!currentGoal) {
@@ -458,7 +458,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             filteredTransactions.forEach(transaction => {
                 const amt = Number(transaction.amount);
                 // Assuming transactions with type "income" are income; everything else is expense.
-                if (transaction.type && transaction.type.toLowerCase() === "income") {
+                if (transaction.type && String(transaction.type).toLowerCase() === "income") {
                     totalIncome += amt;
                 } else {
                     totalExpense += amt;
@@ -513,7 +513,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // tranaction id added to each row for future useg
         tableBody.innerHTML = data.map(transaction => {
-            const isIncome = transaction.type.toLowerCase() === "income";
+            const isIncome = String(transaction.type).toLowerCase() === "income";
             const amountClass = isIncome ? "income-amount" : "expense-amount";
             const formattedAmount = `${isIncome ? "" : "-"}$${transaction.amount.toFixed(2)}`; // Add negative sign for expenses
     
@@ -674,9 +674,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const type = (document.getElementById("income-button").classList.contains("active")) ? "income" : "expense";
 
         let goalAmount = amount;
-        const transDate = new Date(`${dateInput} T00:00:00Z`);
-        checkDate = transDate.getMonth() === currentMonth && transDate.getFullYear() === currentYear;
-
+        const transDate = new Date(`${dateInput}T00:00:00Z`);
+        const today = new Date();
+        const cMonth = today.getMonth(); // Returns 0-11
+        const cYear = today.getFullYear();
+        checkDate = transDate.getMonth() === cMonth && transDate.getFullYear() === cYear;
 
         // TODOL needs re-work
         if (type === "expense" && checkDate) {
