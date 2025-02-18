@@ -214,13 +214,6 @@ The project requires an `api.json` file to store **MongoDB credentials**. Create
 
 The app will be deployed using **Render.com**.
 
-Steps:
-
-1. **Push latest version to GitHub**.
-2. **Deploy using Render or Azure**.
-3. **Set up environment variables (`api.json` settings)**.
-4. **Launch and test the live app**.
-
 ## **Contributing**
 
 1. Fork the repository.
