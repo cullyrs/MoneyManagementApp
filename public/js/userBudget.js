@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const budgetForm = document.getElementById("budget-form");
     const budgetNameInput = document.getElementById("budget-name");
     const budgetInput = document.getElementById("budget-input");
-    const budgetCategorySelect = document.getElementById("budget-category");
 
 
     async function refreshDashboard() {
@@ -43,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             } else {
                 const budgetCurrent = currentBudget.current || 0;
                 const budgetSpent = currentBudget.totalAmount || 9999;
-                const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
+                const budgetPercent = budgetSpent > 0 ? 100-(budgetCurrent / budgetSpent) * 100 : 100;
                 // TODO: remove these logs to keep data more secure
                 //added to check what budget is currently returning
                 console.log("check", [currentBudget.current, currentBudget.totalAmount, budgetPercent])
@@ -57,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const budgetProgressBar = document.querySelector(".prog-budget");
                 if (budgetProgressBar) {
                     budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
-
+                    budgetProgressBar.style.transform = `scaleX(-1)`;
                 }
             }
         } catch (error) {
@@ -66,39 +65,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
     await refreshDashboard();
-
-    async function fetchCategories() {
-        try {
-            const response = await fetch(`/api/categories`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-    
-            if (!response.ok) {
-                console.error("Failed to fetch categories:", response.statusText);
-                return;
-            }
-    
-            const categories = await response.json(); // Directly get the array
-    
-            if (!Array.isArray(categories) || categories.length === 0) {
-                console.error("No categories returned from API.");
-                return;
-            }
-    
-            populateCategories(categories);
-        } catch (error) {
-            console.error("Error fetching categories:", error);
-        }
-    }
-    
-
-    function populateCategories(categories) {
-        budgetCategorySelect.innerHTML = categories
-            .map(cat => `<option value="${cat.categoryID}">${cat.name}</option>`)
-            .join("");
-    }
-
-    await fetchCategories();
 
     budgetForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -116,6 +82,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        const response = await fetch(`/api/transactions/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = await response.json();
+        let transactions = data.transactions;
+
+        // Get current month and year
+        const today = new Date();
+        const currentMonth = today.getMonth(); // 0-based (Jan = 0)
+        const currentYear = today.getFullYear();
+        const currentMonthTransactions = transactions.filter(transaction => {
+            const transactionDate = new Date(transaction.date);
+            return (
+                transactionDate.getMonth() === currentMonth &&
+                transactionDate.getFullYear() === currentYear &&
+                transaction.type === "expense" // Only sum up expenses
+            );
+        });
+        // Calculate total expense for the current month
+        const currentTotal = currentMonthTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+
+        console.log("Current Month Expenses Total:", currentTotal);
+
         try {
             const response = await fetch(`/api/dashboard/${userId}/budgets/add`, {
                 method: "POST",
@@ -123,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 body: JSON.stringify({
                     name: newBudgetName,
                     amount: newBudgetValue,
-//                    categoryID: budgetCategory
+                    current: currentTotal
                 })
             });
 

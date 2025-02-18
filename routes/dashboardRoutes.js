@@ -1,6 +1,6 @@
 const express = require("express");
-const { getSpentAmount, getBudget, addBudget, removeBudget } = require("../db/budgetFunctions");
-const { getSavedAmount, getTargetAmount, getGoal, addGoal, removeGoal } = require("../db/goalFunctions");
+const { getSpentAmount, getBudget, addBudget, removeBudget, updateBudgetCurrent } = require("../db/budgetFunctions");
+const { getSavedAmount, getTargetAmount, getGoal, addGoal, removeGoal, increaseSavedAmount } = require("../db/goalFunctions");
 const { findUser } = require("../db/userFunctions");
 
 
@@ -9,9 +9,9 @@ const router = express.Router();
 
 router.post("/:id/budgets/add", async (req, res) => {
     const userID = req.params.id;
-    const { name, amount } = req.body;
+    const { name, amount, current } = req.body;
     try {
-        const budget = await addBudget(userID, name, amount);
+        const budget = await addBudget(userID, name, amount, current);
         if (budget) {
             res.status(201).json({ budget });
         } else {
@@ -45,10 +45,33 @@ router.post("/:id/budgets/remove", async (req, res) => {
     }
 });
 
+router.post("/:id/budgets/update", async (req, res) => {
+    const { userID, budgetID, amountToAdd } = req.body;
+
+    if (!userID || !budgetID || !amountToAdd) {
+        console.error("Missing required fields:", { userID, budgetID, amountToAdd});
+        return res.status(400).json({ success: false, error: "Missing required fields" });
+    }
+    try {
+        const budget = await updateBudgetCurrent(userID, budgetID, amountToAdd);
+        if (budget) {
+            res.status(201).json({ budget });
+        } else {
+            res.status(400).json({
+                success: false,
+                error: "Budget update failed. Check that the user exists and all fields are valid.",
+                secondError : {userID, budgetID, amountToAdd}
+            });
+        }
+    } catch (error) {
+        console.error("Error updating budget:", error);
+        res.status(500).json({ success: false, error: "Server error while updating budget." });
+    }
+});
+
 router.post("/:id/goals/add", async (req, res) => {
     const userID = req.params.id;
-    const { targetAmount, savedAmount, savedToDate } = req.body;
-    console.log("Hello?", [targetAmount, savedAmount, savedToDate])
+    const { targetAmount, savedAmount, savedToDate} = req.body;
     try {
         const goal = await addGoal(userID, targetAmount, savedAmount, savedToDate);
         if (goal) {
@@ -81,6 +104,31 @@ router.post("/:id/goals/remove", async (req, res) => {
     } catch (error) {
         console.error("Error removing goal:", error);
         res.status(500).json({ success: false, error: "Server error while removing goal." });
+    }
+});
+
+router.post("/:id/goals/update", async (req, res) => {
+    const { userID, goalID, amount } = req.body;
+
+    if (!userID || !goalID || !amount) {
+        console.error("Missing required fields:", { userID, goalID, amount});
+        return res.status(400).json({ success: false, error: "Missing required fields" });
+    }
+    try {
+        const goal = await increaseSavedAmount(userID, goalID, amount);
+
+        if (goal) {
+            res.status(201).json({ success: true, goal });
+        } else {
+            res.status(400).json({
+                success: false,
+                error: "Goal update failed. Check that the user exists and all fields are valid.",
+                secondError : {userID, goalID, amount}
+            });
+        }
+    } catch (error) {
+        console.error("Error updating goal:", error);
+        res.status(500).json({ success: false, error: "Server error while updating Goal." });
     }
 });
 

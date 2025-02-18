@@ -295,9 +295,9 @@ const getUserTransactions = async (userID) => {
             .sort({ date: -1 })
             .populate("category", "name type") // Ensure category details are populated
             .lean();
-        console.log("transactions", transactions);
+        // console.log("transactions", transactions);
         // print variable type
-        console.log("type", typeof transactions);
+        // console.log("type", typeof transactions);
 
         return transactions || []; // Always return an array
     } catch (error) {

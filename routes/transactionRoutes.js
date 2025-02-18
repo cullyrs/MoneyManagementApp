@@ -11,10 +11,10 @@ router.get("/:id", async (req, res) => {
     const userId = req.params.id;
 
     try {
-        console.log(`Fetching transactions for userID: ${userId}`);
+        // console.log(`Fetching transactions for userID: ${userId}`);
 
         const transactions = await getUserTransactions(userId);
-        console.log(`Found ${transactions.length} transactions for userID: ${userId}`);
+        // console.log(`Found ${transactions.length} transactions for userID: ${userId}`);
 
         res.json({ success: true, transactions });
     } catch (error) {

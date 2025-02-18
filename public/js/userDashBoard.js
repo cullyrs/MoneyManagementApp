@@ -367,15 +367,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
                 // TODO: remove these logs to keep data more secure
                 //added to check what budget is currently returning
-                console.error("check", { budgetCurrent, budgetSpent, budgetPercent })
                 budgetDisplay.innerHTML = `
                 <span class="budget-progress-text">Budget - ${USD.format(budgetCurrent)} / ${USD.format(budgetSpent)}</span>
                 <progress class="prog-budget" max="100" value="${budgetPercent}"></progress>
             `;
-                const budgetProgressBar = document.querySelector(".prog-budget");
-                if (budgetProgressBar) {
-                    budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
-                }
+                // const budgetProgressBar = document.querySelector(".prog-budget");
+                // if (budgetProgressBar) {
+                //     budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
+                // }
             }
 
             if (!currentGoal) {
@@ -384,7 +383,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const goalCurrent = currentGoal.savedAmount || 0;
                 const goalTarget = currentGoal.targetAmount || 9999;
                 const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
-                console.error("checking", { goalCurrent, goalTarget, goalPercent })
                 goalDisplay.innerHTML = `
                 <span class="goal-progress-text">Goal - ${USD.format(goalCurrent)} / ${USD.format(goalTarget)}</span>
                 <progress class="prog-goal" max="100" value="${goalPercent}"></progress>
@@ -589,8 +587,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         currentMonth = date.toISOString().slice(0, 7);
         monthSelector.value = currentMonth;
 
-        console.log("changeMonth", monthSelector.value);
-
         //reset sort indicators
         const tableHeaders = document.querySelectorAll("[data-key]");
         tableHeaders.forEach(header => header.removeAttribute("data-order"));
@@ -616,6 +612,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function handleAddTransaction(event) {
         event.preventDefault();
 
+        const budgetsData = sessionStorage.getItem("budgets");
+        const goalsData = sessionStorage.getItem("goals");
+        const budgets = budgetsData ? JSON.parse(budgetsData) : [];
+        const goals = goalsData ? JSON.parse(goalsData) : [];
+        const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
+        const currentGoal = goals.length ? goals[goals.length - 1] : null;
+
         const userID = sessionStorage.getItem("userId");
         const token = sessionStorage.getItem("token");
 
@@ -635,6 +638,86 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // get transaction type Expense or Income
         const type = (document.getElementById("income-button").classList.contains("active")) ? "income" : "expense";
+
+        let goalAmount = amount;
+        const transDate = new Date(`${dateInput} T00:00:00Z`);
+        checkDate = transDate.getMonth() === currentMonth && transDate.getFullYear() === currentYear;
+
+
+        // TODOL needs re-work
+        if (type === "expense" && checkDate){
+            const budgetData = {
+                userID : userID,
+                budgetID : currentBudget._id,
+                amountToAdd : amount
+            }
+            goalAmount = goalAmount * -1;
+            const budgetResponse = await fetch(`/api/dashboard/${userId}/budgets/update`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(budgetData)
+            });
+            console.log("Server Response Status for budget:", budgetResponse.status);
+
+            const result = await budgetResponse.json();
+            console.log("updateBudget result:", result);
+
+            if (budgetResponse.ok && result.budget) {
+                alert("Budget updated successfully!");
+                if (result.budgets) {
+                    sessionStorage.setItem("budgets", JSON.stringify(result.budgets));
+                } else {
+                    let storedBudgets = JSON.parse(sessionStorage.getItem("budgets") || "[]");
+                    storedBudgets.push(result.budget);
+                    sessionStorage.setItem("budgets", JSON.stringify(storedBudgets));
+                }
+            } else if (!budgetResponse.ok) {
+                const errorText = await budgetResponse.text();
+                console.error("Server Response Body:", errorText);
+                throw new Error(`Failed to update budget. Server Response: ${errorText}`);
+            }
+        }
+
+        if(checkDate){
+            const goalData = {
+                userID : userID,
+                goalID : currentGoal._id,
+                amount : goalAmount
+            }
+
+            const goalResponse = await fetch(`/api/dashboard/${userId}/goals/update`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(goalData)
+            });
+            console.log("Server Response Status for goal:", goalResponse.status);
+
+            const result2 = await goalResponse.json();
+            console.log("updateGoal result:", result2);
+            console.log("ok and success", {goalResponse, result2})
+
+            if (goalResponse.ok && result2.success) {
+                alert("Goal updated successfully!");
+                if (result2.goals) {
+                    sessionStorage.setItem("goals", JSON.stringify(result2.goals));
+                } else {
+
+                    let storedGoals = JSON.parse(sessionStorage.getItem("goals") || "[]");
+                    storedGoals.push(result2.goal);
+                    sessionStorage.setItem("goals", JSON.stringify(storedGoals));
+                }
+            } else if (!goalResponse.ok) {
+                const errorText = await goalResponse.text();
+                console.error("Server Response Body:", errorText);
+                throw new Error(`Failed to update goal. Server Response: ${errorText}`);
+            }
+            refreshDashboard();
+        }
+
 
         // Prepare transaction data
         const transactionData = {
@@ -673,7 +756,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             showAlert("Transaction added successfully!", "success");
             document.querySelector(".add-expense-form").reset();
-
 
             dateInputField.value = dateInputValue;
             categorySelect.value = categoryInputValue;

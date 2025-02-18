@@ -112,7 +112,7 @@ const getSavedAmount = async(userID, goalID)=>{
 
     if(user && index >= 0){
         const goal = await Goal.findOne({_id : goalID});
-        return goal.current;
+        return goal.savedAmount;
     }
     return null;
 }
@@ -152,16 +152,14 @@ const getTargetAmount = async(userID, goalID)=>{
  */
 const updateTargetAmount = async(userID, goalID, newTargetAmount) => {
     const user = await User.findOne({_id : userID});
-    const index = user.goalList.indexOf(goalID);
-    if(user && newTargetAmount > 0 && index >= 0){
-        const goal = await Goal.findOne({_id : goalID});      
-     
-        // Update and save goal instance.
-        goal.set('target' , newTargetAmount);
-        await goal.save();
-        return goal;
-    }
-    return null;
+    const goal = await Goal.findOne({_id : goalID}); 
+    if(!user || !newTargetAmount > 0 && !goal) return null;
+    newTargetAmount = parseFloat(newTargetAmount);
+
+    // Update and save goal instance.
+    goal.set('target' , newTargetAmount);
+    await goal.save();
+    return goal;
 }
 
 /**
@@ -178,16 +176,14 @@ const updateTargetAmount = async(userID, goalID, newTargetAmount) => {
  */
 const updateSavedAmount = async(userID, goalID, newSavedAmount) => {
     const user = await User.findOne({_id : userID});
-    const index = user.goalList.indexOf(goalID);
-    if(user && newSavedAmount > 0 && index >= 0){
-        const goal = await Goal.findOne({_id : goalID});      
-     
-        // Update and save goal instance.
-        goal.set('current' , newSavedAmount);
-        await goal.save();
-        return goal;
-    }
-    return null;
+    const goal = await Goal.findOne({_id : goalID}); 
+    newSavedAmount = parseFloat(newSavedAmount);
+    if(!user || !newTargetAmount > 0 && !goal) return null;
+
+    // Update and save goal instance.
+    goal.set('savedAmount' , newSavedAmount);
+    await goal.save();
+    return goal;
 }
 /**
  * Function to add an amount to a goal's saved amount in the goal collection 
@@ -203,16 +199,14 @@ const updateSavedAmount = async(userID, goalID, newSavedAmount) => {
  */
 const increaseSavedAmount = async(userID, goalID, amount) => {
     const user = await User.findOne({_id : userID});
-    const index = user.goalList.indexOf(goalID);
-    if(user && amount > 0 && index >= 0){
-        const goal = await Goal.findOne({_id : goalID});      
-     
-        // Update and save goal instance.
-        goal.set('current' , goal.current + amount);
-        await goal.save();
-        return goal;
-    }
-    return null;
+    const goal = await Goal.findOne({_id : goalID}); 
+    amount = parseFloat(amount);
+    if(!user || isNaN(amount) || !goal) return null;
+
+    // Update and save goal instance.
+    goal.set('savedAmount' , goal.savedAmount + amount);
+    await goal.save();
+    return goal;
 }
 module.exports ={addGoal, removeGoal, getGoal, updateTargetAmount,
     updateSavedAmount, increaseSavedAmount, getSavedAmount,
