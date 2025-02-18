@@ -19,8 +19,8 @@ const saltRounds = 10;
  * @returns {Promise<String>} - The hashed string.
  */
 const hashed = async (entry) => {
-  const salt = await bcrypt.genSalt(saltRounds);
-  return bcrypt.hash(entry, salt);
+    const salt = await bcrypt.genSalt(saltRounds);
+    return bcrypt.hash(entry, salt);
 };
 
 /**
@@ -30,12 +30,12 @@ const hashed = async (entry) => {
  * @returns {Promise<Boolean>} - The boolean result of the comparison.
  */
 const compareEntry = async (entry, hashedPassword) => {
-  return bcrypt.compare(entry, hashedPassword);
+    return bcrypt.compare(entry, hashedPassword);
 };
 
 module.exports = {
-  default: hashed,
-  compareEntry
+    hashed,
+    compareEntry
 };
 
 

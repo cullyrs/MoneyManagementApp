@@ -1,0 +1,82 @@
+<!--
+    Name : Cully Stearns
+    Date  : 1/31/2025
+    File Name : goal.html
+    Course : CMSC 495 Capstone in Computer Science
+    Project : Expense Tracker Capstone Project
+    Description : This HTML file provides the user interface for updating the user's financial goal.
+    It displays the current goal status and includes a form for entering a new goal target
+    and goal name. The page also features a header with navigation elements for seamless 
+    integration with the rest of the Expense Tracker application.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Money Management App">
+    <meta name="keywords" content="money, management, app, budget, finance">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <!-- Scripts -->
+    <script src="js/logout.js"></script>
+    <script src="js/userGoal.js"></script>
+    <title>Update Goal</title>
+</head>
+
+<body>
+    <header>
+        <a href="index.html"><img src="imgs/icon.png" alt="icon homepage"></a>
+        <h2><a href="dashboard.html">Expense Tracker</a></h2>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="dropdown">
+                    <div class="menu-title">Settings</div>
+                    <nav class="settings-dropdown">
+                        <ul class="menu-dropdown">
+                            <li><a href="#" id="export-csv">Export Data to CSV</a></li>
+                            <li><a href="profile.html">User Profile</a></li>
+                            <li><a href="manage-targets.html">Manage Budget and Goals</a></li>
+
+                        </ul>
+                    </nav>
+                </li>
+                <li id="logout"><a id="logout-link" href="logout.html">Log Out</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="goal-page">
+        <h1>Update Goal</h1>
+        <!-- Display the current goal information -->
+        <div id="current-goal">Current Goal: $0/9,999</div>
+        <!-- Form for updating the goal -->
+        <form id="goal-form">
+            <label for="budget-name">Budget Name:</label>
+            <input type="text" id="budget-name" name="budget-name" placeholder="Enter budget name">
+
+            <label for="goal-input">New Goal Target:</label>
+            <input type="number" id="goal-input" name="goal-input" placeholder="Enter new goal target" required>
+            <label for="goal-saved">Saved Amount:</label>
+            <input type="number" id="goal-saved" placeholder="Enter saved amount" required>
+            <!-- <label for="date">Goal Date:</label>
+            <input type="date" id="goal-due-date" required /> -->
+            <button type="submit">Update Goal</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
+    </footer>
+
+
+</body>
+
+</html>

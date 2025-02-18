@@ -1,0 +1,78 @@
+<!--
+    Name : Cully Stearns, Naeem Lovitt, Steven Moonie
+    Date : 1/31/2025
+    File Name : budget.html
+    Course : CMSC 495 Capstone in Computer Science
+    Project : Expense Tracker Capstone Project
+    Description : This HTML file provides the user interface for updating the user's budget.
+    It includes a form for entering a new budget amount and budget name.
+    The page also features a header with navigation to various sections
+    of the application.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Money Management App">
+    <meta name="keywords" content="money, management, app, budget, finance">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <!-- Scripts -->
+    <script src="js/logout.js"></script>
+    <script src="js/userBudget.js"></script>
+    <title>Update Budget</title>
+</head>
+
+<body>
+    <header>
+        <a href="index.html"><img src="imgs/icon.png" alt="icon homepage"></a>
+        <h2><a href="dashboard.html">Expense Tracker</a></h2>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="dropdown">
+                    <div class="menu-title">Settings</div>
+                    <nav class="settings-dropdown">
+                        <ul class="menu-dropdown">
+                            <li><a href="#" id="export-csv">Export Data to CSV</a></li>
+                            <li><a href="profile.html">User Profile</a></li>
+                            <li><a href="manage-targets.html">Manage Budget and Goals</a></li>
+
+                        </ul>
+                    </nav>
+                </li>
+                <li id="logout"><a id="logout-link" href="logout.html">Log Out</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="budget-page">
+        <h1>Update Budget</h1>
+        <!-- Display the current budget (optional) -->
+        <div id="current-budget">Current Budget: $0/9,999</div>
+        <!-- Form for updating the budget -->
+        <form id="budget-form">
+            <label for="budget-name">Budget Name:</label>
+            <input type="text" id="budget-name" name="budget-name" placeholder="Enter budget name" required>
+
+            <label for="budget-input">New Budget Amount:</label>
+            <input type="number" id="budget-input" name="budget-input" placeholder="Enter new budget amount" required>
+
+            <button type="submit">Update Budget</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
+    </footer>
+
+</body>
+
+</html>
