@@ -3,11 +3,6 @@ const path = require("path");
 
 // Import functions
 const { connectToDB } = require("./db/dbconnect");
-const budgetFunctions = require("./db/budgetFunctions");
-const userFunctions = require("./db/userFunctions");
-const categoryFunctions = require("./db/categoryFunctions");
-const goalFunctions = require("./db/goalFunctions");
-const transactionsFunctions = require("./db/transactionsFunctions");
 
 // Import routes
 const authRoutes = require("./routes/authenRoutes"); 

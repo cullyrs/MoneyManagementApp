@@ -39,11 +39,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("contact-form");
     // const formStatus = document.createElement("p");
     // form.appendChild(formStatus);
-
     let email = "";
 
     if (!userId || !token) {
         console.error("No logged-in user found.");
+        window.location.href = "./login.html";
         return;
     }
 

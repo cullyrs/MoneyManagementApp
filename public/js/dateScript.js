@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
             new monthSelectPlugin({
                 shorthand: true, // Display short month names (Jan, Feb, etc.)
                 dateFormat: "Y-m", // Format as YYYY-MM
-                theme: "light" // You can change to "dark" if needed
+                theme: "light" // can change to "dark" if needed
             })
         ]
     });

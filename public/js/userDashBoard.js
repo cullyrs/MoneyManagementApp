@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("edit-transaction").style.display = "none";
     document.getElementById("delete-transaction").style.display = "none";
 
-    // Ensure only up to 2 decimal places to be typed in the amount field
+    // only up to 2 decimal places to be typed in the amount field
     document.getElementById("amount").addEventListener("input", function (event) {
         let value = event.target.value;
         if (!/^\d*\.?\d{0,2}$/.test(value)) {
@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const categoryName = row.cells[0].textContent.trim();
         const description = row.cells[1].textContent.trim();
         const date = row.cells[2].textContent.trim();
-        let amount = parseFloat(row.cells[3].textContent.replace("$", "").trim()); // Remove $ sign and parse as float
+        let amount = parseFloat(row.cells[3].textContent.replace("$", "").trim()).toFixed(2); // remove $ sign and parse as float
 
         if (!transactionId) {
             console.error("Transaction ID missing from row");
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         // Check if Transaction is Income or Expense
-        const transactionType = row.getAttribute("data-transaction-type"); // Now present in rows
+        const transactionType = row.getAttribute("data-transaction-type"); 
         const isIncome = transactionType === "income";
 
         // toggle active Button Based on Type: Income or Expense
@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             expenseButton.classList.remove("active");
             populateCategories(incomeCategories); // Show income categories
         } else {
-            amount = Math.abs(amount); // Remove negative sign if expense
+            amount = Math.abs(amount).toFixed(2); // Remove negative sign if expense
             expenseButton.classList.add("active");
             incomeButton.classList.remove("active");
             populateCategories(expenseCategories); // Show expense categories
@@ -370,16 +370,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const budgetCurrent = currentBudget.current || 0;
                 const budgetSpent = currentBudget.totalAmount || 9999;
                 const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
-                // TODO: remove these logs to keep data more secure
-                //added to check what budget is currently returning
+
                 budgetDisplay.innerHTML = `
                 <span class="budget-progress-text">Budget - ${USD.format(budgetCurrent)} / ${USD.format(budgetSpent)}</span>
                 <progress class="prog-budget" max="100" value="${budgetPercent}"></progress>
             `;
-                // const budgetProgressBar = document.querySelector(".prog-budget");
-                // if (budgetProgressBar) {
-                //     budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
-                // }
+
             }
 
             if (!currentGoal) {
@@ -392,11 +388,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <span class="goal-progress-text">Goal - ${USD.format(goalCurrent)} / ${USD.format(goalTarget)}</span>
                 <progress class="prog-goal" max="100" value="${goalPercent}"></progress>
             `;
-                // const goalProgressBar = document.querySelector(".prog-goal");
-                // if (goalProgressBar) {
-                //     goalProgressBar.style.background = `linear-gradient(to right, #0c5460 ${goalPercent}%, #d1ecf1 ${goalPercent}%)`;
-                //     //goalProgressBar.textContent = `Goal - $${goalCurrent}/${goalTarget}`;
-                // }
+
             }
         } catch (error) {
             console.error("Error loading dashboard:", error);
