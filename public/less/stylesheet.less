@@ -8,7 +8,7 @@
 @danger-text: #721c24;
 @info-bg: #d1ecf1;
 @info-text: #0c5460;
-@shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+@shadow: 0 2px 4px rgba(20, 10, 112, 0.217);
 @table-border: 1px solid #000000;
 @hover-bg: #0056b3;
 @button-font-size: 20px;
@@ -237,6 +237,30 @@ header {
     }
 }
 
+// Table Row Styling Based on Transaction Type
+#expense-table-body {
+    tr {
+        transition: background-color 0.3s ease;
+
+        td:nth-child(4) { // Target Amount Column
+            font-weight: bold;
+
+            &.income-amount {
+                color: @success-color; // Green for income
+            }
+
+            &.expense-amount {
+                color: @error-color; // Red for expense
+            }
+        }
+    }
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+}
+
 
 // Navigation buttons
 // todo: dropdown month selector
@@ -245,7 +269,7 @@ header {
     transform: translateX(-50%) !important; // Center it relative to the input
     width: auto;
     min-width: 150px;
-    box-shadow: @alert-shadow;
+    box-shadow: @shadow;
     background-color: @header-text-color;
     border-radius: 5px;
     padding: 5px;
@@ -479,7 +503,7 @@ header {
                 tr {
 
                     &:hover {
-                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                        box-shadow: @shadow;
                         background: darken(@secondary-color, 2%);
                         transform: scale(1.01); // Slightly enlarge the row on hover
                         cursor: pointer;

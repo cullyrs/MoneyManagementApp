@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const categoryName = row.cells[0].textContent.trim();
         const description = row.cells[1].textContent.trim();
         const date = row.cells[2].textContent.trim();
-        const amount = parseFloat(row.cells[3].textContent.replace("$", "").trim()).toFixed(2); // Remove $ sign and add 2 decimal places
+        let amount = parseFloat(row.cells[3].textContent.replace("$", "").trim()); // Remove $ sign and parse as float
 
         if (!transactionId) {
             console.error("Transaction ID missing from row");
@@ -228,6 +228,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             expenseButton.classList.remove("active");
             populateCategories(incomeCategories); // Show income categories
         } else {
+            amount = Math.abs(amount); // Remove negative sign if expense
             expenseButton.classList.add("active");
             incomeButton.classList.remove("active");
             populateCategories(expenseCategories); // Show expense categories
@@ -339,9 +340,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("budgetsData (raw):", budgetsData);
             console.log("goalsData (raw):", goalsData);
 
-        const budgets = budgetsData ? JSON.parse(budgetsData) : [];
-        const goals = goalsData ? JSON.parse(goalsData) : [];
-        const netbalance = netIncome ? JSON.parse(netIncome) : 0; 
+            const budgets = budgetsData ? JSON.parse(budgetsData) : [];
+            const goals = goalsData ? JSON.parse(goalsData) : [];
+            const netbalance = netIncome ? JSON.parse(netIncome) : 0;
 
 
 
@@ -349,19 +350,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             console.log("Parsed budgets:", budgets);
             console.log("Parsed goals:", goals);
-            
 
 
 
-                const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
-                const currentGoal = goals.length ? goals[goals.length - 1] : null;
-                const currentLifetimeBalance = document.getElementById("Income");
 
-                if (!netbalance) {
-                    currentLifetimeBalance.innerText = "No display"; // Show a fallback message when balance is unavailable
-                } else {
-                    currentLifetimeBalance.innerText = `$${netbalance.toFixed(2)}`; // Display the formatted balance
-                }
+            const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
+            const currentGoal = goals.length ? goals[goals.length - 1] : null;
+            const currentLifetimeBalance = document.getElementById("TotalBalance");
+
+            if (!netbalance) {
+                currentLifetimeBalance.innerText = "No display"; // Show a fallback message when balance is unavailable
+            } else {
+                currentLifetimeBalance.innerText = `$${netbalance.toFixed(2)}`; // Display the formatted balance
+            }
 
             if (!currentBudget) {
                 budgetDisplay.innerText = "No Budget Set";
@@ -420,80 +421,80 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /** Refresh Transactions Table */
     async function refreshTransactionTable() {
-    const tableBody = document.getElementById("expense-table-body");
+        const tableBody = document.getElementById("expense-table-body");
 
-    try {
-        const response = await fetch(`/api/transactions/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        try {
+            const response = await fetch(`/api/transactions/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
-        const data = await response.json();
-        const transactions = data.transactions;
+            const data = await response.json();
+            const transactions = data.transactions;
 
-        if (!Array.isArray(transactions)) {
-            console.error("Transactions data is not an array:", transactions);
-            return;
-        }
-
-        // Sort transactions by month/year using currentMonth (formatted "YYYY-MM")
-        const [selectedYear, selectedMonth] = currentMonth.split("-").map(Number);
-        console.log(`Filtering transactions for: ${selectedMonth}/${selectedYear}`);
-
-        // Filter transactions for the selected month/year
-        const filteredTransactions = transactions.filter(transaction => {
-            if (!transaction.date) return false;
-            const transactionDate = new Date(transaction.date);
-            const transactionYear = transactionDate.getFullYear();
-            const transactionMonth = transactionDate.getMonth() + 1; // JavaScript months are 0-indexed
-            return transactionYear === selectedYear && transactionMonth === selectedMonth;
-        });
-
-        console.log("Filtered transactions:", filteredTransactions);
-
-        // Calculate Monthly Balance
-        let totalIncome = 0;
-        let totalExpense = 0;
-
-        filteredTransactions.forEach(transaction => {
-            const amt = Number(transaction.amount);
-            // Assuming transactions with type "income" are income; everything else is expense.
-            if (transaction.type && transaction.type.toLowerCase() === "income") {
-                totalIncome += amt;
-            } else {
-                totalExpense += amt;
+            if (!Array.isArray(transactions)) {
+                console.error("Transactions data is not an array:", transactions);
+                return;
             }
-        });
 
-        const monthlyBalance = totalIncome - totalExpense;
-        const monthBalanceEl = document.getElementById("Income");
-        if (monthBalanceEl) {
-            monthBalanceEl.innerText = `$${monthlyBalance.toFixed(2)}`;
-        }
+            // Sort transactions by month/year using currentMonth (formatted "YYYY-MM")
+            const [selectedYear, selectedMonth] = currentMonth.split("-").map(Number);
+            console.log(`Filtering transactions for: ${selectedMonth}/${selectedYear}`);
 
-        if (filteredTransactions.length === 0) {
-            tableBody.innerHTML = `
+            // Filter transactions for the selected month/year
+            const filteredTransactions = transactions.filter(transaction => {
+                if (!transaction.date) return false;
+                const transactionDate = new Date(transaction.date);
+                const transactionYear = transactionDate.getFullYear();
+                const transactionMonth = transactionDate.getMonth() + 1; // JavaScript months are 0-indexed
+                return transactionYear === selectedYear && transactionMonth === selectedMonth;
+            });
+
+            console.log("Filtered transactions:", filteredTransactions);
+
+            // Calculate Monthly Balance
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            filteredTransactions.forEach(transaction => {
+                const amt = Number(transaction.amount);
+                // Assuming transactions with type "income" are income; everything else is expense.
+                if (transaction.type && transaction.type.toLowerCase() === "income") {
+                    totalIncome += amt;
+                } else {
+                    totalExpense += amt;
+                }
+            });
+
+            const monthlyBalance = totalIncome - totalExpense;
+            const monthBalanceEl = document.getElementById("Income");
+            if (monthBalanceEl) {
+                monthBalanceEl.innerText = `$${monthlyBalance.toFixed(2)}`;
+            }
+
+            if (filteredTransactions.length === 0) {
+                tableBody.innerHTML = `
                 <tr>
                     <td colspan="4" style="text-align: center;">No transactions found for this month.</td>
                 </tr>
             `;
-            return;
+                return;
+            }
+
+            // Sort the filtered transactions by date in descending order
+            const sortedTransactions = sortData(filteredTransactions, "date", "desc");
+
+            // Update the header for the default sorting
+            const dateHeader = document.querySelector('thead th[data-key="date"]');
+            if (dateHeader) {
+                dateHeader.setAttribute("data-order", "desc");
+            }
+
+            // Render the sorted transactions in the table
+            renderTableRows(sortedTransactions);
+        } catch (error) {
+            console.error("Error fetching transactions:", error);
         }
-
-        // Sort the filtered transactions by date in descending order
-        const sortedTransactions = sortData(filteredTransactions, "date", "desc");
-
-        // Update the header for the default sorting
-        const dateHeader = document.querySelector('thead th[data-key="date"]');
-        if (dateHeader) {
-            dateHeader.setAttribute("data-order", "desc");
-        }
-
-        // Render the sorted transactions in the table
-        renderTableRows(sortedTransactions);
-    } catch (error) {
-        console.error("Error fetching transactions:", error);
     }
-}
 
 
 
@@ -509,16 +510,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     /** Render Table Rows */
     function renderTableRows(data) {
         const tableBody = document.getElementById("expense-table-body");
-        console.error("checking category", data)
+
         // tranaction id added to each row for future useg
-        tableBody.innerHTML = data.map(transaction => `
-            <tr data-transaction-id="${transaction._id}" data-transaction-type="${transaction.type}">
-                <td>${transaction.category?.name || "Uncategorized"}</td>
-                <td>${transaction.description || ""}</td>
-                <td>${formatDate(transaction.date)}</td>
-                <td>$${transaction.amount.toFixed(2)}</td>
-            </tr>
-        `).join("");
+        tableBody.innerHTML = data.map(transaction => {
+            const isIncome = transaction.type.toLowerCase() === "income";
+            const amountClass = isIncome ? "income-amount" : "expense-amount";
+            const formattedAmount = `${isIncome ? "" : "-"}$${transaction.amount.toFixed(2)}`; // Add negative sign for expenses
+    
+            return `
+                <tr data-transaction-id="${transaction._id}" data-transaction-type="${transaction.type}">
+                    <td>${transaction.category?.name || "Uncategorized"}</td>
+                    <td>${transaction.description || ""}</td>
+                    <td>${formatDate(transaction.date)}</td>
+                    <td class="${amountClass}">${formattedAmount}</td>
+                </tr>
+            `;
+        }).join("");
+    
     }
 
     /** Sort Data */
@@ -671,11 +679,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
         // TODOL needs re-work
-        if (type === "expense" && checkDate){
+        if (type === "expense" && checkDate) {
             const budgetData = {
-                userID : userID,
-                budgetID : currentBudget._id,
-                amountToAdd : amount
+                userID: userID,
+                budgetID: currentBudget._id,
+                amountToAdd: amount
             }
             goalAmount = goalAmount * -1;
             const budgetResponse = await fetch(`/api/dashboard/${userId}/budgets/update`, {
@@ -706,11 +714,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        if(checkDate){
+        if (checkDate) {
             const goalData = {
-                userID : userID,
-                goalID : currentGoal._id,
-                amount : goalAmount
+                userID: userID,
+                goalID: currentGoal._id,
+                amount: goalAmount
             }
 
             const goalResponse = await fetch(`/api/dashboard/${userId}/goals/update`, {
@@ -724,7 +732,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const result2 = await goalResponse.json();
             console.log("updateGoal result:", result2);
-            console.log("ok and success", {goalResponse, result2})
+            console.log("ok and success", { goalResponse, result2 })
 
             if (goalResponse.ok && result2.success) {
                 alert("Goal updated successfully!");

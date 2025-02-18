@@ -51,7 +51,7 @@ header img {
   left: 0;
   background: white;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(20, 10, 112, 0.217);
   display: none;
   z-index: 1000;
   outline: 2px solid black;
@@ -94,7 +94,7 @@ header img {
   padding: 20px;
   border-radius: 8px;
   margin-right: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(20, 10, 112, 0.217);
   cursor: pointer;
   transition: background-color 0.3s ease;
   position: relative;
@@ -143,7 +143,7 @@ header img {
   padding: 20px;
   border-radius: 8px;
   margin-right: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(20, 10, 112, 0.217);
   cursor: pointer;
   transition: background-color 0.3s ease;
   position: relative;
@@ -186,12 +186,29 @@ header img {
 .budget-goals #goal-display .prog-goal::-moz-progress-bar {
   background: #39a8bd;
 }
+#expense-table-body tr {
+  transition: background-color 0.3s ease;
+}
+#expense-table-body tr td:nth-child(4) {
+  font-weight: bold;
+}
+#expense-table-body tr td:nth-child(4).income-amount {
+  color: #4eb466;
+}
+#expense-table-body tr td:nth-child(4).expense-amount {
+  color: #dc3545;
+}
+#expense-table-body td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
 .flatpickr-calendar {
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: auto;
   min-width: 150px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(20, 10, 112, 0.217);
   background-color: white;
   border-radius: 5px;
   padding: 5px;
@@ -274,7 +291,7 @@ header img {
 .finance-container {
   margin: 0 auto;
   max-width: 80%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(20, 10, 112, 0.217);
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
@@ -318,7 +335,7 @@ header img {
   display: flex;
   justify-content: center;
   margin: 0 auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(20, 10, 112, 0.217);
   max-height: 470px;
   overflow: hidden;
   overflow-y: auto;
@@ -375,7 +392,7 @@ header img {
   background-color: #dae0e5;
 }
 .finance-container .table table tbody tr:hover {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(20, 10, 112, 0.217);
   background: #f2f4f6;
   transform: scale(1.01);
   cursor: pointer;

@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
     }
 
     const msg = {
-        to: ["nlovitt@student.umgc.edu"], 
+        to: ["nlovitt@student.umgc.edu", "smounie@student.umgc.edu"], 
         from: SENDER_EMAIL,  
         subject: `New Contact Form Submission - ${category}`,
         text: `Name: ${name}\nEmail: ${email}\nCategory: ${category}\nMessage: ${message}`,
