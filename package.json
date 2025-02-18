@@ -33,7 +33,7 @@
     "url": "git+https://github.com/cullyrs/MoneyManagementApp.git"
   },
   "keywords": [],
-  "author": "Naeem Lovitt, [add names here]",
+  "author": "Naeem Lovitt, Steven Mounie, Cully Stearns",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/cullyrs/MoneyManagementApp/issues",
@@ -45,8 +45,8 @@
   "homepage": "https://github.com/cullyrs/MoneyManagementApp#readme",
   "description": "Money Management Web Application",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.4",
     "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "flatpickr": "^4.6.13",
     "jest": "^29.7.0",
@@ -61,7 +61,6 @@
     "mongoose-int32": "^0.6.0",
     "morgan": "^1.10.0",
     "node-fetch": "^3.3.2",
-    "nodemailer": "^6.10.0",
     "supertest": "^7.0.0"
   },
   "devDependencies": {
