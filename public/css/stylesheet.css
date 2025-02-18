@@ -99,7 +99,7 @@ header img {
   transition: background-color 0.3s ease;
   position: relative;
   background-color: #f8d7da;
-  color: #721c24;
+  color: #de2f3f;
 }
 .budget-goals #budget-display:hover {
   opacity: 0.8;
