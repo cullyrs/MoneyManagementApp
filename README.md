@@ -7,12 +7,13 @@ The **Expense Tracker** is a financial management tool designed to help users lo
 ## **Contributors**
 
 **Team Members & Roles:**
-
-- **Arewa (Arewa-lyi)** - DB Developer: Oversaw database development
 - **Naeem (NLovitt)** - Frontend & Documentation: Handles UI/UX design and maintains project documentation
 - **Steven (mouniesa)** - Full Stack: Develops server-side logic and integrates frontend with backend
 - **Cully (cullyrs)** - Backend: Leads server-side development and JavaScript code optimization
 
+**Contributors:**
+- **Arewa (Arewa-lyi)** - DB Developer: Oversaw database development
+  
 ## **Project Setup**
 
 ### **Prerequisites**
@@ -60,33 +61,81 @@ The **Expense Tracker** is a financial management tool designed to help users lo
 ## **Project Structure**
 
 ```graphql
-expense-tracker/
-│── db/                     # Database connection and models
-│   ├── dbconnect.js        # MongoDB connection setup
-│   ├── user.js             # User-related database operations
-│   ├── models/             # Mongoose schemas
-│       ├── Budget.js
-│       ├── Category.js
-│       ├── Goal.js
-│       ├── Transactions.js
-│       ├── User.js
-│── js/                     # Frontend JavaScript files
-│   ├── addExpense.js
-│   ├── dateScript.js
-│   ├── fillTableData.js
-│   ├── headerMenu.js
-│   ├── initializeUser.js
-│   ├── updateBudgetGoal.js
-│── utils/                  # Utility functions
-│   ├── helper.js           # Password hashing and verification
-│── imgs/                   # Images and icons
-│── css/                    # Stylesheets
-│── less/                   # LESS preprocessed styles
-│── main.js                 # Main Electron application entry point
-│── preLoad.js              # Preload script for Electron
-│── package.json            # Project metadata and dependencies
-│── README.md               # Project documentation
-│── api.json                # MongoDB credentials **(not included in repo)**
+.
+└── MoneyManagementApp/
+    ├── .gitignore
+    ├── main.js
+    ├── package.json
+    ├── package-lock.json
+    ├── README.md
+    ├── db/
+    │   ├── api.json
+    │   ├── budgetFunctions.js
+    │   ├── categoryFunctions.js
+    │   ├── dbconnect.js
+    │   ├── goalFunctions.js
+    │   ├── transactionsFunctions.js
+    │   ├── userFunctions.js
+    │   └── models/
+    │       ├── Budget.js
+    │       ├── Category.js
+    │       ├── Goal.js
+    │       ├── Transactions.js
+    │       └── User.js
+    ├── public/
+    │   ├── about.html
+    │   ├── budget.html
+    │   ├── change-password.html
+    │   ├── contact.html
+    │   ├── dashboard.html
+    │   ├── goal.html
+    │   ├── index.html
+    │   ├── less-watch-compiler.config.json
+    │   ├── login.html
+    │   ├── logout.html
+    │   ├── manage-targets.html
+    │   ├── profile.html
+    │   ├── site.webmanifest
+    │   ├── css/
+    │   │   └── stylesheet.css
+    │   ├── imgs/
+    │   │   ├── android-chrome-192x192.png
+    │   │   ├── android-chrome-512x512.png
+    │   │   ├── apple-touch-icon.png
+    │   │   ├── arewa.png
+    │   │   ├── cully.png
+    │   │   ├── favicon.ico
+    │   │   ├── favicon-16x16.png
+    │   │   ├── favicon-32x32.png
+    │   │   ├── icon.png
+    │   │   ├── naeem.png
+    │   │   └── steven.png
+    │   ├── js/
+    │   │   ├── dateScript.js
+    │   │   ├── headerMenu.js
+    │   │   ├── initializeUser.js
+    │   │   ├── logout.js
+    │   │   ├── manageTargets.js
+    │   │   ├── updatePassword.js
+    │   │   ├── userBudget.js
+    │   │   ├── userContact.js
+    │   │   ├── userDashBoard.js
+    │   │   ├── userGoal.js
+    │   │   └── userProfile.js
+    │   └── less/
+    │       └── stylesheet.less
+    ├── routes/
+    │   ├── alertRoutes.js
+    │   ├── authenRoutes.js
+    │   ├── categoryRoutes.js
+    │   ├── contactRoutes.js
+    │   ├── dashboardRoutes.js
+    │   ├── transactionRoutes.js
+    │   └── userRoutes.js
+    ├── tests/
+    │   └── test.js
+    └── utils/
+        └── helper.js
 ```
 
 ## **Technologies Used**
