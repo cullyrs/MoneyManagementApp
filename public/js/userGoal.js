@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!currentGoal) {
                 currentGoalDiv.innerText = "No goal set.";
             } else {
-                const goalCurrent = currentGoal.current || 0;
-                const goalTarget = currentGoal.target || 9999;
+                const goalCurrent = currentGoal.savedAmount || 0;
+                const goalTarget = currentGoal.targetAmount || 9999;
                 const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
                 currentGoalDiv.innerHTML = `
                     <div id="goal-progress-container">    
@@ -66,13 +66,43 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        const response = await fetch(`/api/transactions/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        const data = await response.json();
+        let transactions = data.transactions;
+        
+        // Get current month and year
+        const today = new Date();
+        const currentMonth = today.getMonth(); // 0-based (Jan = 0)
+        const currentYear = today.getFullYear();
+        
+        // Filter transactions for the current month and year
+        const currentMonthTransactions = transactions.filter(transaction => {
+            const transactionDate = new Date(transaction.date);
+            return (
+                transactionDate.getMonth() === currentMonth &&
+                transactionDate.getFullYear() === currentYear
+            );
+        });
+        
+        // Calculate the net balance (income - expenses)
+        const currentTotal = currentMonthTransactions.reduce((sum, transaction) => {
+            return sum + (transaction.type === "income" ? transaction.amount : -transaction.amount);
+        }, 0);
+        
+        console.log("Net Total for Current Month (Income - Expenses):", currentTotal);
+        // don't trust the user to know the right amount? or just remove the saved input?
+        let newGoalSaved2 = newGoalSaved > currentTotal ? newGoalSaved : currentTotal;
+
         try {
             const response = await fetch(`/api/users/${userId}/goals/add`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     targetAmount: newGoalTarget,
-                    savedAmount: newGoalSaved,
+                    savedAmount: newGoalSaved2,
                     savedToDate: newGoalDueDate,
                 })
             });

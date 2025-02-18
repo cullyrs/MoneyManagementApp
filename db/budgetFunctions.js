@@ -28,8 +28,9 @@ const Transactions = require('./models/Transactions.js'); // Added from db branc
  *   2. No name is provided.
  *   3. Invalid amount is provided.
  */
-const addBudget = async (userID, name, totalAmount) => {
+const addBudget = async (userID, name, totalAmount, current) => {
     totalAmount = parseFloat(totalAmount);
+    current = parseFloat(current);
 
     const user = await User.findOne({ _id: userID });
 
@@ -37,7 +38,7 @@ const addBudget = async (userID, name, totalAmount) => {
         const budget = await Budget.create({
             userID : userID,
             name : name,
-            current : 0,
+            current : current,
             totalAmount : totalAmount
         });
         await user.save();
@@ -119,9 +120,10 @@ const updateBudgetName = async (userID, budgetID, newName) => {
  */
 const updateBudgetCurrent = async (userID, budgetID, amountToAdd) => {
     const user = await User.findOne({ _id: userID });
-    if (!user || !amountToAdd || !user.budgetList.includes(budgetID)) return null;
-
     const budget = await Budget.findOne({ _id: budgetID });
+    amountToAdd = parseFloat(amountToAdd);
+    if (!user || amountToAdd < 0 || !budget) return null;
+
     budget.set('current' , budget.current+amountToAdd);
     await budget.save();
     return budget;

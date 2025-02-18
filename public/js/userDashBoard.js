@@ -162,6 +162,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const budgetProgressBar = document.querySelector(".prog-budget");
                     if (budgetProgressBar) {
                         budgetProgressBar.style.background = `linear-gradient(to right, #721c24 ${budgetPercent}%, #f8d7da ${budgetPercent}%)`;
+                        budgetProgressBar.style.transform = `scaleX(-1)`;
                     }
                 }
 
@@ -181,7 +182,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const goalProgressBar = document.querySelector(".prog-goal");
                     if (goalProgressBar) {
                         goalProgressBar.style.background = `linear-gradient(to right, #0c5460 ${goalPercent}%, #d1ecf1 ${goalPercent}%)`;
-                        //goalProgressBar.textContent = `Goal - $${goalCurrent}/${goalTarget}`;
                     }
                 }
             } catch (error) {
@@ -393,6 +393,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function handleAddTransaction(event) {
         event.preventDefault();
 
+        const budgetsData = sessionStorage.getItem("budgets");
+        const goalsData = sessionStorage.getItem("goals");
+        const budgets = budgetsData ? JSON.parse(budgetsData) : [];
+        const goals = goalsData ? JSON.parse(goalsData) : [];
+        const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
+        const currentGoal = goals.length ? goals[goals.length - 1] : null;
+
         const userID = sessionStorage.getItem("userId");
         const token = sessionStorage.getItem("token");
 
@@ -416,6 +423,82 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!dateInput) {
             alert("Please enter a date.");
             return;
+        }
+        let goalAmount = amount;
+        const transDate = new Date(`${dateInput} T00:00:00Z`);
+        checkDate = transDate.getMonth() === currentMonth && transDate.getFullYear() === currentYear;
+
+        if (type === "expense" && checkDate){
+            const budgetData = {
+                userID : userID,
+                budgetID : currentBudget._id,
+                amountToAdd : amount
+            }
+            goalAmount = goalAmount * -1;
+            const budgetResponse = await fetch(`/api/users/${userId}/budgets/update`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(budgetData)
+            });
+            console.log("Server Response Status for budget:", budgetResponse.status);
+
+            const result = await budgetResponse.json();
+            console.log("updateBudget result:", result);
+
+            if (budgetResponse.ok && result.budget) {
+                alert("Budget updated successfully!");
+                if (result.budgets) {
+                    sessionStorage.setItem("budgets", JSON.stringify(result.budgets));
+                } else {
+                    let storedBudgets = JSON.parse(sessionStorage.getItem("budgets") || "[]");
+                    storedBudgets.push(result.budget);
+                    sessionStorage.setItem("budgets", JSON.stringify(storedBudgets));
+                }
+            } else if (!budgetResponse.ok) {
+                const errorText = await budgetResponse.text();
+                console.error("Server Response Body:", errorText);
+                throw new Error(`Failed to update budget. Server Response: ${errorText}`);
+            }
+        }
+
+        if(checkDate){
+            const goalData = {
+                userID : userID,
+                goalID : currentGoal._id,
+                amount : goalAmount
+            }
+
+            const goalResponse = await fetch(`/api/users/${userId}/goals/update`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(goalData)
+            });
+            console.log("Server Response Status for goal:", goalResponse.status);
+
+            const result2 = await goalResponse.json();
+            console.log("updateGoal result:", result2);
+            console.log("ok and success", {goalResponse, result2})
+
+            if (goalResponse.ok && result2.success) {
+                alert("Goal updated successfully!");
+                if (result2.goals) {
+                    sessionStorage.setItem("goals", JSON.stringify(result2.goals));
+                } else {
+
+                    let storedGoals = JSON.parse(sessionStorage.getItem("goals") || "[]");
+                    storedGoals.push(result2.goal);
+                    sessionStorage.setItem("goals", JSON.stringify(storedGoals));
+                }
+            } else if (!goalResponse.ok) {
+                const errorText = await goalResponse.text();
+                console.error("Server Response Body:", errorText);
+                throw new Error(`Failed to update goal. Server Response: ${errorText}`);
+            }
+            refreshDashboard();
         }
 
 
