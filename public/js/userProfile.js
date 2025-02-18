@@ -9,17 +9,16 @@
  * via IPC, toggles the settings dropdown, and handles user logout functionality.
  */
 document.addEventListener("DOMContentLoaded", async () => {
-    const userId = sessionStorage.getItem("userId");
-    const token = sessionStorage.getItem("token");
-    
+  const userId = sessionStorage.getItem("userId");
+  const token = sessionStorage.getItem("token");
 
-    if (!userId || !token) {
-        console.error("No logged-in user found. Redirecting to login page.");
-        window.location.href = "login.html";
-        return;
-    }
+  if (!userId || !token) {
+    console.error("No logged-in user found. Redirecting to login page.");
+    window.location.href = "login.html";
+    return;
+  }
 
-    console.log("Retrieved userId:", userId);
+  console.log("Retrieved userId:", userId);
 
     try {
         // Fetch user information from the backend

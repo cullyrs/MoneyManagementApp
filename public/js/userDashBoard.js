@@ -339,25 +339,29 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("budgetsData (raw):", budgetsData);
             console.log("goalsData (raw):", goalsData);
 
-            const budgets = budgetsData ? JSON.parse(budgetsData) : [];
-            const goals = goalsData ? JSON.parse(goalsData) : [];
-            const netbalance = netIncome ? JSON.parse(netIncome) : 0; // Ensure it's a number
+        const budgets = budgetsData ? JSON.parse(budgetsData) : [];
+        const goals = goalsData ? JSON.parse(goalsData) : [];
+        const netbalance = netIncome ? JSON.parse(netIncome) : 0; 
+
 
 
             // TODO: remove these logs to keep data more secure
 
             console.log("Parsed budgets:", budgets);
             console.log("Parsed goals:", goals);
+            
 
-            const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
-            const currentGoal = goals.length ? goals[goals.length - 1] : null;
-            const currentNetBalance = document.getElementById("Income");
 
-            if (!netbalance) {
-                currentNetBalance.innerText = "No display"; // Show a fallback message when balance is unavailable
-            } else {
-                currentNetBalance.innerText = `$${netbalance.toFixed(2)}`; // Display the formatted balance
-            }
+
+                const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
+                const currentGoal = goals.length ? goals[goals.length - 1] : null;
+                const currentLifetimeBalance = document.getElementById("Income");
+
+                if (!netbalance) {
+                    currentLifetimeBalance.innerText = "No display"; // Show a fallback message when balance is unavailable
+                } else {
+                    currentLifetimeBalance.innerText = `$${netbalance.toFixed(2)}`; // Display the formatted balance
+                }
 
             if (!currentBudget) {
                 budgetDisplay.innerText = "No Budget Set";
@@ -416,60 +420,82 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /** Refresh Transactions Table */
     async function refreshTransactionTable() {
-        const tableBody = document.getElementById("expense-table-body");
+    const tableBody = document.getElementById("expense-table-body");
 
-        try {
-            const response = await fetch(`/api/transactions/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+    try {
+        const response = await fetch(`/api/transactions/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-            const data = await response.json();
-            transactions = data.transactions;
+        const data = await response.json();
+        const transactions = data.transactions;
 
-            if (!Array.isArray(transactions)) {
-                console.error("Transactions data is not an array:", transactions);
-                return;
+        if (!Array.isArray(transactions)) {
+            console.error("Transactions data is not an array:", transactions);
+            return;
+        }
+
+        // Sort transactions by month/year using currentMonth (formatted "YYYY-MM")
+        const [selectedYear, selectedMonth] = currentMonth.split("-").map(Number);
+        console.log(`Filtering transactions for: ${selectedMonth}/${selectedYear}`);
+
+        // Filter transactions for the selected month/year
+        const filteredTransactions = transactions.filter(transaction => {
+            if (!transaction.date) return false;
+            const transactionDate = new Date(transaction.date);
+            const transactionYear = transactionDate.getFullYear();
+            const transactionMonth = transactionDate.getMonth() + 1; // JavaScript months are 0-indexed
+            return transactionYear === selectedYear && transactionMonth === selectedMonth;
+        });
+
+        console.log("Filtered transactions:", filteredTransactions);
+
+        // Calculate Monthly Balance
+        let totalIncome = 0;
+        let totalExpense = 0;
+
+        filteredTransactions.forEach(transaction => {
+            const amt = Number(transaction.amount);
+            // Assuming transactions with type "income" are income; everything else is expense.
+            if (transaction.type && transaction.type.toLowerCase() === "income") {
+                totalIncome += amt;
+            } else {
+                totalExpense += amt;
             }
-            //sort transactions by month/year
-            const [selectedYear, selectedMonth] = currentMonth.split("-").map(Number);
-            console.log(`Filtering transactions for: ${selectedMonth}/${selectedYear}`);
+        });
 
-            const filteredTransactions = transactions.filter(transaction => {
-                if (!transaction.date) return false;
+        const monthlyBalance = totalIncome - totalExpense;
+        const monthBalanceEl = document.getElementById("Income");
+        if (monthBalanceEl) {
+            monthBalanceEl.innerText = `$${monthlyBalance.toFixed(2)}`;
+        }
 
-                const transactionDate = new Date(transaction.date);
-
-                const transactionYear = transactionDate.getFullYear();
-                const transactionMonth = transactionDate.getMonth() + 1; // they are 0-indexed
-
-                return transactionYear === selectedYear && transactionMonth === selectedMonth;
-            });
-
-            console.log("Filtered transactions:", filteredTransactions); // Debugging
-
-            // Handle empty filtered result
-            if (filteredTransactions.length === 0) {
-                tableBody.innerHTML = `
+        if (filteredTransactions.length === 0) {
+            tableBody.innerHTML = `
                 <tr>
                     <td colspan="4" style="text-align: center;">No transactions found for this month.</td>
                 </tr>
             `;
-                return;
-            }
-
-            const sortedTransactions = sortData(filteredTransactions, "date", "desc");
-
-            // Update the header for the default sorting
-            const dateHeader = document.querySelector('thead th[data-key="date"]');
-            if (dateHeader) {
-                dateHeader.setAttribute("data-order", "desc");
-            }
-
-            renderTableRows(sortedTransactions);
-        } catch (error) {
-            console.error("Error fetching transactions:", error);
+            return;
         }
+
+        // Sort the filtered transactions by date in descending order
+        const sortedTransactions = sortData(filteredTransactions, "date", "desc");
+
+        // Update the header for the default sorting
+        const dateHeader = document.querySelector('thead th[data-key="date"]');
+        if (dateHeader) {
+            dateHeader.setAttribute("data-order", "desc");
+        }
+
+        // Render the sorted transactions in the table
+        renderTableRows(sortedTransactions);
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
     }
+}
+
+
 
     // needed to get correct date format. Was getting -1 day
     function formatDate(dateString) {

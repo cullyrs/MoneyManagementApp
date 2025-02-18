@@ -1,8 +1,8 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const { loginUser, addUser, findUser, getUser } = require("../db/userFunctions");
+const { loginUser, addUser, findUser, getUser, updatePassword } = require("../db/userFunctions");
 require("dotenv").config();
-
+const { compareEntry, hashed } = require("../utils/helper.js");
 const router = express.Router();
 
 const { password } = require("../db/api.json");
@@ -111,19 +111,38 @@ router.get('/by-email/:email', async (req, res) => {
     }
 });
 
-router.get('/:userID', async (req, res) => {
-    const userID = req.params.userID;
 
-    try {
-        const user = await findUser(userID);
-        if (!user) {
-            return res.status(404).json({ success: false, error: 'User not found' });
-        }
-        res.json({ success: true, user });
-    } catch (error) {
-        console.error('Error fetching user:', error);
-        res.status(500).json({ success: false, error: 'Server error' });
+router.post("/updatePassword", async (req, res) => {
+  const { userID, oldEntry, newEntry } = req.body;
+
+  if (!userID || !oldEntry || !newEntry) {
+    return res.status(400).json({
+      success: false,
+      error: "Missing required fields: userID, oldEntry, or newEntry.",
+    });
+  }
+
+  try {
+ const existingUser = await findUser(userID);
+    if (!existingUser) {
+      return res.status(400).json({ success: false, error: "User not found." });
     }
+
+    if (!(await compareEntry(oldEntry, existingUser.password))) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Old password is incorrect." });
+    }
+
+    existingUser.password = await hashed(newEntry);
+    await existingUser.save();
+
+    res.json({ success: true, user: existingUser });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
 });
 
 module.exports = router;
+
