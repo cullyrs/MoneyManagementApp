@@ -13,8 +13,6 @@
  */
 const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
-
-
 document.addEventListener("DOMContentLoaded", async () => {
     // Check if user is logged in
     const userId = sessionStorage.getItem("userId");
@@ -219,7 +217,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         // Check if Transaction is Income or Expense
-        const transactionType = row.getAttribute("data-transaction-type"); 
+        const transactionType = row.getAttribute("data-transaction-type");
         const isIncome = transactionType === "income";
 
         // toggle active Button Based on Type: Income or Expense
@@ -325,94 +323,154 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
 
-
-
     /** Refresh Dashboard Data */
     async function refreshDashboard() {
         try {
-            const budgetsData = sessionStorage.getItem("budgets");
-            const goalsData = sessionStorage.getItem("goals");
+            const userId = sessionStorage.getItem("userId");
+            const token = sessionStorage.getItem("token");
+            const selectedMonth = document.getElementById("month-selector").value;
+
+            let currentBudget = null;
+            let currentGoal = null;
+            let transactions = [];
+
+
+            // Fetch Budget for the selected month
+            try {
+                const budgetResponse = await fetch(`/api/dashboard/${userId}/budgets/${selectedMonth}`);
+                if (budgetResponse.ok) {
+                    const budgetResult = await budgetResponse.json();
+                    currentBudget = budgetResult.success ? budgetResult.budget : null;
+                }
+            } catch (error) {
+                console.error("Error fetching budget:", error);
+                budgetDisplay.innerText = "No Budget Set";
+                goalDisplay.innerText = "No Goal Set";
+            }
+
+            // Fetch Goal for the selected month
+            try {
+                const goalResponse = await fetch(`/api/dashboard/${userId}/goals/${selectedMonth}`);
+                if (goalResponse.ok) {
+                    const goalResult = await goalResponse.json();
+                    currentGoal = goalResult.success ? goalResult.goal : null;
+                }
+            } catch (error) {
+                console.error("Error fetching goal:", error);
+                budgetDisplay.innerText = "No Budget Set";
+                goalDisplay.innerText = "No Goal Set";
+            }
+            // Fetch transactions
+            try {
+                const response = await fetch(`/api/transactions/${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    transactions = Array.isArray(data.transactions) ? data.transactions : [];
+                }
+            } catch (error) {
+                console.error("Error fetching transactions:", error);
+            }
+
+
+            // Compute total income and expenses for the selected month
+            let totalIncome = 0;
+            let totalExpense = 0;
+            if (transactions.length > 0) {
+                transactions.forEach(transaction => {
+                    if (transaction.date.startsWith(selectedMonth)) {
+                        if (transaction.type === "income") {
+                            totalIncome += transaction.amount;
+                        } else {
+                            totalExpense += transaction.amount;
+                        }
+                    }
+                });
+            }
+
+            // Store in sessionStorage for later use
+            sessionStorage.setItem(`income_${selectedMonth}`, totalIncome.toFixed(2));
+            sessionStorage.setItem(`expense_${selectedMonth}`, totalExpense.toFixed(2));
+
+            console.log("Total Income:", totalIncome);
+            console.log("Total Expense:", totalExpense);
+            if (currentBudget) {
+                currentBudget.current = totalExpense;
+            }
+            if (currentGoal) {
+                currentGoal.current = totalIncome;
+            }
+            // Fetch and update budgets and goals
+            // const budgetsData = sessionStorage.getItem("budgets");
+            // const goalsData = sessionStorage.getItem("goals");
             const netIncome = sessionStorage.getItem("netbalance");
 
+            // const budgets = budgetsData ? JSON.parse(budgetsData) : {};
+            // const goals = goalsData ? JSON.parse(goalsData) : {};
 
-            // TODO: remove these logs to keep data more secure
-
-            console.log("budgetsData (raw):", budgetsData);
-            console.log("goalsData (raw):", goalsData);
-
-            const budgets = budgetsData ? JSON.parse(budgetsData) : [];
-            const goals = goalsData ? JSON.parse(goalsData) : [];
             const netbalance = netIncome ? JSON.parse(netIncome) : 0;
-
-
-
-            // TODO: remove these logs to keep data more secure
-
-            console.log("Parsed budgets:", budgets);
-            console.log("Parsed goals:", goals);
-
-
-
-
-            const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
-            const currentGoal = goals.length ? goals[goals.length - 1] : null;
             const currentLifetimeBalance = document.getElementById("TotalBalance");
+            currentLifetimeBalance.innerText = netbalance ? `$${netbalance.toFixed(2)}` : "No display";
 
-            if (!netbalance) {
-                currentLifetimeBalance.innerText = "No display"; // Show a fallback message when balance is unavailable
-            } else {
-                currentLifetimeBalance.innerText = `$${netbalance.toFixed(2)}`; // Display the formatted balance
-            }
 
             if (!currentBudget) {
                 budgetDisplay.innerText = "No Budget Set";
             } else {
-                const budgetCurrent = currentBudget.current || 0;
-                const budgetSpent = currentBudget.totalAmount || 9999;
+                const budgetCurrent = totalExpense;
+                const budgetSpent = currentBudget.totalAmount || 0;
                 const budgetPercent = budgetSpent > 0 ? (budgetCurrent / budgetSpent) * 100 : 0;
 
                 budgetDisplay.innerHTML = `
                 <span class="budget-progress-text">Budget - ${USD.format(budgetCurrent)} / ${USD.format(budgetSpent)}</span>
                 <progress class="prog-budget" max="100" value="${budgetPercent}"></progress>
             `;
-
+                const budgetProgressBar = document.querySelector(".prog-budget");
+                if (budgetProgressBar) {
+                    budgetProgressBar.style.transform = `scaleX(-1)`;
+                }
             }
 
             if (!currentGoal) {
                 goalDisplay.innerText = "No goal set.";
             } else {
-                const goalCurrent = currentGoal.savedAmount || 0;
-                const goalTarget = currentGoal.targetAmount || 9999;
+                const goalCurrent = totalIncome;
+                const goalTarget = currentGoal.totalAmount || 0;
                 const goalPercent = goalTarget > 0 ? (goalCurrent / goalTarget) * 100 : 0;
+
                 goalDisplay.innerHTML = `
                 <span class="goal-progress-text">Goal - ${USD.format(goalCurrent)} / ${USD.format(goalTarget)}</span>
                 <progress class="prog-goal" max="100" value="${goalPercent}"></progress>
             `;
-
             }
         } catch (error) {
             console.error("Error loading dashboard:", error);
         }
     }
 
+
     /** Get Transactions */
     async function getTransactions() {
-        const response = await fetch(`/api/transactions/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const data = await response.json();
-        let transactions = data.transactions;
-
-        if (!Array.isArray(transactions)) {
-            console.error("Transactions data is not an array:", transactions);
-            return;
+        const userId = sessionStorage.getItem("userId");
+        const token = sessionStorage.getItem("token");
+        try {
+            const response = await fetch(`/api/transactions/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) throw new Error("Failed to fetch transactions.");
+            const data = await response.json();
+            return Array.isArray(data.transactions) ? data.transactions : [];
+        } catch (error) {
+            console.error("Error fetching transactions:", error);
+            return [];
         }
-        return transactions;
     }
+
 
     /** Refresh Transactions Table */
     async function refreshTransactionTable() {
+
         const tableBody = document.getElementById("expense-table-body");
 
         try {
@@ -450,7 +508,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             filteredTransactions.forEach(transaction => {
                 const amt = Number(transaction.amount);
                 // Assuming transactions with type "income" are income; everything else is expense.
-                if (transaction.type && transaction.type.toLowerCase() === "income") {
+                if (transaction.type && String(transaction.type).toLowerCase() === "income") {
                     totalIncome += amt;
                 } else {
                     totalExpense += amt;
@@ -483,6 +541,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // Render the sorted transactions in the table
             renderTableRows(sortedTransactions);
+            refreshDashboard();
         } catch (error) {
             console.error("Error fetching transactions:", error);
         }
@@ -505,10 +564,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // tranaction id added to each row for future useg
         tableBody.innerHTML = data.map(transaction => {
-            const isIncome = transaction.type.toLowerCase() === "income";
+            const isIncome = String(transaction.type).toLowerCase() === "income";
             const amountClass = isIncome ? "income-amount" : "expense-amount";
             const formattedAmount = `${isIncome ? "" : "-"}$${transaction.amount.toFixed(2)}`; // Add negative sign for expenses
-    
+
             return `
                 <tr data-transaction-id="${transaction._id}" data-transaction-type="${transaction.type}">
                     <td>${transaction.category?.name || "Uncategorized"}</td>
@@ -518,7 +577,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </tr>
             `;
         }).join("");
-    
+
     }
 
     /** Sort Data */
@@ -640,49 +699,39 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const budgetsData = sessionStorage.getItem("budgets");
         const goalsData = sessionStorage.getItem("goals");
-        const budgets = budgetsData ? JSON.parse(budgetsData) : [];
-        const goals = goalsData ? JSON.parse(goalsData) : [];
-        const currentBudget = budgets.length ? budgets[budgets.length - 1] : null;
-        const currentGoal = goals.length ? goals[goals.length - 1] : null;
+        const budgets = budgetsData ? JSON.parse(budgetsData) : {};
+        const goals = goalsData ? JSON.parse(goalsData) : {};
+
 
         const userID = sessionStorage.getItem("userId");
         const token = sessionStorage.getItem("token");
+        const selectedMonth = document.getElementById("month-selector").value;
 
         const dateInput = document.getElementById("date").value;
         const amount = parseFloat(document.getElementById("amount").value);
         const categorySelect = document.getElementById("category");
-        const categoryId = categorySelect.value; //  stores ObjectId
-        const description = document.getElementById("description").value.trim() ||
-            categorySelect.options[categorySelect.selectedIndex].text;
-        // const customCategoryInput = document.getElementById("custom-category");
-
+        const categoryId = categorySelect.value;
+        const description = document.getElementById("description").value.trim() || categorySelect.options[categorySelect.selectedIndex].text;
+        const type = document.getElementById("income-button").classList.contains("active") ? "income" : "expense";
         const dateInputField = document.getElementById("date");
         const dateInputValue = dateInputField.value;
         const categoryInputValue = categorySelect.value;
-
-        // const customCategory = (categoryId === "custom" && customCategoryInput) ? customCategoryInput.value.trim() : "";
-
-        // get transaction type Expense or Income
-        const type = (document.getElementById("income-button").classList.contains("active")) ? "income" : "expense";
-
-        let goalAmount = amount;
-        const transDate = new Date(`${dateInput} T00:00:00Z`);
-        checkDate = transDate.getMonth() === currentMonth && transDate.getFullYear() === currentYear;
+        const currentBudget = budgets[selectedMonth] || null;
+        const currentGoal = goals[selectedMonth] || null;
 
 
-        // TODOL needs re-work
-        if (type === "expense" && checkDate) {
+        if (type === "expense" && currentBudget) {
             const budgetData = {
-                userID: userID,
-                budgetID: currentBudget._id,
-                amountToAdd: amount
-            }
-            goalAmount = goalAmount * -1;
-            const budgetResponse = await fetch(`/api/dashboard/${userId}/budgets/update`, {
+                userId: userID,
+                month: selectedMonth,
+                name: currentBudget.name,
+                totalAmount: currentBudget.totalAmount,
+                current: currentBudget.current + amount,
+            };
+
+            const budgetResponse = await fetch(`/api/dashboard/${userID}/budgets/update`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(budgetData)
             });
             console.log("Server Response Status for budget:", budgetResponse.status);
@@ -706,20 +755,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        if (checkDate) {
+        if (currentGoal) {
             const goalData = {
-                userID: userID,
-                goalID: currentGoal._id,
-                amount: goalAmount
-            }
+                userId: userID,
+                month: selectedMonth,
+                name: currentGoal.name,
+                totalAmount: currentGoal.totalAmount,
+                current: currentGoal.current + (type === "income" ? amount : 0),
+            };
 
-            const goalResponse = await fetch(`/api/dashboard/${userId}/goals/update`, {
+            const goalResponse = await fetch(`/api/dashboard/${userID}/goals/update`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(goalData)
             });
+
             console.log("Server Response Status for goal:", goalResponse.status);
 
             const result2 = await goalResponse.json();
@@ -741,27 +791,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 console.error("Server Response Body:", errorText);
                 throw new Error(`Failed to update goal. Server Response: ${errorText}`);
             }
-            refreshDashboard();
         }
 
-
-        // Prepare transaction data
+        console.log("Adding transaction:", { userID, amount, type, dateInput, categoryId, description });
         const transactionData = {
             userID,
             amount,
             type,
             date: dateInput,
-            category: categoryId, // ObjectId from DB
+            category: categoryId,
             description,
-            version: 1,
         };
 
-        // Log data to debug
-        // TODO: remove these logs to keep data more secure
-        console.log("Transaction Data Being Sent:", JSON.stringify(transactionData, null, 2));
-
         try {
-            // Send the transaction request
             const response = await fetch("/api/transactions", {
                 method: "POST",
                 headers: {
@@ -771,9 +813,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 body: JSON.stringify(transactionData),
             });
 
-            // Check response status
-            console.log("Server Response Status:", response.status);
-
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Server Response Body:", errorText);
@@ -782,22 +821,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             showAlert("Transaction added successfully!", "success");
             document.querySelector(".add-expense-form").reset();
-
             dateInputField.value = dateInputValue;
             categorySelect.value = categoryInputValue;
             refreshTransactionTable();
+            closeExpenseMenu(true);
         } catch (error) {
             console.error("Error adding transaction:", error);
             showAlert("Failed to add transaction. Please try again.", "error");
         }
     }
-
-
     document.querySelector(".add-expense-form").addEventListener("submit", handleAddTransaction);
 
     /** Redirects */
-    if (budgetDisplay) budgetDisplay.addEventListener("click", () => window.location.href = "budget.html");
-    if (goalDisplay) goalDisplay.addEventListener("click", () => window.location.href = "goal.html");
+    function redirectToTargetPage(page) {
+        const selectedMonth = monthSelector.value;
+        window.location.href = `${page}.html?month=${selectedMonth}`; // UPDATED
+    }
+
+    budgetDisplay.addEventListener("click", () => redirectToTargetPage("budget"));
+    goalDisplay.addEventListener("click", () => redirectToTargetPage("goal"));
 
     // Ensure Expense is the default active selection
     expenseButton.classList.add("active");
@@ -805,6 +847,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initialize Dashboard
     await fetchCategories();
-    await refreshDashboard();
     await refreshTransactionTable();
 });

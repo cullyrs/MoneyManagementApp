@@ -8,7 +8,7 @@
  * compact functions to interact with the Goal collection of
  * the Expense Tracker Accounts database.
  */
-const Category = require('./models/Category.js');
+// const Category = require('./models/Category.js');
 const Goal = require ('./models/Goal.js');
 const User = require('./models/User.js');
 
@@ -26,54 +26,28 @@ const User = require('./models/User.js');
  *   1. Invalid userID is provided.
  *   3. Invalid targetAmount is provided.
  */
-const addGoal = async(userID, targetAmount, savedAmount = 0, 
-                     savedToDate = new Date(Date.now() + 30 * 24 * 3600 * 1000)) =>{    
-    const user = await User.findOne({_id : userID});
-    targetAmount = parseFloat(targetAmount);
-    savedAmount = parseFloat(savedAmount);
-    
-    if(user && targetAmount > 0 ){
-       
-        const goal = await Goal.create({
-            userID : userID,
-            targetAmount : targetAmount,
-            savedAmount : savedAmount,            
-            savedToDate : new Date(savedToDate)
-        });
-        user.goalList.push(goal._id);
-        user.save();
-        return goal;
-    }
-    return null;
-}
-/**
- * Function to remove a goal from the Goal collection of the 
- * Expense Tracker Accounts database. The unique goal _id of the goal
- * is removed from the goalList array in the User collection.
- * @param {String} userID - The unique _id of the associated User instance. 
- * @param {String} goalID - The unique _id of the goal. 
- * @returns {Object} The removed instance of the goal object.
- * Returns null if :
- *      1. Invalid userID is provided.
- *      2. goalID is not associated with the User instance provided.
- */
-const removeGoal = async (userID, goalID) =>{
-    const user = await User.findOne({_id : userID});
-    const index = user.goalList.indexOf(goalID);
-    if(user && index >= 0){
-        
-        const goal = await Goal.findOne({_id : goalID});
-        const finalCopy = JSON.parse(JSON.stringify(goal));
-        await Goal.deleteOne({_id : goalID});
+const addGoal = async (userID, name, totalAmount, month) => {
+    totalAmount = parseFloat(totalAmount);
 
-        // Removes goal _id from goalList.
-        user.goalList.splice(index, 1);
+    const user = await User.findOne({ _id: userID });
 
-        await user.save();
-        return finalCopy;
+    if (!user || !name || !totalAmount || !month) {
+        console.error("Invalid goal parameters:", { userID, name, totalAmount, month });
+        return null;
     }
-   return null
-}
+
+    const goal = await Goal.create({
+        userID,
+        name,
+        month,
+        totalAmount,
+        current: 0 // Initialize savings to 0
+    });
+
+    await user.save();
+    return goal;
+};
+
 /**
  * Function to retrieve a goal from the goal collection of the 
  * Expense Tracker Accounts database. The unique goal _id of the goal
@@ -85,16 +59,38 @@ const removeGoal = async (userID, goalID) =>{
  *      1. Invalid userID is provided.
  *      2. goalID is not associated with the User instance provided.
  */
-const getGoal = async(userID, goalID)=>{
-    const user = await User.findOne({_id : userID});
-    const index = user.goalList.indexOf(goalID);
+const getGoalByMonth = async (userID, month) => {
+    return await Goal.findOne({ userID, month });
+};
 
-    if(user && index >= 0){
-        const goal = await Goal.findOne({_id : goalID});
-        return goal;
+/**
+ * Function to remove a goal from the Goal collection of the 
+ * Expense Tracker Accounts database. The unique goal _id of the goal
+ * is removed from the goalList array in the User collection.
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} goalID - The unique _id of the goal. 
+ * @returns {Object} The removed instance of the goal object.
+ * Returns null if :
+ *      1. Invalid userID is provided.
+ *      2. goalID is not associated with the User instance provided.
+ */
+const removeGoal = async (userID, goalID) => {
+    const user = await User.findOne({ _id: userID });
+    if (!user) return null;
+
+    const index = user.goalList.indexOf(goalID);
+    if (index >= 0) {
+        const goal = await Goal.findOne({ _id: goalID });
+        const finalCopy = JSON.parse(JSON.stringify(goal));
+
+        await Goal.deleteOne({ _id: goalID });
+        user.goalList.splice(index, 1);
+        await user.save();
+        return finalCopy;
     }
     return null;
-}
+};
+
 /**
  * Function to retrieve a goal's total saved amount from the goal collection of the 
  * Expense Tracker Accounts database. The unique goal _id of the goal
@@ -197,18 +193,31 @@ const updateSavedAmount = async(userID, goalID, newSavedAmount) => {
  *      2. Invalid amount is provided. (Positive values only)
  *      3. goalID is not associated with the User instance provided.
  */
-const increaseSavedAmount = async(userID, goalID, amount) => {
-    const user = await User.findOne({_id : userID});
-    const goal = await Goal.findOne({_id : goalID}); 
+const increaseSavedAmount = async (userID, goalID, amount) => {
     amount = parseFloat(amount);
-    if(!user || isNaN(amount) || !goal) return null;
+    const user = await User.findOne({ _id: userID });
+    const goal = await Goal.findOne({ _id: goalID });
 
-    // Update and save goal instance.
-    goal.set('savedAmount' , goal.savedAmount + amount);
+    if (!user || isNaN(amount) || amount < 0 || !goal) {
+        console.error("Invalid goal update parameters:", { userID, goalID, amount });
+        return null;
+    }
+
+    goal.current += amount;
     await goal.save();
     return goal;
+};
+async function getAllGoals(userID) {
+    try {
+        const goals = await Goal.find({ userID }).sort({ savedToDate: -1 }); // Sort by newest first
+        return goals;
+    } catch (error) {
+        console.error("Error fetching all goals:", error);
+        return [];
+    }
 }
-module.exports ={addGoal, removeGoal, getGoal, updateTargetAmount,
+
+module.exports ={addGoal, removeGoal, getGoalByMonth, updateTargetAmount,
     updateSavedAmount, increaseSavedAmount, getSavedAmount,
-    getTargetAmount
+    getTargetAmount, getAllGoals
 };

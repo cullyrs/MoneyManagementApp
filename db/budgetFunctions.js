@@ -10,7 +10,7 @@
  */
 
 
-const Category = require('./models/Category.js');
+// const Category = require('./models/Category.js');
 const Budget = require('./models/Budget.js');
 const User = require('./models/User.js');
 const Transactions = require('./models/Transactions.js'); // Added from db branch
@@ -28,23 +28,88 @@ const Transactions = require('./models/Transactions.js'); // Added from db branc
  *   2. No name is provided.
  *   3. Invalid amount is provided.
  */
-const addBudget = async (userID, name, totalAmount, current) => {
+const addBudget = async (userID, name, totalAmount, month, current = 0) => {
     totalAmount = parseFloat(totalAmount);
     current = parseFloat(current);
 
     const user = await User.findOne({ _id: userID });
 
-    if (user && name && totalAmount > 0) {
-        const budget = await Budget.create({
-            userID : userID,
-            name : name,
-            current : current,
-            totalAmount : totalAmount
-        });
-        await user.save();
-        return budget;
+    if (!user || !name || !totalAmount || !month) {
+        console.error("Invalid budget parameters:", { userID, name, totalAmount, month });
+        return null;
     }
-    return null;
+
+    const budget = await Budget.create({
+        userID,
+        name,
+        month,
+        current,
+        totalAmount
+    });
+
+    await user.save();
+    return budget;
+};
+
+/**
+ * Function to retrieve a budget from the Budget collection.
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} budgetID - The unique _id of the budget. 
+ * @returns {Object} The instance of the budget object.
+ */
+const getBudgetByMonth = async (userID, month) => {
+    return await Budget.findOne({ userID, month });
+};
+
+/**
+ * Function to change a budget's amount in the Budget collection 
+ * of the Expense Tracker Accounts database. 
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} budgetID - The unique _id of the budget. 
+ * @param {Double} newAmount - The updated budget amount.
+ * @returns {Object} The updated instance of the budget object.
+ * Returns null if :
+ *      1. Invalid userID is provided.
+ *      2. Invalid newAmount is provided. (Positive values only)
+ *      3. budgetID is not associated with the User instance provided.
+ */
+
+const updateBudgetCurrent = async (userID, budgetID, amountToAdd) => {
+    amountToAdd = parseFloat(amountToAdd);
+    const user = await User.findOne({ _id: userID });
+    const budget = await Budget.findOne({ _id: budgetID });
+
+    if (!user || isNaN(amountToAdd) || amountToAdd < 0 || !budget) {
+        console.error("Invalid update parameters:", { userID, budgetID, amountToAdd });
+        return null;
+    }
+
+    budget.current += amountToAdd;
+    await budget.save();
+    return budget;
+};
+
+
+/**
+ * Function to change a budget's name in the Budget collection of the 
+ * Expense Tracker Accounts database. 
+ * @param {String} userID - The unique _id of the associated User instance. 
+ * @param {String} budgetID - The unique _id of the budget.
+ * @param {String} newName - The updated budget name.  
+ * @returns {Object} The updated instance of the budget object.
+ * Returns null if :
+ *      1. Invalid userID is provided.
+ *      2. Invalid newName is provided. (Empty String)
+ *      3. budgetID is not associated with the User instance provided.
+ */
+const updateBudgetName = async (userID, budgetID, newName) => {
+    const user = await User.findOne({ _id: userID });
+    if (!user || !newName || !user.budgetList.includes(budgetID)) return null;
+
+    const budget = await Budget.findOne({ _id: budgetID });
+    budget.set('name', newName);
+    await budget.save();
+    return budget;
 };
 
 /**
@@ -71,18 +136,6 @@ const removeBudget = async (userID, budgetID) => {
     return null;
 };
 
-/**
- * Function to retrieve a budget from the Budget collection.
- * @param {String} userID - The unique _id of the associated User instance. 
- * @param {String} budgetID - The unique _id of the budget. 
- * @returns {Object} The instance of the budget object.
- */
-const getBudget = async (userID, budgetID) => {
-    const user = await User.findOne({ _id: userID });
-    if (!user || !user.budgetList.includes(budgetID)) return null;
-
-    return await Budget.findOne({ _id: budgetID });
-};
 
 /**
  * Function to change a budget's name in the Budget collection of the 
@@ -96,58 +149,14 @@ const getBudget = async (userID, budgetID) => {
  *      2. Invalid newName is provided. (Empty String)
  *      3. budgetID is not associated with the User instance provided.
  */
-const updateBudgetName = async (userID, budgetID, newName) => {
-    const user = await User.findOne({ _id: userID });
-    if (!user || !newName || !user.budgetList.includes(budgetID)) return null;
 
-    const budget = await Budget.findOne({ _id: budgetID });
-    budget.set('name' , newName);
-    await budget.save();
-    return budget;
-};
-
-/**
- * Function to change a budget's name in the Budget collection of the 
- * Expense Tracker Accounts database. 
- * @param {String} userID - The unique _id of the associated User instance. 
- * @param {String} budgetID - The unique _id of the budget.
- * @param {String} newName - The updated budget name.  
- * @returns {Object} The updated instance of the budget object.
- * Returns null if :
- *      1. Invalid userID is provided.
- *      2. Invalid newName is provided. (Empty String)
- *      3. budgetID is not associated with the User instance provided.
- */
-const updateBudgetCurrent = async (userID, budgetID, amountToAdd) => {
-    const user = await User.findOne({ _id: userID });
-    const budget = await Budget.findOne({ _id: budgetID });
-    amountToAdd = parseFloat(amountToAdd);
-    if (!user || amountToAdd < 0 || !budget) return null;
-
-    budget.set('current' , budget.current+amountToAdd);
-    await budget.save();
-    return budget;
-};
-
-/**
- * Function to change a budget's amount in the Budget collection 
- * of the Expense Tracker Accounts database. 
- * @param {String} userID - The unique _id of the associated User instance. 
- * @param {String} budgetID - The unique _id of the budget. 
- * @param {Double} newAmount - The updated budget amount.
- * @returns {Object} The updated instance of the budget object.
- * Returns null if :
- *      1. Invalid userID is provided.
- *      2. Invalid newAmount is provided. (Positive values only)
- *      3. budgetID is not associated with the User instance provided.
- */
 const updateBudgetAmount = async (userID, budgetID, newAmount) => {
     newAmount = parseFloat(newAmount);
     const user = await User.findOne({ _id: userID });
     if (!user || newAmount <= 0 || !user.budgetList.includes(budgetID)) return null;
 
     const budget = await Budget.findOne({ _id: budgetID });
-    budget.set('totalAmount' , newAmount);
+    budget.set('totalAmount', newAmount);
     await budget.save();
     return budget;
 };
@@ -171,13 +180,23 @@ const getSpentAmount = async (userID, budgetID) => {
     //await budget.save();
     return spentAmount;
 };
+async function getAllBudgets(userID) {
+    try {
+        const budgets = await Budget.find({ userID }).sort({ createdAt: -1 }); // Sort by newest first
+        return budgets;
+    } catch (error) {
+        console.error("Error fetching all budgets:", error);
+        return [];
+    }
+}
 
 module.exports = {
     addBudget,
-    getBudget,
+    getBudgetByMonth,
     removeBudget,
     updateBudgetName,
     updateBudgetAmount,
     updateBudgetCurrent,
-    getSpentAmount
+    getSpentAmount,
+    getAllBudgets,
 };

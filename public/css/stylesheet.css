@@ -132,7 +132,7 @@ header img {
   border-radius: 8px;
 }
 .budget-goals #budget-display .prog-budget::-webkit-progress-value {
-  background: #da2939;
+  background: #e9808a;
 }
 .budget-goals #budget-display .prog-budget::-moz-progress-bar {
   background: #da2939;
@@ -534,32 +534,16 @@ header img {
 }
 #budget-progress-container,
 #goal-progress-container {
-  position: relative;
-  display: inline-block;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }
 .progress-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  white-space: nowrap;
-  transform: translate(-50%, -50%);
+  font-size: 16px;
   font-weight: bold;
-  color: #000000;
-  font-size: 1rem;
-  z-index: 10;
-}
-progress.prog-budget::-webkit-progress-bar {
-  background-color: #f8d7da !important;
-}
-progress.prog-budget::-webkit-progress-value {
-  background-color: #721c24 !important;
-}
-progress.prog-budget::-moz-progress-bar {
-  background-color: #721c24 !important;
-}
-progress.prog-goal::-webkit-progress-bar {
-  background-color: #d1ecf1 !important;
+  color: #333;
+  text-align: center;
 }
 .about .app-description {
   max-width: 800px;
@@ -1073,6 +1057,68 @@ progress.prog-goal::-webkit-progress-bar {
 .homepage .selling-points .points .point p {
   font-size: 1rem;
   color: #555;
+}
+.budget-page,
+.goal-page {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+.budget-page h1,
+.goal-page h1 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+.budget-page #current-budget,
+.goal-page #current-budget,
+.budget-page #current-goal,
+.goal-page #current-goal {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+.budget-page form,
+.goal-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.budget-page form label,
+.goal-page form label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+.budget-page form input[type="text"],
+.goal-page form input[type="text"],
+.budget-page form input[type="number"],
+.goal-page form input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+.budget-page form button[type="submit"],
+.goal-page form button[type="submit"] {
+  background: #007bff;
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+.budget-page form button[type="submit"]:hover,
+.goal-page form button[type="submit"]:hover {
+  background: #0056b3;
 }
 /* Alert Box Styling */
 .alert-container {
