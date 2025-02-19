@@ -19,16 +19,13 @@ mongooseInt32.loadType(mongoose);
 const { ObjectId, Double, Int32 } = SchemaTypes;
 
 const BudgetSchema = new Schema({
-  userID: { type: ObjectId, ref: 'User', required: true },
+  userID: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  month: { type: String, required: true }, // Format: YYYY-MM
   name: { type: String, required: true },
-  current: { type: Double, default: 0 }, // Added from db branch
-  totalAmount: { type: Double, required: true },
-  duration: {
-    type: Date,
-    default: () => new Date(Date.now() + 30 * 24 * 3600 * 1000) // Default month duration
-  },
-  categoryID: { type: Int32, default: 0 },
+  totalAmount: { type: Number, required: true, default: 0 }, // Total budget
+  current: { type: Number, default: 0 }, // Tracks expenses
   version: { type: Int32, default: 1 }
-}, { collection: 'Budget', timestamps: true });
+}, 
+{ collection: 'Budget', timestamps: true });
 
 module.exports = mongoose.model('Budget', BudgetSchema);

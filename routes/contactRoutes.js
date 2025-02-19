@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
         to: ["nlovitt@student.umgc.edu", "smounie@student.umgc.edu"], 
         from: SENDER_EMAIL,  
         subject: `New Contact Form Submission - ${category}`,
-        text: `Name: ${name}\nEmail: ${email}\nCategory: ${category}\nMessage: ${message}`,
+        text: `Name: ${name || "N/A"}\nEmail: ${email || "N/A"}\nCategory: ${category || "N/A"}\nMessage: ${message || "N/A"}`,
     };
 
     try {
