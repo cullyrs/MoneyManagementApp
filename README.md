@@ -39,12 +39,12 @@ The **Expense Tracker** is a financial management web application designed to he
     ```
     
 2. **Configuration File**
-The project requires an `api.json` file to store **MongoDB credentials**. Create this file in the root directory and add:
+The project requires a `config.env` file to store **MongoDB credentials**. Create this file in the root directory and add:
     
     ```json
     {
-        "username": "YOUR_MONGODB_USERNAME",
-        "password": "YOUR_MONGODB_PASSWORD"
+        "DB_USERNAME": "YOUR_MONGODB_USERNAME",
+        "DB_PASSWORD": "YOUR_MONGODB_PASSWORD"
         "SENDGRID_API_KEY": "API_KEY",
         "SENDER_EMAIL": "SENDER_EMAIL"
     }
@@ -73,7 +73,7 @@ The project requires an `api.json` file to store **MongoDB credentials**. Create
     ├── package-lock.json
     ├── README.md
     ├── db/
-    │   ├── api.json
+    │   ├── config.env
     │   ├── budgetFunctions.js
     │   ├── categoryFunctions.js
     │   ├── dbconnect.js
@@ -151,7 +151,7 @@ The project requires an `api.json` file to store **MongoDB credentials**. Create
 
 ### **2. Database Schema Changes**
 
-- Switched to a new MongoDB instance (update `api.json` for connectivity).
+- Switched to a new MongoDB instance (update `config.env` for connectivity).
 - Category now has a `type` field to distinguish income vs. expenses.
 - Removed budget and goal categories (budgets/goals are now tracked monthly).
 - Transactions now store category names instead of IDs.
@@ -203,7 +203,7 @@ The project requires an `api.json` file to store **MongoDB credentials**. Create
 ### **Common Issues & Fixes**
 
 1. **MongoDB Connection Error**
-    - Ensure your credentials in `api.json` are correct.
+    - Ensure your credentials in `config.env` are correct.
     - Make sure your **MongoDB IP whitelist includes your machine**.
 2. **Modules Not Found**
     - Run `npm install` to install missing dependencies.
