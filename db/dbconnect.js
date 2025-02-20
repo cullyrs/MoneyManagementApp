@@ -9,13 +9,13 @@
  */
 
 const mongoose = require('mongoose');
-const {username, password} = require('./api.json');
-
-// OLD DB
-//const uri = `mongodb+srv://${username}:${password}@expensemanager1.3yfoo.mongodb.net/Accounts?retryWrites=true&w=majority&appName=ExpenseManager1`;
+const dotenv = require("dotenv");
+const path = require("path");
+configPath = path.resolve(__dirname, "./config.env");
+dotenv.config({ path: configPath});
 
 // NEW DB 
-const uri = `mongodb+srv://${username}:${password}@expensedata.aptda.mongodb.net/Accounts?retryWrites=true&w=majority&appName=ExpenseDATA`;
+const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@expensedata.aptda.mongodb.net/Accounts?retryWrites=true&w=majority&appName=ExpenseDATA`;
 
 async function connectToDB() {
     try {

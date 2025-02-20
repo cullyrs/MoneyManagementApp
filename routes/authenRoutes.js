@@ -1,17 +1,16 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const { loginUser, addUser, findUser, getUser, updatePassword } = require("../db/userFunctions");
-require("dotenv").config();
 const { compareEntry, hashed } = require("../utils/helper.js");
 const router = express.Router();
 
-const { password } = require("../db/api.json");
+require("dotenv").config({ path: require("path").resolve(__dirname, "../db/config.env") });
 
-const SECRET_KEY = password || "defaultSecretKey"; // Secret from api.json
+const SECRET_KEY = process.env.DB_PASSWORD || "defaultSecretKey"; 
 
 
 if (!SECRET_KEY) {
-    console.error("ERROR: SECRET_KEY is missing in api.json file");
+    console.error("ERROR: SECRET_KEY is missing in config file");
     process.exit(1);
 }
 
