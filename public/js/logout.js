@@ -32,6 +32,14 @@ async function exportTransactionsToCSV(userId, token) {
         console.error("Missing user authentication details.");
         return;
     }
+
+    // Confirmation Popup
+    const confirmDownload = window.confirm("Download your transactions?");
+    console.log("I sent a confirmation popup");
+    if (!confirmDownload) {
+        return; // Exit if the user cancels
+    }
+
     try {
       const response = await fetch(`/api/transactions/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
