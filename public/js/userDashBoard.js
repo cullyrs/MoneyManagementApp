@@ -412,7 +412,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const netbalance = netIncome ? JSON.parse(netIncome) : 0;
             const currentLifetimeBalance = document.getElementById("TotalBalance");
-            currentLifetimeBalance.innerText = netbalance ? ` ${USD.format(netbalance)}` : "No display";
+            currentLifetimeBalance.innerText = netbalance ? `Lifetime Balance: ${USD.format(netbalance)}` : "No display";
 
 
             if (!currentBudget) {
@@ -518,7 +518,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const monthlyBalance = totalIncome - totalExpense;
             const monthBalanceEl = document.getElementById("Income");
             if (monthBalanceEl) {
-                monthBalanceEl.innerText = ` ${USD.format(monthlyBalance)}`;
+                monthBalanceEl.innerText = `Monthly Balance: ${USD.format(monthlyBalance)}`;
             }
 
             if (filteredTransactions.length === 0) {
