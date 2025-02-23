@@ -29,9 +29,10 @@ const { hashed, compareEntry } = require('../utils/helper.js');
  */
 const addUser = async (username, entry, email) => {
     console.log("addUser inputs:", { username, entry, email });
+    const name = username.toLowerCase();
     if (username && entry && email) {
         const user = await User.create({
-            userName: username,
+            userName: name,
             password: await hashed(entry),
             email: email,
             totalAmount: 0
