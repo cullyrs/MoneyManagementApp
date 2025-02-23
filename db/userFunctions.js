@@ -187,13 +187,26 @@ const updateEmail = async (userID, oldEmail, newEmail) => {
  *      3. Invalid newEntry is provided. (Empty String)
  */
 const updatePassword = async (userID, oldEntry, newEntry) => {
-    const user = await User.findOne({ _id: userID });
-    if (await loginUser(user.email, oldEntry) && newEntry) {
+    try {
+        const user = await User.findOne({ _id: userID });
+        if (!user) {
+            console.error("User not found.");
+            return null;
+        }
+
+        const doesMatch = await compareEntry(oldEntry, user.password);
+        if (!doesMatch) {
+            console.error("Old password is incorrect.");
+            return null;
+        }
         user.set('password', await hashed(newEntry));
         await user.save();
         return user;
     }
-    return null;
+    catch (error) {
+        console.error("Error updating password:", error);
+        return null;
+    }
 }
 
 module.exports = {

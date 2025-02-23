@@ -122,26 +122,21 @@ router.post("/updatePassword", async (req, res) => {
     }
 
     try {
-        const existingUser = await findUser(userID);
-        if (!existingUser) {
-            return res.status(400).json({ success: false, error: "User not found." });
+
+        const updatedUser = await updatePassword(userID, oldEntry, newEntry);
+
+        if (!updatedUser) {
+            return res.status(400).json({
+                success: false,
+                error: "User not found or old password is incorrect.",
+            });
         }
 
-        if (!(await compareEntry(oldEntry, existingUser.password))) {
-            return res
-                .status(400)
-                .json({ success: false, error: "Old password is incorrect." });
-        }
-
-        existingUser.password = await hashed(newEntry);
-        await existingUser.save();
-
-        res.json({ success: true, user: existingUser });
+        res.json({ success: true, user: updatedUser });
     } catch (error) {
         console.error("Error updating password:", error);
         res.status(500).json({ success: false, error: "Server error" });
     }
 });
-
 module.exports = router;
 
