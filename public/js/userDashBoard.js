@@ -405,15 +405,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Fetch and update budgets and goals
             // const budgetsData = sessionStorage.getItem("budgets");
             // const goalsData = sessionStorage.getItem("goals");
-            const netIncome = sessionStorage.getItem("netbalance");
+            // const netIncome = sessionStorage.getItem("netbalance");
 
             // const budgets = budgetsData ? JSON.parse(budgetsData) : {};
             // const goals = goalsData ? JSON.parse(goalsData) : {};
-
-            const netbalance = netIncome ? JSON.parse(netIncome) : 0;
-            const currentLifetimeBalance = document.getElementById("TotalBalance");
-            currentLifetimeBalance.innerText = netbalance ? `Lifetime Balance: ${USD.format(netbalance)}` : "No display";
-
 
             if (!currentBudget) {
                 budgetDisplay.innerText = "No Budget Set";
@@ -481,11 +476,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             const data = await response.json();
             const transactions = data.transactions;
 
-            if (!Array.isArray(transactions)) {
-                console.error("Transactions data is not an array:", transactions);
-                return;
-            }
-
             // Sort transactions by month/year using currentMonth (formatted "YYYY-MM")
             const [selectedYear, selectedMonth] = currentMonth.split("-").map(Number);
             console.log(`Filtering transactions for: ${selectedMonth}/${selectedYear}`);
@@ -499,26 +489,46 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return transactionYear === selectedYear && transactionMonth === selectedMonth;
             });
 
-            console.log("Filtered transactions:", filteredTransactions);
+            // console.log("Filtered transactions:", filteredTransactions);
 
             // Calculate Monthly Balance
-            let totalIncome = 0;
-            let totalExpense = 0;
+            let monthlyIncome = 0;
+            let monthlyExpense = 0;
 
             filteredTransactions.forEach(transaction => {
                 const amt = Number(transaction.amount);
                 // Assuming transactions with type "income" are income; everything else is expense.
                 if (transaction.type && String(transaction.type).toLowerCase() === "income") {
-                    totalIncome += amt;
+                    monthlyIncome += amt;
                 } else {
-                    totalExpense += amt;
+                    monthlyExpense += amt;
                 }
             });
 
-            const monthlyBalance = totalIncome - totalExpense;
+            const monthlyBalance = monthlyIncome - monthlyExpense;
             const monthBalanceEl = document.getElementById("Income");
             if (monthBalanceEl) {
                 monthBalanceEl.innerText = `Monthly Balance: ${USD.format(monthlyBalance)}`;
+            }
+
+            // get all transactions for total balance
+            let totalIncome = 0;
+            let totalExpense = 0;
+            // total balance fetch here
+            let totalBalance = transactions.reduce((total, transaction) => {
+                let amt = Number(transaction.amount);
+                if (transaction.type && String(transaction.type).toLowerCase() === "income") {
+                    totalIncome += amt;
+                    return total + amt;
+                } else {
+                    totalExpense += amt;
+                    return total - amt;
+                }
+            }, 0);
+
+            const totalBalanceEl = document.getElementById("TotalBalance");
+            if (totalBalanceEl) {
+                totalBalanceEl.innerText = `Total Balance: ${USD.format(totalBalance)}`;
             }
 
             if (filteredTransactions.length === 0) {
@@ -527,6 +537,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <td colspan="4" style="text-align: center;">No transactions found for this month.</td>
                 </tr>
             `;
+                refreshDashboard()
                 return;
             }
 

@@ -93,7 +93,7 @@ const findUser = async (userID) => {
  *      2. Invalid entry is provided. (Current entry mismatch)
  */
 const loginUser = async (userName, entry) => {
-    const name = userName.toLowerCase();
+    const name = userName;
     const user = await User.findOne({ userName: name });
     if (user && await compareEntry(entry, user.password)) {
         const transactions = await Transactions.where("userID").equals(user._id);

@@ -6,7 +6,7 @@ const router = express.Router();
 
 require("dotenv").config({ path: require("path").resolve(__dirname, "../db/config.env") });
 
-const SECRET_KEY = process.env.DB_PASSWORD || "defaultSecretKey"; 
+const SECRET_KEY = process.env.DB_PASSWORD || "defaultSecretKey";
 
 
 if (!SECRET_KEY) {
@@ -41,7 +41,7 @@ router.post("/login", async (req, res) => {
         const goals = userData[3];
 
         const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: "1h" });
-        
+
         res.json({
             success: true,
             token,
@@ -112,35 +112,35 @@ router.get('/by-email/:email', async (req, res) => {
 
 
 router.post("/updatePassword", async (req, res) => {
-  const { userID, oldEntry, newEntry } = req.body;
+    const { userID, oldEntry, newEntry } = req.body;
 
-  if (!userID || !oldEntry || !newEntry) {
-    return res.status(400).json({
-      success: false,
-      error: "Missing required fields: userID, oldEntry, or newEntry.",
-    });
-  }
-
-  try {
- const existingUser = await findUser(userID);
-    if (!existingUser) {
-      return res.status(400).json({ success: false, error: "User not found." });
+    if (!userID || !oldEntry || !newEntry) {
+        return res.status(400).json({
+            success: false,
+            error: "Missing required fields: userID, oldEntry, or newEntry.",
+        });
     }
 
-    if (!(await compareEntry(oldEntry, existingUser.password))) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Old password is incorrect." });
+    try {
+        const existingUser = await findUser(userID);
+        if (!existingUser) {
+            return res.status(400).json({ success: false, error: "User not found." });
+        }
+
+        if (!(await compareEntry(oldEntry, existingUser.password))) {
+            return res
+                .status(400)
+                .json({ success: false, error: "Old password is incorrect." });
+        }
+
+        existingUser.password = await hashed(newEntry);
+        await existingUser.save();
+
+        res.json({ success: true, user: existingUser });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        res.status(500).json({ success: false, error: "Server error" });
     }
-
-    existingUser.password = await hashed(newEntry);
-    await existingUser.save();
-
-    res.json({ success: true, user: existingUser });
-  } catch (error) {
-    console.error("Error updating password:", error);
-    res.status(500).json({ success: false, error: "Server error" });
-  }
 });
 
 module.exports = router;
