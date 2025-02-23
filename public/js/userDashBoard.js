@@ -54,6 +54,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             body: JSON.stringify({ message, type }),
         })
             .then(response => response.text())
+            .then(alertHtml => {
+                document.body.insertAdjacentHTML("beforeend", alertHtml);
+
+                const alertBox = document.querySelector(".alert-container:last-of-type");
+                if (!alertBox) return;
+
+                // Show alert
+                setTimeout(() => {
+                    alertBox.classList.add("show");
+                }, 100);
+
+                // Auto-hide alert after 5 seconds
+                setTimeout(() => closeAlert(alertBox), 5000);
+
+                // Close button functionality
+                //alertBox.querySelector("#alert-close").addEventListener("click", () => closeAlert(alertBox));
+            })
             .catch(error => {
                 console.error("Error triggering alert:", error);
             });
