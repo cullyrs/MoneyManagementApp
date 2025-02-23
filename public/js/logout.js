@@ -35,7 +35,6 @@ async function exportTransactionsToCSV(userId, token) {
 
     // Confirmation Popup
     const confirmDownload = window.confirm("Download your transactions?");
-    console.log("I sent a confirmation popup");
     if (!confirmDownload) {
         return; // Exit if the user cancels
     }
