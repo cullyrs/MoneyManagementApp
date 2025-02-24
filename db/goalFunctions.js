@@ -162,22 +162,30 @@ const updateTargetAmount = async(userID, goalID, newTargetAmount) => {
  * Function to change a goal's saved amount in the goal collection 
  * of the Expense Tracker Accounts database. 
  * @param {String} userID - The unique _id of the associated User instance. 
- * @param {String} goalID - The unique _id of the goal. 
- * @param {Double} newSavedAmount - The updated goal saved amount.
+ * @param {String} month - The unique month of the goal. 
+ * @param {Double} totalAmount - The updated goal saved amount.
+ * @param {string} name - The name of the goal.
  * @returns {Object} The updated instance of the goal object.
  * Returns null if :
  *      1. Invalid userID is provided.
  *      2. Invalid savedAmount is provided. (Positive values only)
  *      3. goalID is not associated with the User instance provided.
  */
-const updateSavedAmount = async(userID, goalID, newSavedAmount) => {
-    const user = await User.findOne({_id : userID});
-    const goal = await Goal.findOne({_id : goalID}); 
-    newSavedAmount = parseFloat(newSavedAmount);
-    if(!user || !newTargetAmount > 0 && !goal) return null;
+const updateSavedAmount = async(userID, month, totalAmount, name) => {
+    totalAmount = parseFloat(totalAmount);
+
+    const user = await User.findOne({ _id: userID });
+    const goal = await Goal.findOne({ userID: userID, month: month });
+
+
+    if (!user || !totalAmount || !month) {
+        console.error("Invalid goal parameters:", { userID, totalAmount, month });
+        return null;
+    }
 
     // Update and save goal instance.
-    goal.set('savedAmount' , newSavedAmount);
+    goal.set('totalAmount' , totalAmount);
+    goal.set('name', name);
     await goal.save();
     return goal;
 }
@@ -193,7 +201,7 @@ const updateSavedAmount = async(userID, goalID, newSavedAmount) => {
  *      2. Invalid amount is provided. (Positive values only)
  *      3. goalID is not associated with the User instance provided.
  */
-const increaseSavedAmount = async (userID, goalID, amount) => {
+const increaseSavedAmount = async (userID, month, amount) => {
     amount = parseFloat(amount);
     const user = await User.findOne({ _id: userID });
     const goal = await Goal.findOne({ _id: goalID });

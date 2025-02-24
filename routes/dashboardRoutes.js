@@ -1,6 +1,6 @@
 const express = require("express");
 const { getSpentAmount, addBudget, removeBudget, updateBudgetCurrent, getBudgetByMonth, getAllBudgets } = require("../db/budgetFunctions");
-const { getSavedAmount, getTargetAmount, addGoal, removeGoal, increaseSavedAmount, getGoalByMonth, getAllGoals } = require("../db/goalFunctions");
+const { getSavedAmount, getTargetAmount, addGoal, removeGoal, updateSavedAmount, getGoalByMonth, getAllGoals } = require("../db/goalFunctions");
 const { findUser } = require("../db/userFunctions");
 
 
@@ -44,14 +44,24 @@ router.post("/:id/budgets/add", async (req, res) => {
 });
 
 router.post("/:id/budgets/update", async (req, res) => {
-    const { userID, budgetID, amountToAdd } = req.body;
+    const { userID, totalAmount, month, name } = req.body;
 
-    if (!userID || !budgetID || !amountToAdd) {
-        console.error("Missing required fields:", { userID, budgetID, amountToAdd});
-        return res.status(400).json({ success: false, error: "Missing required fields" });
+    if (!userID || !name || !totalAmount || !month) {
+        if (!userID) {
+            console.error("Missing userID in request params");
+        }
+        if (!name) {
+            console.error("Missing name in request body");
+        }
+        if (!totalAmount) {
+            console.error("Missing totalAmount in request body");
+        }
+        if (!month) {
+            console.error("Missing month in request body");
+        }
     }
     try {
-        const budget = await updateBudgetCurrent(userID, budgetID, amountToAdd);
+        const budget = await updateBudgetCurrent(userID, name, totalAmount, month);
         if (budget) {
             res.status(200).json({ success: true, budget });
         } else {
@@ -121,14 +131,26 @@ router.post("/:id/goals/add", async (req, res) => {
 });
 
 router.post("/:id/goals/update", async (req, res) => {
-    const { userID, goalID, amount } = req.body;
+    const userID = req.params.id;
+    const { name, totalAmount, month } = req.body;
 
-    if (!userID || !goalID || amount === undefined) {
-        return res.status(400).json({ success: false, error: "Missing required fields" });
+    if (!userID || !name || !totalAmount || !month) {
+        if (!userID) {
+            console.error("Missing userID in request params");
+        }
+        if (!name) {
+            console.error("Missing name in request body");
+        }
+        if (!totalAmount) {
+            console.error("Missing totalAmount in request body");
+        }
+        if (!month) {
+            console.error("Missing month in request body");
+        }
     }
 
     try {
-        const goal = await increaseSavedAmount(userID, goalID, amount);
+        const goal = await updateSavedAmount(userID, month, totalAmount, name);
         if (goal) {
             res.status(200).json({ success: true, goal });
         } else {
@@ -139,6 +161,7 @@ router.post("/:id/goals/update", async (req, res) => {
         res.status(500).json({ success: false, error: "Server error while updating goal." });
     }
 });
+
 router.post("/:id/goals/remove", async (req, res) => {
     const userID = req.params.id;
     const { goalID } = req.body;

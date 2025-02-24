@@ -74,17 +74,18 @@ const getBudgetByMonth = async (userID, month) => {
  *      3. budgetID is not associated with the User instance provided.
  */
 
-const updateBudgetCurrent = async (userID, budgetID, amountToAdd) => {
-    amountToAdd = parseFloat(amountToAdd);
+const updateBudgetCurrent = async (userID, name, totalAmount, month) => {
+    totalAmount = parseFloat(totalAmount);
     const user = await User.findOne({ _id: userID });
-    const budget = await Budget.findOne({ _id: budgetID });
+    const budget = await Budget.findOne({ userID: userID, month: month });
 
-    if (!user || isNaN(amountToAdd) || amountToAdd < 0 || !budget) {
+    if (!user || isNaN(totalAmount) || totalAmount < 0 || !budget || !name) {
         console.error("Invalid update parameters:", { userID, budgetID, amountToAdd });
         return null;
     }
 
-    budget.current += amountToAdd;
+    budget.set( 'totalAmount', totalAmount);
+    budget.set('name', name);
     await budget.save();
     return budget;
 };
