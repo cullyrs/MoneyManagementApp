@@ -68,9 +68,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert("Please enter a valid goal target amount.");
             return;
         }
-
         try {
-            const response = await fetch(`/api/dashboard/${userId}/goals/add`, {
+            const updateResponse = await fetch(`/api/dashboard/${userId}/goals/update`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -78,19 +77,43 @@ document.addEventListener("DOMContentLoaded", async () => {
                     month: selectedMonth,
                     name: newGoalName,
                     totalAmount: newGoalTarget,
-                    current: 0,
                 }),
             });
 
-            const result = await response.json();
+            const updateResult = await updateResponse.json();
+            console.log("update", {updateResponse, updateResult});
 
-            if (response.ok && result.success) {
+            if (!updateResponse.ok && !updateResult.success) {
+
+                const response = await fetch(`/api/dashboard/${userId}/goals/add`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userId,
+                        month: selectedMonth,
+                        name: newGoalName,
+                        totalAmount: newGoalTarget,
+                        current: 0,
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    let storedGoals = JSON.parse(sessionStorage.getItem("goals") || "{}");
+                    storedGoals[selectedMonth] = result.goal;
+                    sessionStorage.setItem("goals", JSON.stringify(storedGoals));
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert("Failed to add goal: " + (result.error || "Unknown error"));
+                }
+            } else if (updateResponse.ok && updateResult.success) {
                 let storedGoals = JSON.parse(sessionStorage.getItem("goals") || "{}");
-                storedGoals[selectedMonth] = result.goal;
-                sessionStorage.setItem("goals", JSON.stringify(storedGoals));
-                window.location.href = "dashboard.html";
+                    storedGoals[selectedMonth] = updateResult.goal;
+                    sessionStorage.setItem("goals", JSON.stringify(storedGoals));
+                    window.location.href = "dashboard.html";
             } else {
-                alert("Failed to update goal: " + (result.error || "Unknown error"));
+                alert("Failed to update goal: " + (updateResult.error || "Unknown error"));
             }
         } catch (err) {
             console.error("Error updating goal:", err);

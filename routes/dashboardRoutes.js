@@ -1,6 +1,6 @@
 const express = require("express");
 const { getSpentAmount, addBudget, removeBudget, updateBudgetCurrent, getBudgetByMonth, getAllBudgets } = require("../db/budgetFunctions");
-const { getSavedAmount, getTargetAmount, addGoal, removeGoal, increaseSavedAmount, getGoalByMonth, getAllGoals } = require("../db/goalFunctions");
+const { getSavedAmount, getTargetAmount, addGoal, removeGoal, updateSavedAmount, getGoalByMonth, getAllGoals } = require("../db/goalFunctions");
 const { findUser } = require("../db/userFunctions");
 
 

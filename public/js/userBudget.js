@@ -70,27 +70,50 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            const response = await fetch(`/api/dashboard/${userId}/budgets/add`, {
+            const updateResponse = await fetch(`/api/dashboard/${userId}/budgets/update`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    userId,
+                    userID: userId,
                     month: selectedMonth,
                     name: newBudgetName,
-                    totalAmount: newBudgetAmount,
-                    current: 0,
+                    totalAmount: newBudgetAmount
                 }),
             });
 
-            const result = await response.json();
+            const updateResult = await updateResponse.json();
+            console.log("update", {updateResponse, updateResult});
 
-            if (response.ok && result.success) {
+            if (!updateResponse.ok && !updateResult.success) {
+                const response = await fetch(`/api/dashboard/${userId}/budgets/add`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userId,
+                        month: selectedMonth,
+                        name: newBudgetName,
+                        totalAmount: newBudgetAmount,
+                        current: 0,
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    let storedBudgets = JSON.parse(sessionStorage.getItem("budgets") || "{}");
+                    storedBudgets[selectedMonth] = result.budget;
+                    sessionStorage.setItem("budgets", JSON.stringify(storedBudgets));
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert("Failed to add budget: " + (result.error || "Unknown error"));
+                }
+            } else if (updateResponse.ok && updateResult.success) {
                 let storedBudgets = JSON.parse(sessionStorage.getItem("budgets") || "{}");
-                storedBudgets[selectedMonth] = result.budget;
+                storedBudgets[selectedMonth] = updateResult.budget;
                 sessionStorage.setItem("budgets", JSON.stringify(storedBudgets));
                 window.location.href = "dashboard.html";
             } else {
-                alert("Failed to update budget: " + (result.error || "Unknown error"));
+                alert("Failed to add budget: " + (updateResult.error || "Unknown error"));
             }
         } catch (err) {
             console.error("Error updating budget:", err);
