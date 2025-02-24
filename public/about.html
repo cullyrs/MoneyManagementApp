@@ -76,33 +76,48 @@
 
         <h2>About the Creators</h2>
         <div class="team-section">
-            <div class="team-card">
+            <div class="team-card" id="naeem">
                 <img src="imgs/naeem.png" alt="Naeem Lovitt">
                 <h3>Naeem Lovitt</h3>
                 <p>Frontend Developer & Documentation Lead</p>
                 <p>Naeem designed the user interface and compiled project documentation for seamless usability.</p>
             </div>
-            <div class="team-card">
+            <div class="team-card" id="steven">
                 <img src="imgs/steven.png" alt="Steven Mounie">
                 <h3>Steven Mounie</h3>
                 <p>Full Stack Developer</p>
                 <p>Steven handled server-side integration with the Frontend and implemented key application
                     functionalities.</p>
             </div>
-            <div class="team-card">
+            <div class="team-card" id="cully">
                 <img src="imgs/cully.png" alt="Cully Stearns">
                 <h3>Cully Stearns</h3>
                 <p>Backend Developer</p>
                 <p>Cully focused on server-side logic and the core backend logic to ensure smooth operation.</p>
             </div>
-            <div class="team-card">
+
+            <div class="team-card" id="arewa">
+                <button class="reveal-btn" onclick="toggleTeamMember('arewa')"></button>
+
                 <img src="imgs/arewa.png" alt="Arewa Ojelade">
                 <h3>Arewa Ojelade</h3>
-                <p>Database Developer</p>
+                <p>Former Team Member & Database Developer</p>
                 <p>Arewa implemented the database structure.</p>
             </div>
         </div>
     </main>
+    <script>
+
+        function toggleTeamMember(id) {
+            const teamCard = document.getElementById(id);
+            if (teamCard) {
+                teamCard.style.opacity = teamCard.style.opacity === '0' ? '1' : '0';
+                const revealBtn = teamCard.querySelector('.reveal-btn');
+
+            }
+        }
+               
+    </script>
     <footer>
         <p>&copy; 2025 Expense Tracker. All rights reserved.</p>
     </footer>

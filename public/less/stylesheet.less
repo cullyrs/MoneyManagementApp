@@ -76,8 +76,9 @@
         width: 100%;
         margin-bottom: 5px;
     }
+
     .table-container {
-        overflow-x: scroll; // Enables horizontal scrolling on mobile
+        overflow-x: scroll;
     }
 
     table {
@@ -85,11 +86,12 @@
         width: 100%;
     }
 
-    th, td {
-        font-size: 0.9rem; // Slightly smaller text on mobile
+    th,
+    td {
+        font-size: 0.9rem;
         padding: 8px;
     }
-    
+
 }
 
 // tablet responsive
@@ -316,7 +318,8 @@ header {
     tr {
         transition: background-color 0.3s ease;
 
-        td:nth-child(4) { // Target Amount Column
+        td:nth-child(4) {
+            // Target Amount Column
             font-weight: bold;
 
             &.income-amount {
@@ -328,6 +331,7 @@ header {
             }
         }
     }
+
     td {
         padding: 10px;
         border-bottom: 1px solid #ddd;
@@ -373,7 +377,7 @@ header {
 
 // Customize the selected month color (Optional)
 .flatpickr-monthDropdown-months option:hover {
-    background-color: @primary-color !important; // Change hover color
+    background-color: @primary-color  !important; // Change hover color
     color: #fff !important; // White text on hover
     border-radius: 3px;
 }
@@ -861,6 +865,32 @@ header {
                 color: @text-color;
             }
         }
+
+        #arewa {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out; 
+            position: relative; 
+        }
+
+        .reveal-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0);
+            color: black;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+            border-radius: 10px;
+
+            &:hover {
+                background-color: darken(rgba(46, 46, 46, 0.127), 10%);
+            }
+        }
+
     }
 }
 
@@ -1437,7 +1467,8 @@ header {
 @shadow-color: rgba(0, 0, 0, 0.1);
 
 // Budget and Goal Update Pages Styling
-.budget-page, .goal-page {
+.budget-page,
+.goal-page {
     max-width: 500px;
     margin: 40px auto;
     padding: 20px;
@@ -1452,7 +1483,8 @@ header {
         color: @text-color;
     }
 
-    #current-budget, #current-goal {
+    #current-budget,
+    #current-goal {
         text-align: center;
         font-size: 18px;
         font-weight: bold;
@@ -1470,7 +1502,8 @@ header {
             color: darken(@text-color, 10%);
         }
 
-        input[type="text"], input[type="number"] {
+        input[type="text"],
+        input[type="number"] {
             width: 100%;
             padding: 10px;
             border: 1px solid @input-border;
@@ -1644,7 +1677,8 @@ header {
             text-align: left;
         }
 
-        input, .btn {
+        input,
+        .btn {
             width: 100%; // Force full width
             box-sizing: border-box; // Prevents padding from affecting width
             padding: 10px;
