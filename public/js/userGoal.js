@@ -82,7 +82,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const updateResult = await updateResponse.json();
             console.log("update", {updateResponse, updateResult});
-            alert("TEST");
 
             if (!updateResponse.ok && !updateResult.success) {
 
