@@ -120,21 +120,18 @@ const updateBudgetName = async (userID, budgetID, newName) => {
  * @param {String} budgetID - The unique _id of the budget. 
  * @returns {Object} The removed instance of the budget object.
  */
-const removeBudget = async (userID, budgetID) => {
+const removeBudget = async (userID, month) => {
     const user = await User.findOne({ _id: userID });
     if (!user) return null;
 
-    const index = user.budgetList.indexOf(budgetID);
-    if (index >= 0) {
-        const budget = await Budget.findOne({ _id: budgetID });
-        const finalCopy = JSON.parse(JSON.stringify(budget));
+    const budget = await Budget.findOne({ userID, month });
+    if (!budget) return null;
 
-        await Budget.deleteOne({ _id: budgetID });
-        user.budgetList.splice(index, 1);
-        await user.save();
-        return finalCopy;
-    }
-    return null;
+    const finalCopy = JSON.parse(JSON.stringify(budget));
+    await Budget.deleteOne({ userID, month }); // Delete by user and month
+
+    await user.save();
+    return finalCopy;
 };
 
 

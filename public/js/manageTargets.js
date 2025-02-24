@@ -15,9 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             let monthsData = {};
 
             // Fetch all budgets and goals in one request
-            const response = await fetch(`/api/dashboard/${userID}/budgets-goals/all`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await fetch(`/api/dashboard/${userID}/budgets-goals/all`);
 
             if (!response.ok) {
                 console.error("Failed to fetch budgets and goals.");
@@ -29,25 +27,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("Fetched DATA======>:", data);
             const budgetsByMonth = data.budgetsByMonth || {};
             const goalsByMonth = data.goalsByMonth || {};
-
-
-            // Get current and past 12 months
-            const currentDate = new Date();
-            for (let i = 0; i < 12; i++) {
-                const monthYear = currentDate.toISOString().slice(0, 7);
-                monthsData[monthYear] = { budget: null, goal: null };
-
-                // Assign fetched budgets & goals
-                if (budgetsByMonth[monthYear]) {
-                    monthsData[monthYear].budget = budgetsByMonth[monthYear][0]; // Use first budget for that month
-                }
-                if (goalsByMonth[monthYear]) {
-                    monthsData[monthYear].goal = goalsByMonth[monthYear][0]; // Use first goal for that month
-                }
-
-                currentDate.setMonth(currentDate.getMonth() - 1); // Move to previous month
-            }
-            // Only keep months that have at least a budget or goal
+            
+            console.log("Fetched budgetsByMonth:", budgetsByMonth);
+            console.log("Fetched goalsByMonth:", goalsByMonth);
+        
+            // Create set of months that have either budgets or goals
+            const usedMonths = new Set([
+                ...Object.keys(budgetsByMonth),
+                ...Object.keys(goalsByMonth)
+            ]);
+        
+            // Initialize monthsData only for months that have data
+            usedMonths.forEach(monthYear => {
+                monthsData[monthYear] = {
+                    budget: budgetsByMonth[monthYear] ? budgetsByMonth[monthYear][0] : null,
+                    goal: goalsByMonth[monthYear] ? goalsByMonth[monthYear][0] : null
+                };
+            });
     
 
             displayBudgetsAndGoals(monthsData);
@@ -58,9 +54,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function displayBudgetsAndGoals(monthsData) {
+
+        console.log("monthsData===>>>", monthsData);
         budgetGoalList.innerHTML = "";
 
         const months = Object.keys(monthsData).sort().reverse();
+        console.log("months===>>>", months);
         if (months.length === 0) {
             budgetGoalList.innerHTML = `<p>No budgets or goals set.</p>`;
             return;
@@ -78,6 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const totalIncome = parseFloat(sessionStorage.getItem(`income_${monthYear}`)) || 0;
             const totalExpense = parseFloat(sessionStorage.getItem(`expense_${monthYear}`)) || 0;
 
+            console.log("monthYear===>>>", monthYear);
             // Display Budget
             if (monthsData[monthYear].budget) {
                 const budget = monthsData[monthYear].budget;
@@ -86,11 +86,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const budgetList = document.createElement("ul");
                 budgetList.innerHTML = `<h3>Budget</h3>`;
                 const li = document.createElement("li");
+                console.log("budgetmonth", budget.totalAmount);   
                 li.innerHTML = `
                     ${budget.name || "Unnamed Budget"}: 
                     <strong>$${totalExpense.toFixed(2)} / $${budget.totalAmount.toFixed(2)}</strong>
                     <progress class="prog-budget" max="100" value="${budgetPercent}"></progress>
-                    <button class="delete-goal" data-id="${budget.month}">Delete</button>
+                    <button class="delete-budget" data-month="${monthYear}">Delete</button>
 
                 `;
                 budgetList.appendChild(li);
@@ -109,7 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     ${goal.name || "Unnamed Goal"}: 
                     <strong>$${totalIncome.toFixed(2)} / $${goal.totalAmount.toFixed(2)}</strong>
                     <progress class="prog-goal" max="100" value="${goalPercent}"></progress>
-                    <button class="delete-goal" data-id="${goal.month}">Delete</button>
+                    <button class="delete-goal" data-month="${monthYear}">Delete</button>
                 `;
                 goalList.appendChild(li);
                 monthSection.appendChild(goalList);
@@ -124,9 +125,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     function setupDeleteListeners() {
         document.querySelectorAll(".delete-budget").forEach(button => {
             button.addEventListener("click", async () => {
-                const budgetID = button.getAttribute("data-id");
-                if (confirm("Are you sure you want to delete this budget?")) {
-                    await deleteBudget(budgetID);
+                const month = button.getAttribute("data-month");
+                console.log(month);
+
+                if (confirm(`Are you sure you want to delete the budget for ${formatMonthYear(month)}?`)) {
+                    await deleteBudget(month);
                     fetchBudgetsAndGoals();
                 }
             });
@@ -134,9 +137,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         document.querySelectorAll(".delete-goal").forEach(button => {
             button.addEventListener("click", async () => {
-                const goalID = button.getAttribute("data-id");
-                if (confirm("Are you sure you want to delete this goal?")) {
-                    await deleteGoal(goalID);
+                const month = button.getAttribute("data-month");
+                if (confirm(`Are you sure you want to delete the goal for ${formatMonthYear(month)}?`)) {
+                    await deleteGoal(month);
                     fetchBudgetsAndGoals();
                 }
             });
@@ -148,8 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const response = await fetch(`/api/dashboard/${userID}/budgets/remove`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ month }),
             });
@@ -170,7 +172,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ month }),
             });

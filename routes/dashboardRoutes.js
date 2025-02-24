@@ -43,35 +43,46 @@ router.post("/:id/budgets/add", async (req, res) => {
     }
 });
 
-// router.post("/:id/budgets/update", async (req, res) => {
-//     const { userID, budgetID, amountToAdd } = req.body;
+router.post("/:id/budgets/update", async (req, res) => {
+    const { userID, totalAmount, month, name } = req.body;
 
-//     if (!userID || !budgetID || !amountToAdd) {
-//         console.error("Missing required fields:", { userID, budgetID, amountToAdd});
-//         return res.status(400).json({ success: false, error: "Missing required fields" });
-//     }
-//     try {
-//         const budget = await updateBudgetCurrent(userID, budgetID, amountToAdd);
-//         if (budget) {
-//             res.status(200).json({ success: true, budget });
-//         } else {
-//             res.status(400).json({ success: false, error: "Budget update failed." });
-//         }
-//     } catch (error) {
-//         console.error("Error updating budget:", error);
-//         res.status(500).json({ success: false, error: "Server error while updating budget." });
-//     }
-// });
+    if (!userID || !name || !totalAmount || !month) {
+        if (!userID) {
+            console.error("Missing userID in request params");
+        }
+        if (!name) {
+            console.error("Missing name in request body");
+        }
+        if (!totalAmount) {
+            console.error("Missing totalAmount in request body");
+        }
+        if (!month) {
+            console.error("Missing month in request body");
+        }
+    }
+    try {
+        const budget = await updateBudgetCurrent(userID, name, totalAmount, month);
+        if (budget) {
+            res.status(200).json({ success: true, budget });
+        } else {
+            res.status(400).json({ success: false, error: "Budget update failed." });
+        }
+    } catch (error) {
+        console.error("Error updating budget:", error);
+        res.status(500).json({ success: false, error: "Server error while updating budget." });
+    }
+});
 
 router.post("/:id/budgets/remove", async (req, res) => {
     const userID = req.params.id;
-    const { budgetID } = req.body;
-    if (!userID || !budgetID) {
+    const { month } = req.body; // Accept month YYYY-MM
+
+    if (!userID || !month) {
         return res.status(400).json({ success: false, error: "Missing required fields" });
     }
 
     try {
-        const removedBudget = await removeBudget(userID, budgetID);
+        const removedBudget = await removeBudget(userID, month);
         if (removedBudget) {
             res.json({ success: true, removedBudget });
         } else {
@@ -85,6 +96,7 @@ router.post("/:id/budgets/remove", async (req, res) => {
         res.status(500).json({ success: false, error: "Server error while removing budget." });
     }
 });
+
 
 
 router.post("/:id/goals/add", async (req, res) => {
@@ -121,32 +133,45 @@ router.post("/:id/goals/add", async (req, res) => {
     }
 });
 
-// router.post("/:id/goals/update", async (req, res) => {
-//     const { userID, goalID, amount } = req.body;
+router.post("/:id/goals/update", async (req, res) => {
+    const userID = req.params.id;
+    const { name, totalAmount, month } = req.body;
 
-//     if (!userID || !goalID || amount === undefined) {
-//         return res.status(400).json({ success: false, error: "Missing required fields" });
-//     }
+    if (!userID || !name || !totalAmount || !month) {
+        if (!userID) {
+            console.error("Missing userID in request params");
+        }
+        if (!name) {
+            console.error("Missing name in request body");
+        }
+        if (!totalAmount) {
+            console.error("Missing totalAmount in request body");
+        }
+        if (!month) {
+            console.error("Missing month in request body");
+        }
+    }
 
-//     try {
-//         const goal = await increaseSavedAmount(userID, goalID, amount);
-//         if (goal) {
-//             res.status(200).json({ success: true, goal });
-//         } else {
-//             res.status(400).json({ success: false, error: "Goal update failed." });
-//         }
-//     } catch (error) {
-//         console.error("Error updating goal:", error);
-//         res.status(500).json({ success: false, error: "Server error while updating goal." });
-//     }
-// });
+    try {
+        const goal = await updateSavedAmount(userID, month, totalAmount, name);
+        if (goal) {
+            res.status(200).json({ success: true, goal });
+        } else {
+            res.status(400).json({ success: false, error: "Goal update failed." });
+        }
+    } catch (error) {
+        console.error("Error updating goal:", error);
+        res.status(500).json({ success: false, error: "Server error while updating goal." });
+    }
+});
 router.post("/:id/goals/remove", async (req, res) => {
     const userID = req.params.id;
-    const { goalID } = req.body;
+    const { month } = req.body; // Accept month YYYY-MM
 
-    if (!userID || !goalID) {
+    if (!userID || !month) {
         return res.status(400).json({ success: false, error: "Missing required fields" });
     }
+
     try {
         const removedGoal = await removeGoal(userID, month);
         if (removedGoal) {
@@ -162,7 +187,6 @@ router.post("/:id/goals/remove", async (req, res) => {
         res.status(500).json({ success: false, error: "Server error while removing goal." });
     }
 });
-
 
 
 
@@ -210,98 +234,34 @@ router.get("/users/:userID/goals/:goalID/target", async (req, res) => {
     }
 });
 
-// router.get("/:userID/budgets/:budgetID", async (req, res) => {
-//     try {
-//         const budget = await getBudget(req.params.userID, req.params.budgetID);
-//         if (!budget) {
-//             return res.status(404).json({ success: false, message: "Budget not found" });
-//         }
-//         res.json({ success: true, budget });
-//     } catch (error) {
-//         console.error("Error retrieving budget:", error);
-//         res.status(500).json({ success: false, error: "Server error" });
-//     }
-// });
-
-// router.get("/:userID/goals/:goalID", async (req, res) => {
-//     try {
-//         const goal = await getGoal(req.params.userID, req.params.goalID);
-//         if (!goal) {
-//             return res.status(404).json({ success: false, message: "Goal not found" });
-//         }
-//         res.json({ success: true, goal });
-//     } catch (error) {
-//         console.error("Error retrieving goal:", error);
-//         res.status(500).json({ success: false, error: "Server error" });
-//     }
-// });
-
-router.get("/:id/budgets-goals", async (req, res) => {
-    const userID = req.params.id;
-
+// get budget by id
+router.get("/:userID/budgets/:budgetID", async (req, res) => {
     try {
-        const user = await findUser(userID);
-
-        if (!user) {
-            return res.status(404).json({ success: false, error: "User not found" });
+        const budget = await getBudget(req.params.userID, req.params.budgetID);
+        if (!budget) {
+            return res.status(404).json({ success: false, message: "Budget not found" });
         }
-
-        console.log("Fetched User Data:", JSON.stringify(user, null, 2)); // Debug log
-
-        const budgetsByMonth = {};
-        const goalsByMonth = {};
-
-        if (user.budgetList && user.budgetList.length > 0) {
-            user.budgetList.forEach(budget => {
-                if (!budget || !budget.name || !budget.createdAt) {
-                    console.warn("Skipping invalid budget:", budget);
-                    return;
-                }
-
-                const monthYear = budget.createdAt.toISOString().slice(0, 7); // Format YYYY-MM
-                if (!budgetsByMonth[monthYear]) budgetsByMonth[monthYear] = [];
-                budgetsByMonth[monthYear].push({
-                    id: budget._id,
-                    name: budget.name || "Unnamed Budget",
-                    current: budget.current || 0,
-                    totalAmount: budget.totalAmount || 0,
-                    createdAt: budget.createdAt
-                });
-            });
-        }
-
-        if (user.goalList && user.goalList.length > 0) {
-            user.goalList.forEach(goal => {
-                if (!goal || !goal.targetAmount || !goal.savedToDate) {
-                    console.warn("Skipping invalid goal:", goal);
-                    return;
-                }
-
-                const monthYear = goal.savedToDate.toISOString().slice(0, 7);
-                if (!goalsByMonth[monthYear]) goalsByMonth[monthYear] = [];
-                goalsByMonth[monthYear].push({
-                    id: goal._id,
-                    savedAmount: goal.savedAmount || 0,
-                    targetAmount: goal.targetAmount || 0,
-                    savedToDate: goal.savedToDate
-                });
-            });
-        }
-
-        console.log("Budgets By Month:", JSON.stringify(budgetsByMonth, null, 2)); // Debugging
-        console.log("Goals By Month:", JSON.stringify(goalsByMonth, null, 2)); // Debugging
-
-        res.json({
-            success: true,
-            budgetsByMonth,
-            goalsByMonth
-        });
+        res.json({ success: true, budget });
     } catch (error) {
-        console.error("Error fetching budgets and goals:", error);
-        res.status(500).json({ success: false, error: "Server error while fetching budgets and goals" });
+        console.error("Error retrieving budget:", error);
+        res.status(500).json({ success: false, error: "Server error" });
     }
-    
 });
+
+// get goal by id
+router.get("/:userID/goals/:goalID", async (req, res) => {
+    try {
+        const goal = await getGoal(req.params.userID, req.params.goalID);
+        if (!goal) {
+            return res.status(404).json({ success: false, message: "Goal not found" });
+        }
+        res.json({ success: true, goal });
+    } catch (error) {
+        console.error("Error retrieving goal:", error);
+        res.status(500).json({ success: false, error: "Server error" });
+    }
+});
+
 router.get("/:id/budgets/:month", async (req, res) => {
     const userID = req.params.id;
     const month = req.params.month;
@@ -337,6 +297,7 @@ router.get("/:id/goals/:month", async (req, res) => {
         res.status(500).json({ success: false, error: "Server error while fetching goal." });
     }
 });
+
 router.get("/:id/budgets-goals/all", async (req, res) => {
     const userID = req.params.id;
 

@@ -78,17 +78,14 @@ const removeGoal = async (userID, month) => {
     const user = await User.findOne({ _id: userID });
     if (!user) return null;
 
-    const index = user.goalList.indexOf(month);
-    if (index >= 0) {
-        const goal = await Goal.findOne({ month: month });
-        const finalCopy = JSON.parse(JSON.stringify(goal));
+    const goal = await Goal.findOne({ userID, month });
+    if (!goal) return null;
 
-        await Goal.deleteOne({ month: month });
-        user.goalList.splice(index, 1);
-        await user.save();
-        return finalCopy;
-    }
-    return null;
+    const finalCopy = JSON.parse(JSON.stringify(goal));
+    await Goal.deleteOne({ userID, month }); // Delete by user and month
+
+    await user.save();
+    return finalCopy;
 };
 
 /**
