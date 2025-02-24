@@ -234,33 +234,33 @@ router.get("/users/:userID/goals/:goalID/target", async (req, res) => {
     }
 });
 
-// get budget by id
-router.get("/:userID/budgets/:budgetID", async (req, res) => {
-    try {
-        const budget = await getBudget(req.params.userID, req.params.budgetID);
-        if (!budget) {
-            return res.status(404).json({ success: false, message: "Budget not found" });
-        }
-        res.json({ success: true, budget });
-    } catch (error) {
-        console.error("Error retrieving budget:", error);
-        res.status(500).json({ success: false, error: "Server error" });
-    }
-});
+// // get budget by id
+// router.get("/:userID/budgets/:budgetID", async (req, res) => {
+//     try {
+//         const budget = await getBudget(req.params.userID, req.params.budgetID);
+//         if (!budget) {
+//             return res.status(404).json({ success: false, message: "Budget not found" });
+//         }
+//         res.json({ success: true, budget });
+//     } catch (error) {
+//         console.error("Error retrieving budget:", error);
+//         res.status(500).json({ success: false, error: "Server error" });
+//     }
+// });
 
-// get goal by id
-router.get("/:userID/goals/:goalID", async (req, res) => {
-    try {
-        const goal = await getGoal(req.params.userID, req.params.goalID);
-        if (!goal) {
-            return res.status(404).json({ success: false, message: "Goal not found" });
-        }
-        res.json({ success: true, goal });
-    } catch (error) {
-        console.error("Error retrieving goal:", error);
-        res.status(500).json({ success: false, error: "Server error" });
-    }
-});
+// // get goal by id
+// router.get("/:userID/goals/:goalID", async (req, res) => {
+//     try {
+//         const goal = await getGoal(req.params.userID, req.params.goalID);
+//         if (!goal) {
+//             return res.status(404).json({ success: false, message: "Goal not found" });
+//         }
+//         res.json({ success: true, goal });
+//     } catch (error) {
+//         console.error("Error retrieving goal:", error);
+//         res.status(500).json({ success: false, error: "Server error" });
+//     }
+// });
 
 router.get("/:id/budgets/:month", async (req, res) => {
     const userID = req.params.id;
