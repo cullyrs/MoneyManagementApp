@@ -894,7 +894,7 @@ header {
         input[type="email"],
         select,
         textarea {
-            width: 97%;
+            width: 100%;
             padding: 10px;
             font-size: 14px;
             color: @text-color;
@@ -903,6 +903,7 @@ header {
             border-radius: 5px;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: border-color 0.3s ease;
+            box-sizing: border-box;
 
             &:focus {
                 border-color: @primary-color;
@@ -1239,8 +1240,9 @@ header {
 
             input,
             button {
-                width: 90%; // Match width of input and buttons
+                width: 100%; // Match width of input and buttons
                 max-width: 320px; // Keep uniform width
+                box-sizing: border-box;
             }
 
             input {
@@ -1469,11 +1471,13 @@ header {
         }
 
         input[type="text"], input[type="number"] {
-            width: 96%;
+            width: 100%;
             padding: 10px;
             border: 1px solid @input-border;
             border-radius: 5px;
             font-size: 16px;
+            box-sizing: border-box;
+
         }
 
         button[type="submit"] {
@@ -1485,6 +1489,7 @@ header {
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s ease-in-out;
+            box-sizing: border-box;
 
             &:hover {
                 background: @primary-hover;
@@ -1632,28 +1637,31 @@ header {
         display: flex;
         flex-direction: column;
         gap: 15px;
+        width: 100%; // Ensures the container uses full width
 
         label {
             font-weight: bold;
             text-align: left;
         }
 
-        input {
-            width: 100%;
+        input, .btn {
+            width: 100%; // Force full width
+            box-sizing: border-box; // Prevents padding from affecting width
             padding: 10px;
-            border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
+        }
+
+        input {
+            border: 1px solid #ccc;
         }
     }
 
     .btn {
-        width: 100%;
-        padding: 10px;
         font-size: 18px;
         border: none;
-        border-radius: 5px;
         cursor: pointer;
+        text-align: center;
 
         &.btn-primary {
             background-color: #007bff;

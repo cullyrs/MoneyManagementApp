@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const data = await response.json();
 
-            // console.log("Fetched DATA======>:", data);
+            console.log("Fetched DATA======>:", data);
             const budgetsByMonth = data.budgetsByMonth || {};
             const goalsByMonth = data.goalsByMonth || {};
             
@@ -43,8 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     budget: budgetsByMonth[monthYear] ? budgetsByMonth[monthYear][0] : null,
                     goal: goalsByMonth[monthYear] ? goalsByMonth[monthYear][0] : null
                 };
-            });
-    
+            });   
 
             displayBudgetsAndGoals(monthsData);
         } catch (error) {

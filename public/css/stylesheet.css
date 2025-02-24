@@ -701,7 +701,7 @@ header img {
 .contact form input[type="email"],
 .contact form select,
 .contact form textarea {
-  width: 97%;
+  width: 100%;
   padding: 10px;
   font-size: 14px;
   color: #333;
@@ -710,6 +710,7 @@ header img {
   border-radius: 5px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
 .contact form input[type="text"]:focus,
 .contact form input[type="email"]:focus,
@@ -977,8 +978,9 @@ header img {
 }
 .login .tab-content form input,
 .login .tab-content form button {
-  width: 90%;
+  width: 100%;
   max-width: 320px;
+  box-sizing: border-box;
 }
 .login .tab-content form input {
   padding: 12px;
@@ -1167,11 +1169,12 @@ header img {
 .goal-page form input[type="text"],
 .budget-page form input[type="number"],
 .goal-page form input[type="number"] {
-  width: 96%;
+  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
+  box-sizing: border-box;
 }
 .budget-page form button[type="submit"],
 .goal-page form button[type="submit"] {
@@ -1183,6 +1186,7 @@ header img {
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s ease-in-out;
+  box-sizing: border-box;
 }
 .budget-page form button[type="submit"]:hover,
 .goal-page form button[type="submit"]:hover {
@@ -1284,25 +1288,28 @@ header img {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  width: 100%;
 }
 .change-password .form-group label {
   font-weight: bold;
   text-align: left;
 }
-.change-password .form-group input {
+.change-password .form-group input,
+.change-password .form-group .btn {
   width: 100%;
+  box-sizing: border-box;
   padding: 10px;
-  border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
 }
+.change-password .form-group input {
+  border: 1px solid #ccc;
+}
 .change-password .btn {
-  width: 100%;
-  padding: 10px;
   font-size: 18px;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
+  text-align: center;
 }
 .change-password .btn.btn-primary {
   background-color: #007bff;
