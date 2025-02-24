@@ -270,7 +270,7 @@ router.get("/:id/budgets/:month", async (req, res) => {
         const budget = await getBudgetByMonth(userID, month);
 
         if (!budget) {
-            return res.status(404).json({ success: false, message: "No budget found for this month." });
+            // return res.status(404).json({ success: false, message: "No budget found for this month." });
         }
 
         res.json({ success: true, budget });
@@ -288,7 +288,7 @@ router.get("/:id/goals/:month", async (req, res) => {
         const goal = await getGoalByMonth(userID, month);
 
         if (!goal) {
-            return res.status(404).json({ success: false, message: "No goal found for this month." });
+            // return res.status(404).json({ success: false, message: "No goal found for this month." });
         }
 
         res.json({ success: true, goal });

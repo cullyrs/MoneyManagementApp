@@ -12,8 +12,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    console.log("User logged in:", userId);
-
     // UI Elements
     const currentBudgetDiv = document.getElementById("current-budget");
     const budgetForm = document.getElementById("budget-form");

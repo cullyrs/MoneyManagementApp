@@ -115,7 +115,6 @@ The project requires a `config.env` file to store **MongoDB credentials**. Creat
     │   │   ├── naeem.png
     │   │   └── steven.png
     │   ├── js/
-    │   │   ├── dateScript.js
     │   │   ├── headerMenu.js
     │   │   ├── initializeUser.js
     │   │   ├── logout.js

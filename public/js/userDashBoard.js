@@ -25,8 +25,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    console.log("User logged in:", userId);
-
     // UI Elements
     const categorySelect = document.getElementById("category");
     // const customCategoryContainer = document.getElementById("custom-category-container"); // DEPRECATED
@@ -335,31 +333,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             let transactions = [];
 
 
-            // Fetch Budget for the selected month
+            // Fetch all budgets and goals
             try {
-                const budgetResponse = await fetch(`/api/dashboard/${userId}/budgets/${selectedMonth}`);
-                if (budgetResponse.ok) {
-                    const budgetResult = await budgetResponse.json();
-                    currentBudget = budgetResult.success ? budgetResult.budget : null;
+                const response = await fetch(`/api/dashboard/${userId}/budgets-goals/all`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        // Get budget and goal for selected month
+                        const budgetsByMonth = data.budgetsByMonth || {};
+                        const goalsByMonth = data.goalsByMonth || {};
+
+                        currentBudget = budgetsByMonth[selectedMonth] ? budgetsByMonth[selectedMonth][0] : null;
+                        currentGoal = goalsByMonth[selectedMonth] ? goalsByMonth[selectedMonth][0] : null;
+                    }
                 }
             } catch (error) {
-                console.error("Error fetching budget:", error);
+                console.error("Error fetching budgets and goals:", error);
                 budgetDisplay.innerText = "No Budget Set";
                 goalDisplay.innerText = "No Goal Set";
             }
 
-            // Fetch Goal for the selected month
-            try {
-                const goalResponse = await fetch(`/api/dashboard/${userId}/goals/${selectedMonth}`);
-                if (goalResponse.ok) {
-                    const goalResult = await goalResponse.json();
-                    currentGoal = goalResult.success ? goalResult.goal : null;
-                }
-            } catch (error) {
-                console.error("Error fetching goal:", error);
-                budgetDisplay.innerText = "No Budget Set";
-                goalDisplay.innerText = "No Goal Set";
-            }
             // Fetch transactions
             try {
                 const response = await fetch(`/api/transactions/${userId}`, {
@@ -394,21 +387,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             sessionStorage.setItem(`income_${selectedMonth}`, totalIncome.toFixed(2));
             sessionStorage.setItem(`expense_${selectedMonth}`, totalExpense.toFixed(2));
 
-            console.log("Total Income:", totalIncome);
-            console.log("Total Expense:", totalExpense);
+            // console.log("Total Income:", totalIncome);
+            // console.log("Total Expense:", totalExpense);
             if (currentBudget) {
                 currentBudget.current = totalExpense;
             }
             if (currentGoal) {
                 currentGoal.current = totalIncome;
             }
-            // Fetch and update budgets and goals
-            // const budgetsData = sessionStorage.getItem("budgets");
-            // const goalsData = sessionStorage.getItem("goals");
-            // const netIncome = sessionStorage.getItem("netbalance");
-
-            // const budgets = budgetsData ? JSON.parse(budgetsData) : {};
-            // const goals = goalsData ? JSON.parse(goalsData) : {};
 
             if (!currentBudget) {
                 budgetDisplay.innerText = "No Budget Set";
@@ -703,6 +689,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     prevMonthBtn.addEventListener("click", () => changeMonth(-1));
     nextMonthBtn.addEventListener("click", () => changeMonth(1));
+    
+    flatpickr(monthSelector, {
+        plugins: [
+            new monthSelectPlugin({
+                shorthand: true, // Display short month names (Jan, Feb, etc.)
+                dateFormat: "Y-m", // Format as YYYY-MM
+                theme: "light", // can change to "dark" if needed
+                disableMobile: false, // Allows native date picker on mobile
+            })
+        ]
+    });
 
     /** Handle Adding a Transaction */
     async function handleAddTransaction(event) {
@@ -720,7 +717,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const dateInputField = document.getElementById("date");
         const dateInputValue = dateInputField.value;
         const categoryInputValue = categorySelect.value;
-        
+
         console.log("Adding transaction:", { userID, amount, type, dateInput, categoryId, description });
         const transactionData = {
             userID,

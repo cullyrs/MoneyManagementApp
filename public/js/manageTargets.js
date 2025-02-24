@@ -24,12 +24,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const data = await response.json();
 
-            console.log("Fetched DATA======>:", data);
+            // console.log("Fetched DATA======>:", data);
             const budgetsByMonth = data.budgetsByMonth || {};
             const goalsByMonth = data.goalsByMonth || {};
             
-            console.log("Fetched budgetsByMonth:", budgetsByMonth);
-            console.log("Fetched goalsByMonth:", goalsByMonth);
+            // console.log("Fetched budgetsByMonth:", budgetsByMonth);
+            // console.log("Fetched goalsByMonth:", goalsByMonth);
         
             // Create set of months that have either budgets or goals
             const usedMonths = new Set([
@@ -47,19 +47,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     
 
             displayBudgetsAndGoals(monthsData);
-            console.log("Fetched budgets and goals:", monthsData);
         } catch (error) {
             console.error("Error fetching budgets and goals:", error);
         }
     }
 
     function displayBudgetsAndGoals(monthsData) {
-
-        console.log("monthsData===>>>", monthsData);
         budgetGoalList.innerHTML = "";
 
         const months = Object.keys(monthsData).sort().reverse();
-        console.log("months===>>>", months);
+        // console.log("months===>>>", months);
         if (months.length === 0) {
             budgetGoalList.innerHTML = `<p>No budgets or goals set.</p>`;
             return;
@@ -77,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const totalIncome = parseFloat(sessionStorage.getItem(`income_${monthYear}`)) || 0;
             const totalExpense = parseFloat(sessionStorage.getItem(`expense_${monthYear}`)) || 0;
 
-            console.log("monthYear===>>>", monthYear);
+            // console.log("monthYear===>>>", monthYear);
             // Display Budget
             if (monthsData[monthYear].budget) {
                 const budget = monthsData[monthYear].budget;
@@ -86,7 +83,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const budgetList = document.createElement("ul");
                 budgetList.innerHTML = `<h3>Budget</h3>`;
                 const li = document.createElement("li");
-                console.log("budgetmonth", budget.totalAmount);   
                 li.innerHTML = `
                     ${budget.name || "Unnamed Budget"}: 
                     <strong>$${totalExpense.toFixed(2)} / $${budget.totalAmount.toFixed(2)}</strong>
@@ -126,7 +122,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.querySelectorAll(".delete-budget").forEach(button => {
             button.addEventListener("click", async () => {
                 const month = button.getAttribute("data-month");
-                console.log(month);
+                // console.log(month);
 
                 if (confirm(`Are you sure you want to delete the budget for ${formatMonthYear(month)}?`)) {
                     await deleteBudget(month);

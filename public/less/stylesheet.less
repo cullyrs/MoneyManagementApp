@@ -31,6 +31,78 @@
 }
 
 
+// mobile responsive
+@media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+
+    h2 {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    body {
+        font-size: 14px;
+        padding: 0 10px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .dashboard {
+        padding: 10px;
+    }
+
+    .budget-goals {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .budget-goals div {
+        width: 100%;
+        text-align: center;
+    }
+
+    .toggle-buttons button {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .table-container {
+        overflow-x: scroll; // Enables horizontal scrolling on mobile
+    }
+
+    table {
+        display: block;
+        width: 100%;
+    }
+
+    th, td {
+        font-size: 0.9rem; // Slightly smaller text on mobile
+        padding: 8px;
+    }
+    
+}
+
+// tablet responsive
+@media screen and (max-width: 1024px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .finance-container {
+        flex-direction: column;
+    }
+}
+
 // general basic styling
 body {
     font-family: Arial, sans-serif;
@@ -50,6 +122,8 @@ header {
     background-color: @primary-color;
     padding: 10px 20px;
     color: @header-text-color;
+    flex-wrap: wrap; // Allows elements to move to the next line if needed
+
 
     // move h2 to leftmost of header
     h2 {
@@ -288,6 +362,20 @@ header {
     justify-content: center;
     align-items: center;
     padding: 5px 0;
+}
+
+// Override the default selected month styling
+.flatpickr-monthDropdown-months option[selected] {
+    background-color: transparent !important; // Remove highlight
+    color: inherit !important; // Keep default text color
+    font-weight: normal !important;
+}
+
+// Customize the selected month color (Optional)
+.flatpickr-monthDropdown-months option:hover {
+    background-color: @primary-color !important; // Change hover color
+    color: #fff !important; // White text on hover
+    border-radius: 3px;
 }
 
 .month-navigation {
@@ -806,7 +894,7 @@ header {
         input[type="email"],
         select,
         textarea {
-            width: 100%;
+            width: 97%;
             padding: 10px;
             font-size: 14px;
             color: @text-color;
@@ -1381,7 +1469,7 @@ header {
         }
 
         input[type="text"], input[type="number"] {
-            width: 100%;
+            width: 96%;
             padding: 10px;
             border: 1px solid @input-border;
             border-radius: 5px;
@@ -1524,6 +1612,64 @@ header {
     .alert-style(@info-color);
 }
 
+// change password page
+.change-password {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        label {
+            font-weight: bold;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    }
+
+    .btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &.btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+
+    #message {
+        margin-top: 15px;
+        font-weight: bold;
+    }
+}
 
 
 

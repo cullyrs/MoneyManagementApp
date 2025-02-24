@@ -18,8 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  console.log("Retrieved userId:", userId);
-
     try {
         // Fetch user information from the backend
         const response = await fetch(`/api/users/${userId}`, {
@@ -31,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const user = await response.json();
-        console.log("user:",  user)
+        // console.log("user:",  user)
         const profileInfo = document.querySelector(".profile-info");
 
         if (profileInfo) {
@@ -42,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <p><strong>Join Date:</strong> ${new Date(user.createdAt).toLocaleDateString() || "N/A"}</p>
             `;
         } else {
-            console.warn("Profile info container not found.");
+            // console.warn("Profile info container not found.");
         }
     } catch (err) {
         console.error("Error retrieving user info:", err);

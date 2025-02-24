@@ -12,8 +12,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    console.log("User logged in:", userId);
-
     // UI Elements
     const currentGoalDiv = document.getElementById("current-goal");
     const goalForm = document.getElementById("goal-form");
