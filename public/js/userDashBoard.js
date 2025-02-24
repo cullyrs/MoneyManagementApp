@@ -483,7 +483,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Filter transactions for the selected month/year
             const filteredTransactions = transactions.filter(transaction => {
                 if (!transaction.date) return false;
-                const transactionDate = new Date(transaction.date);
+                var transactionDate = new Date(transaction.date);
+                var temp = new Date();
+                var diff = temp.getTimezoneOffset();
+                transactionDate.setTime(transactionDate.getTime() + (diff * 60000));
                 const transactionYear = transactionDate.getFullYear();
                 const transactionMonth = transactionDate.getMonth() + 1; // JavaScript months are 0-indexed
                 return transactionYear === selectedYear && transactionMonth === selectedMonth;
