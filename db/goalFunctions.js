@@ -74,16 +74,16 @@ const getGoalByMonth = async (userID, month) => {
  *      1. Invalid userID is provided.
  *      2. goalID is not associated with the User instance provided.
  */
-const removeGoal = async (userID, goalID) => {
+const removeGoal = async (userID, month) => {
     const user = await User.findOne({ _id: userID });
     if (!user) return null;
 
-    const index = user.goalList.indexOf(goalID);
+    const index = user.goalList.indexOf(month);
     if (index >= 0) {
-        const goal = await Goal.findOne({ _id: goalID });
+        const goal = await Goal.findOne({ month: month });
         const finalCopy = JSON.parse(JSON.stringify(goal));
 
-        await Goal.deleteOne({ _id: goalID });
+        await Goal.deleteOne({ month: month });
         user.goalList.splice(index, 1);
         await user.save();
         return finalCopy;
@@ -193,13 +193,14 @@ const updateSavedAmount = async(userID, goalID, newSavedAmount) => {
  *      2. Invalid amount is provided. (Positive values only)
  *      3. goalID is not associated with the User instance provided.
  */
-const increaseSavedAmount = async (userID, goalID, amount) => {
+const increaseSavedAmount = async (userID, month, amount) => {
     amount = parseFloat(amount);
     const user = await User.findOne({ _id: userID });
-    const goal = await Goal.findOne({ _id: goalID });
+    // find by month instead of goalID, in format "YYYY-MM"
+    const goal = await Goal.findOne({month: month});
 
     if (!user || isNaN(amount) || amount < 0 || !goal) {
-        console.error("Invalid goal update parameters:", { userID, goalID, amount });
+        console.error("Invalid goal update parameters:", { userID, month, amount });
         return null;
     }
 
@@ -207,16 +208,15 @@ const increaseSavedAmount = async (userID, goalID, amount) => {
     await goal.save();
     return goal;
 };
+
 async function getAllGoals(userID) {
     try {
-        const goals = await Goal.find({ userID }).sort({ savedToDate: -1 }); // Sort by newest first
-        return goals;
+        return await Goal.find({ userID }).sort({ month: -1 }); // Sort by most recent month first
     } catch (error) {
         console.error("Error fetching all goals:", error);
         return [];
     }
 }
-
 module.exports ={addGoal, removeGoal, getGoalByMonth, updateTargetAmount,
     updateSavedAmount, increaseSavedAmount, getSavedAmount,
     getTargetAmount, getAllGoals

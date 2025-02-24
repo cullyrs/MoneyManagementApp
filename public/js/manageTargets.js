@@ -13,61 +13,49 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function fetchBudgetsAndGoals() {
         try {
             let monthsData = {};
+
+            // Fetch all budgets and goals in one request
+            const response = await fetch(`/api/dashboard/${userID}/budgets-goals/all`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (!response.ok) {
+                console.error("Failed to fetch budgets and goals.");
+                return;
+            }
+
+            const data = await response.json();
+
+            console.log("Fetched DATA======>:", data);
+            const budgetsByMonth = data.budgetsByMonth || {};
+            const goalsByMonth = data.goalsByMonth || {};
+
+
+            // Get current and past 12 months
             const currentDate = new Date();
-            currentDate.setMonth(currentDate.getMonth() + 2); // Start 2 months ahead
-            
             for (let i = 0; i < 12; i++) {
                 const monthYear = currentDate.toISOString().slice(0, 7);
                 monthsData[monthYear] = { budget: null, goal: null };
-    
-                let hasBudgetOrGoal = false;
-    
-                // Fetch budget for the month
-                try {
-                    const budgetResponse = await fetch(`/api/dashboard/${userID}/budgets/${monthYear}`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    if (budgetResponse.ok) {
-                        const budgetResult = await budgetResponse.json();
-                        if (budgetResult.success) {
-                            monthsData[monthYear].budget = budgetResult.budget;
-                            hasBudgetOrGoal = true;
-                        }
-                    }
-                } catch (error) {
-                    console.warn(`No budget found for ${monthYear}`);
+
+                // Assign fetched budgets & goals
+                if (budgetsByMonth[monthYear]) {
+                    monthsData[monthYear].budget = budgetsByMonth[monthYear][0]; // Use first budget for that month
                 }
-    
-                // Fetch goal for the month
-                try {
-                    const goalResponse = await fetch(`/api/dashboard/${userID}/goals/${monthYear}`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    if (goalResponse.ok) {
-                        const goalResult = await goalResponse.json();
-                        if (goalResult.success) {
-                            monthsData[monthYear].goal = goalResult.goal;
-                            hasBudgetOrGoal = true;
-                        }
-                    }
-                } catch (error) {
-                    console.warn(`No goal found for ${monthYear}`);
+                if (goalsByMonth[monthYear]) {
+                    monthsData[monthYear].goal = goalsByMonth[monthYear][0]; // Use first goal for that month
                 }
-    
-                // Only keep months that have at least a budget or goal
-                if (!hasBudgetOrGoal) {
-                    delete monthsData[monthYear];
-                }
-    
-                currentDate.setMonth(currentDate.getMonth() - 1); // Move to the previous month
+
+                currentDate.setMonth(currentDate.getMonth() - 1); // Move to previous month
             }
+            // Only keep months that have at least a budget or goal
     
+
             displayBudgetsAndGoals(monthsData);
+            console.log("Fetched budgets and goals:", monthsData);
         } catch (error) {
             console.error("Error fetching budgets and goals:", error);
         }
     }
-    
 
     function displayBudgetsAndGoals(monthsData) {
         budgetGoalList.innerHTML = "";
@@ -86,38 +74,42 @@ document.addEventListener("DOMContentLoaded", async () => {
             title.textContent = formatMonthYear(monthYear);
             monthSection.appendChild(title);
 
+            // Fetch total income & expenses from session storage
             const totalIncome = parseFloat(sessionStorage.getItem(`income_${monthYear}`)) || 0;
             const totalExpense = parseFloat(sessionStorage.getItem(`expense_${monthYear}`)) || 0;
 
-            // Budget
+            // Display Budget
             if (monthsData[monthYear].budget) {
                 const budget = monthsData[monthYear].budget;
                 const budgetPercent = budget.totalAmount > 0 ? (totalExpense / budget.totalAmount) * 100 : 0;
 
                 const budgetList = document.createElement("ul");
-                budgetList.innerHTML = `<h3>Budgets</h3>`;
+                budgetList.innerHTML = `<h3>Budget</h3>`;
                 const li = document.createElement("li");
                 li.innerHTML = `
                     ${budget.name || "Unnamed Budget"}: 
                     <strong>$${totalExpense.toFixed(2)} / $${budget.totalAmount.toFixed(2)}</strong>
                     <progress class="prog-budget" max="100" value="${budgetPercent}"></progress>
+                    <button class="delete-goal" data-id="${budget.month}">Delete</button>
+
                 `;
                 budgetList.appendChild(li);
                 monthSection.appendChild(budgetList);
             }
 
-            // Goal
+            // Display Goal
             if (monthsData[monthYear].goal) {
                 const goal = monthsData[monthYear].goal;
                 const goalPercent = goal.totalAmount > 0 ? (totalIncome / goal.totalAmount) * 100 : 0;
 
                 const goalList = document.createElement("ul");
-                goalList.innerHTML = `<h3>Goals</h3>`;
+                goalList.innerHTML = `<h3>Goal</h3>`;
                 const li = document.createElement("li");
                 li.innerHTML = `
                     ${goal.name || "Unnamed Goal"}: 
                     <strong>$${totalIncome.toFixed(2)} / $${goal.totalAmount.toFixed(2)}</strong>
                     <progress class="prog-goal" max="100" value="${goalPercent}"></progress>
+                    <button class="delete-goal" data-id="${goal.month}">Delete</button>
                 `;
                 goalList.appendChild(li);
                 monthSection.appendChild(goalList);
@@ -151,7 +143,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    async function deleteBudget(budgetID) {
+    async function deleteBudget(month) {
         try {
             const response = await fetch(`/api/dashboard/${userID}/budgets/remove`, {
                 method: "POST",
@@ -159,7 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ budgetID }),
+                body: JSON.stringify({ month }),
             });
 
             if (!response.ok) {
@@ -172,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    async function deleteGoal(goalID) {
+    async function deleteGoal(month) {
         try {
             const response = await fetch(`/api/dashboard/${userID}/goals/remove`, {
                 method: "POST",
@@ -180,7 +172,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ goalID }),
+                body: JSON.stringify({ month }),
             });
 
             if (!response.ok) {

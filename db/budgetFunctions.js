@@ -182,8 +182,7 @@ const getSpentAmount = async (userID, budgetID) => {
 };
 async function getAllBudgets(userID) {
     try {
-        const budgets = await Budget.find({ userID }).sort({ createdAt: -1 }); // Sort by newest first
-        return budgets;
+        return await Budget.find({ userID }).sort({ month: -1 }); // Sort by most recent month first
     } catch (error) {
         console.error("Error fetching all budgets:", error);
         return [];
