@@ -2,7 +2,9 @@
 
 ## **Overview**
 
-The **Expense Tracker** is a financial management web application designed to help users log, categorize, and analyze their income and expenses. The project initially used **Electron** for a desktop-based approach but has since transitioned to **Express.js**, allowing for **RESTful APIs** and improved web-based functionality. This update enhances performance, maintainability, and scalability.
+The **Expense Tracker** is a financial management web application designed to help users log, categorize, and analyze their income and expenses. The project initially used **Electron** for a desktop-based approach but has since transitioned to **Express.js**, allowing for **RESTful APIs** and improved web-based functionality. This update enhances performance, maintainability, and scalability. 
+
+Access the Application through the following link: https://money-management-app-6hik.onrender.com/
 
 ## **Contributors**
 
