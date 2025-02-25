@@ -2,11 +2,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     const logoutLink = document.getElementById("logout-link");
     const userId = sessionStorage.getItem("userId");
     const token = sessionStorage.getItem("token");
+    const dashboardLink = document.querySelector("h2 a[href='dashboard.html']");
 
     try {
         if (!userId || !token) {
             logoutLink.textContent = "Login";
             logoutLink.href = "/login.html";
+            // redirect dashboard to index if not logged in
+            if (dashboardLink) {
+                dashboardLink.href = "index.html";
+                dashboardLink.title = "Go To Homepage";
+
+            }
+
         } else {
             logoutLink.textContent = "Logout";
             logoutLink.href = "/logout.html";
@@ -40,13 +48,13 @@ async function exportTransactionsToCSV(userId, token) {
     }
 
     try {
-      const response = await fetch(`/api/transactions/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-      });
+        const response = await fetch(`/api/transactions/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-      const data = await response.json();
-      let transactions = data.transactions;  
-      if (!transactions || transactions.length === 0) {
+        const data = await response.json();
+        let transactions = data.transactions;
+        if (!transactions || transactions.length === 0) {
             console.error("No transactions to export.");
             return;
         }
@@ -111,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     exportButton.addEventListener("click", async (event) => {
         await exportTransactionsToCSV(userID, token);
     });
-    if(exportButton2) {
+    if (exportButton2) {
         // Attach click event listener
         exportButton2.addEventListener("click", async (event) => {
             await exportTransactionsToCSV(userID, token);

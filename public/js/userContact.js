@@ -25,8 +25,6 @@ async function showAlert(message, type) {
             // Auto-hide alert after 5 seconds
             setTimeout(() => closeAlert(alertBox), 5000);
 
-            // Close button functionality
-            alertBox.querySelector("#alert-close").addEventListener("click", () => closeAlert(alertBox));
         })
         .catch(error => {
             console.error("Error triggering alert:", error);
@@ -42,22 +40,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     let email = "";
 
     if (!userId || !token) {
-        console.error("No logged-in user found.");
-        window.location.href = "./login.html";
-        return;
+        // remove the readonly attribute
+        document.getElementById("email").removeAttribute("readonly");
     }
+    else {
+        // Auto-fill user's email
+        try {
+            const response = await fetch(`/api/users/${userId}`);
 
-    // Auto-fill user's email
-    try {
-        const response = await fetch(`/api/users/${userId}`);
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
-        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-
-        const user = await response.json();
-        email = user.email;
-        document.getElementById("email").value = email;
-    } catch (err) {
-        console.error("Error retrieving user info:", err);
+            const user = await response.json();
+            email = user.email;
+            document.getElementById("email").value = email;
+        } catch (err) {
+            console.error("Error retrieving user info:", err);
+        }
     }
 
     // Handle Form Submission

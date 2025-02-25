@@ -16,6 +16,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Money Management App">
     <meta name="keywords" content="money, management, app, budget, finance">
+    <meta name="author" content="Naeem Lovitt">
     <link rel="stylesheet" href="css/stylesheet.css">
     <link rel="apple-touch-icon" sizes="180x180" href="imgs/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon-32x32.png">
@@ -28,10 +29,8 @@
 
 <body>
     <header>
-        <a href="index.html"><img src="imgs/icon.png" alt="icon homepage"></a>
-
-        <!-- dashboard if user logged in, login if not -->
-        <h2><a href="dashboard.html">Expense Tracker</a></h2>
+        <a href="index.html"><img src="imgs/icon.png" alt="icon homepage" title="Go To Homepage"></a>
+        <h2 title="Go To Dashboard"><a href="dashboard.html">Expense Tracker</a></h2>
         <nav class="main-nav">
             <ul>
                 <li><a href="about.html">About</a></li>
@@ -97,7 +96,7 @@
             </div>
 
             <div class="team-card" id="arewa">
-                <button class="reveal-btn" onclick="toggleTeamMember('arewa')"></button>
+                <button title="Click to Reveal Hidden Area" class="reveal-btn" onclick="toggleTeamMember('arewa')"></button>
 
                 <img src="imgs/arewa.png" alt="Arewa Ojelade">
                 <h3>Arewa Ojelade</h3>
@@ -106,17 +105,17 @@
             </div>
         </div>
     </main>
+            <!-- fun  -->
     <script>
+        const revealBtn = document.querySelector('.reveal-btn');
 
         function toggleTeamMember(id) {
             const teamCard = document.getElementById(id);
             if (teamCard) {
                 teamCard.style.opacity = teamCard.style.opacity === '0' ? '1' : '0';
-                const revealBtn = teamCard.querySelector('.reveal-btn');
-
+                revealBtn.title = teamCard.style.opacity === '0' ? "Click to Reveal Hidden Area" : "Click to Hide Area";
             }
         }
-               
     </script>
     <footer>
         <p>&copy; 2025 Expense Tracker. All rights reserved.</p>

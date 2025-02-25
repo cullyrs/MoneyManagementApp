@@ -55,8 +55,6 @@ async function showAlert(message, type) {
             // Auto-hide alert after 5 seconds
             setTimeout(() => closeAlert(alertBox), 5000);
 
-            // Close button functionality
-            alertBox.querySelector("#alert-close").addEventListener("click", () => closeAlert(alertBox));
         })
         .catch(error => {
             console.error("Error triggering alert:", error);

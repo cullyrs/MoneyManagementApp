@@ -1,3 +1,9 @@
+/**
+ * Naeem Lovitt
+ * Course : CMSC 495 Capstone in Computer Science
+ * Project : Expense Tracker Capstone Project
+ * Description: This file is the main entry point for the server. It connects to the database and starts the server.
+ */
 const express = require("express");
 const path = require("path");
 
