@@ -135,8 +135,6 @@ The project requires a `config.env` file to store **MongoDB credentials**. Creat
     │   ├── dashboardRoutes.js
     │   ├── transactionRoutes.js
     │   └── userRoutes.js
-    ├── tests/
-    │   └── test.js
     └── utils/
         └── helper.js
 ```
